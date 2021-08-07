@@ -1,0 +1,155 @@
+---
+title: "IST772– Week5 Async"
+author: "Sathish Kumar Rajendiran"
+output: pdf_document
+---
+
+```{r}
+install.packages("psych")
+library(psych)
+
+str(mtcars)
+dim(mtcars)
+head(mtcars)
+View(mtcars)
+
+describe(mtcars)
+```
+```{r}
+colnames(mtcars)
+```
+
+
+```{r}
+?mtcars
+mtcars[which.max(subset(mtcars,am==1)$mpg),]
+
+mtcars[which.max(subset(mtcars,am=="0")$mpg),]
+mtcars[which.max(subset(mtcars,am==1)$mpg),]
+mtcars[which.max(mtcars$mpg),]
+
+x <- subset(mtcars,am==1)
+
+x[which.max(x$mpg),]
+
+y <- subset(mtcars,am==0)
+y[which.max(y$mpg),]
+```
+
+, 1]	mpg	Miles/(US) gallon
+[, 2]	cyl	Number of cylinders
+[, 3]	disp	Displacement (cu.in.)
+[, 4]	hp	Gross horsepower
+[, 5]	drat	Rear axle ratio
+[, 6]	wt	Weight (1000 lbs)
+[, 7]	qsec	1/4 mile time
+[, 8]	vs	Engine (0 = V-shaped, 1 = straight)
+[, 9]	am	Transmission (0 = automatic, 1 = manual)
+[,10]	gear	Number of forward gears
+[,11]	carb	Number of carburetors
+
+
+```{r}
+mean(mtcars$mpg[mtcars$am == 0 ] )
+mean(mtcars$mpg[mtcars$am == 1 ] )
+
+sd(mtcars$mpg[mtcars$am == 0 ] )
+sd(mtcars$mpg[mtcars$am == 1 ] )
+```
+
+
+```{r}
+boxplot(mpg ~ am, data=mtcars)
+```
+
+
+```{r}
+#draw one sample as demo
+sample(mtcars$mpg[mtcars$am == 1], size=13,replace=TRUE) # 13 observation with am==1
+sample(mtcars$mpg[mtcars$am == 0], size=19,replace=TRUE)
+
+mean(sample(mtcars$mpg[mtcars$am==0],size=19,replace=TRUE))
+mean(sample(mtcars$mpg[mtcars$am == 0], size=19,replace=TRUE))
+      
+meanDiffs <- replicate(100,
+                       mean(sample(mtcars$mpg[mtcars$am == 0], size=19,replace=TRUE)) -  
+                       mean(sample(mtcars$mpg[mtcars$am == 1], size=13,replace=TRUE)))
+meanDiffs
+hist(meanDiffs) # histogram of mean distribution
+
+
+n1 <- mean(sample(mtcars$mpg[mtcars$am == 1], size=13,replace=TRUE))
+n2 <- mean(sample(mtcars$mpg[mtcars$am == 0], size=19,replace=TRUE)) 
+n1
+n2
+```
+```{r}
+#first t-test | inferential test
+
+t.test(mtcars$mpg[mtcars$am == 0],mtcars$mpg[mtcars$am == 1])
+```
+
+
+
+
+```{r}
+install.packages("BEST")
+library(BEST)
+```
+
+
+```{r}
+install.packages("BEST")
+library(BEST)
+carsBest <- BESTmcmc(mtcars$mpg[mtcars$am==0],mtcars$mpg[mtcars$am==1])
+```
+
+
+```{r}
+plot(carsBest)
+```
+
+```{r}
+1373-1394
+options(scipen=999) # to handle scientific notions 
+p_value <- 1.693e-05
+p_value
+```
+
+
+```{r}
+x <- seq(from=-3,to=3,by=.1)
+plot(x, dt(x,df=30))
+abline(v=-2.04)
+abline(v=2.04)
+abline(v=2.5,col="green")
+
+```
+```{r}
+X1 <-  c(32, 48, 23, 23, 23, 21, 28)
+X2 <- c(51, 32, 33, 50, 26, 66, 27)
+df <- data.frame(mpg=X1, wt=X2)
+
+View(df)
+
+length(X1)
+
+length(df$mpg)
+
+median(X1)
+
+max(X2)
+
+length(df$mpg)== length(df$wt)
+
+min(df$wt)
+
+X2[1]
+
+df$wt[1]
+
+mean(X2)
+
+
+```
+

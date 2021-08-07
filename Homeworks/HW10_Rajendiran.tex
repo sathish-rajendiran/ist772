@@ -1,0 +1,617 @@
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\usepackage{hyperref}
+\hypersetup{
+            pdftitle={IST772-- Problem Set 10},
+            pdfauthor={Sathish Kumar Rajendiran},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+
+\title{IST772-- Problem Set 10}
+\author{Sathish Kumar Rajendiran}
+\date{}
+
+\begin{document}
+\maketitle
+
+Attribution statement: 1. I did this homework by myself, with help from
+the book and the professor.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# import libraries }
+\CommentTok{#create a function to ensure the libraries are imported}
+\NormalTok{EnsurePackage <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x)\{}
+\NormalTok{  x <-}\StringTok{ }\KeywordTok{as.character}\NormalTok{(x)}
+    \ControlFlowTok{if}\NormalTok{ (}\OperatorTok{!}\KeywordTok{require}\NormalTok{(x,}\DataTypeTok{character.only =} \OtherTok{TRUE}\NormalTok{))\{}
+      \KeywordTok{install.packages}\NormalTok{(}\DataTypeTok{pkgs=}\NormalTok{x, }\DataTypeTok{repos =} \StringTok{"http://cran.us.r-project.org"}\NormalTok{)}
+      \KeywordTok{require}\NormalTok{(x, }\DataTypeTok{character.only =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{    \}}
+\NormalTok{  \}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{chapter-11-exercise-1}{%
+\section{Chapter 11, Exercise 1}\label{chapter-11-exercise-1}}
+
+\emph{Download and library the nlme package and use data(``Pixel'') to
+activate the Pixel data set and ``? Pixel'' for documentation. Inspect
+the data and create a box plot showing the Pixel intensities on
+different days. (1 pt) Run a repeated measures ANOVA to compare pixel
+intensities on days 4, 6, 10 and 14 using aov() (1 pt) and report the
+results. (1 pt) You can use a command like:}
+
+\hypertarget{question-2-repeated-measures-data}{%
+\section{1) Question 2: Repeated Measures
+data}\label{question-2-repeated-measures-data}}
+
+\begin{itemize}
+\tightlist
+\item
+  Data Exploration
+
+  \begin{itemize}
+  \tightlist
+  \item
+    glm(Catholic.b \textasciitilde{} Fertility +
+    Agriculture,data=swiss,family = binomial(link = ``logit'')) is
+    stored on a variable ``swiss.glm''
+  \item
+    above code runs a logistic regression analysis on Catholic.b as the
+    dependent variable and Fertility and Agriculture as the predictors
+    from ``swiss'' dataset.
+  \end{itemize}
+\item
+  Balancing Data
+
+  \begin{itemize}
+  \tightlist
+  \item
+    From the glm(Catholic.b \textasciitilde{} Fertility +
+    Agriculture,data=swiss,family = binomial(link = ``logit'')) ; this
+    formula predicts ``Catholic.b'' values from Fertility and
+    Agriculture combined from the dataset ``swiss''
+  \item
+    Procedure glm() is similar to lm() procedure and expects the
+    dependent variable (variable, in question for prediction) first.
+    Followed by, independent/prdictor variable and a link function.
+  \end{itemize}
+\item
+  Repeated measures ANOVA
+
+  \begin{itemize}
+  \tightlist
+  \item
+    From the glm(Catholic.b \textasciitilde{} Fertility +
+    Agriculture,data=swiss,family = binomial(link = ``logit'')) ; this
+    formula predicts ``Catholic.b'' values from Fertility and
+    Agriculture combined from the dataset ``swiss''
+  \end{itemize}
+\item
+  Results
+
+  \begin{itemize}
+  \tightlist
+  \item
+    From the glm(Catholic.b \textasciitilde{} Fertility +
+    Agriculture,data=swiss,family = binomial(link = ``logit'')) ; this
+    formula predicts ``Catholic.b'' values from Fertility and
+    Agriculture combined from the dataset ``swiss''
+  \end{itemize}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{EnsurePackage}\NormalTok{(}\StringTok{"nlme"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: nlme
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{?Pixel}
+\CommentTok{# X-ray pixel intensities over time}
+\CommentTok{# Description}
+\CommentTok{# The Pixel data frame has 102 rows and 4 columns of data on the pixel }
+\CommentTok{# intensities of CT scans of dogs over time}
+
+\CommentTok{# This data frame contains the following columns:}
+\CommentTok{# Dog: a factor with levels 1 to 10 designating the dog on which the scan was made Side}
+\CommentTok{# a factor with levels L and R designating the side of the dog being scanned}
+\CommentTok{# day: a numeric vector giving the day post injection of the contrast on which the }
+\CommentTok{# scan was made}
+\CommentTok{# pixel}
+\CommentTok{# a numeric vector of pixel intensities}
+
+\KeywordTok{summary}\NormalTok{(Pixel)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       Dog     Side        day            pixel     
+##  1      :14   L:51   Min.   : 0.00   Min.   :1034  
+##  2      :14   R:51   1st Qu.: 4.00   1st Qu.:1054  
+##  3      :14          Median : 6.00   Median :1088  
+##  4      :14          Mean   : 7.49   Mean   :1087  
+##  5      :10          3rd Qu.:10.00   3rd Qu.:1110  
+##  6      :10          Max.   :21.00   Max.   :1161  
+##  (Other):26
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# dim(Pixel) # [1] 102   4}
+
+\CommentTok{# View(Pixel)}
+\CommentTok{# str(Pixel)}
+\CommentTok{# colnames(Pixel)}
+
+\CommentTok{# define variables}
+\NormalTok{Dog <-}\StringTok{ }\NormalTok{Pixel}\OperatorTok{$}\NormalTok{Dog}
+\NormalTok{Side <-}\StringTok{ }\NormalTok{Pixel}\OperatorTok{$}\NormalTok{Side}
+\NormalTok{day <-}\StringTok{ }\NormalTok{Pixel}\OperatorTok{$}\NormalTok{day}
+\NormalTok{pixel <-}\StringTok{ }\NormalTok{Pixel}\OperatorTok{$}\NormalTok{pixel}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#box plot to compare the tensions}
+\KeywordTok{boxplot}\NormalTok{(pixel}\OperatorTok{~}\NormalTok{day, }\DataTypeTok{data=}\NormalTok{Pixel,}
+       \DataTypeTok{border=}\StringTok{"orange"}\NormalTok{, }
+       \DataTypeTok{col=}\StringTok{"steelblue"}\NormalTok{,}
+       \DataTypeTok{freq=}\OtherTok{FALSE}\NormalTok{,}
+       \DataTypeTok{las=}\DecValTok{1}\NormalTok{, }
+       \CommentTok{# breaks=10,}
+       \CommentTok{# notch = TRUE,}
+       \DataTypeTok{horizontal =} \OtherTok{FALSE}\NormalTok{ ,}\DataTypeTok{main=}\StringTok{" Distribution of pixel vs day"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW10_Rajendiran_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{EnsurePackage}\NormalTok{(}\StringTok{"tidyverse"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: tidyverse
+\end{verbatim}
+
+\begin{verbatim}
+## -- Attaching packages --------------------------------------------------------------------------------------------------------------------------------------------------------------------- tidyverse 1.3.0 --
+\end{verbatim}
+
+\begin{verbatim}
+## v ggplot2 3.3.2     v purrr   0.3.4
+## v tibble  3.0.1     v dplyr   1.0.0
+## v tidyr   1.0.2     v stringr 1.4.0
+## v readr   1.3.1     v forcats 0.5.0
+\end{verbatim}
+
+\begin{verbatim}
+## -- Conflicts ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ tidyverse_conflicts() --
+## x dplyr::collapse() masks nlme::collapse()
+## x dplyr::filter()   masks stats::filter()
+## x dplyr::lag()      masks stats::lag()
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#data distribution}
+\CommentTok{# violin plot with mean points}
+
+\NormalTok{Pixel }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{pivot_longer}\NormalTok{(}\DataTypeTok{cols=}\OperatorTok{-}\KeywordTok{c}\NormalTok{(Dog,Side), }\DataTypeTok{names_to=}\StringTok{"variable"}\NormalTok{, }\DataTypeTok{values_to=}\StringTok{"value"}\NormalTok{, }\DataTypeTok{values_drop_na =} \OtherTok{TRUE}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{variable, }\DataTypeTok{y=}\NormalTok{value)) }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_violin}\NormalTok{(}\DataTypeTok{trim=}\OtherTok{FALSE}\NormalTok{, }\DataTypeTok{fill=}\StringTok{'steelblue'}\NormalTok{, }\DataTypeTok{color=}\StringTok{"orange"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{( }\OperatorTok{~}\StringTok{ }\NormalTok{variable, }\DataTypeTok{scales=}\StringTok{"free"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{stat_summary}\NormalTok{(}\DataTypeTok{fun=}\NormalTok{mean, }\DataTypeTok{geom=}\StringTok{"point"}\NormalTok{, }\DataTypeTok{shape=}\DecValTok{23}\NormalTok{, }\DataTypeTok{size=}\DecValTok{4}\NormalTok{,}\DataTypeTok{color=}\StringTok{"white"}\NormalTok{)  }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{theme_minimal}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW10_Rajendiran_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# EnsurePackage("dlookr") # outlier analysis}
+\CommentTok{# # #outlier analysis}
+\CommentTok{# plot_outlier(Pixel)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Corellation between Agriculture and Fertility}
+\KeywordTok{plot}\NormalTok{(pixel, day}
+\NormalTok{     ,}\DataTypeTok{main=}\StringTok{"Corellation between pixel and day"}
+\NormalTok{     ,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW10_Rajendiran_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\emph{to subset the data. Keeping in mind that the data will need to be
+balanced before you can conduct this analysis. (1 pt) Try running a
+command like:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#balanced Data}
+\NormalTok{myPixel <-}\StringTok{ }\KeywordTok{subset}\NormalTok{(Pixel, day }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{10}\NormalTok{,}\DecValTok{14}\NormalTok{))  }\CommentTok{# copy the dataset}
+\NormalTok{myPixel}\OperatorTok{$}\NormalTok{dayFact <-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(myPixel}\OperatorTok{$}\NormalTok{day)   }\CommentTok{# convert day to a factor}
+\NormalTok{list <-}\StringTok{ }\KeywordTok{rowSums}\NormalTok{(}\KeywordTok{table}\NormalTok{(myPixel}\OperatorTok{$}\NormalTok{Dog,myPixel}\OperatorTok{$}\NormalTok{dayFact))}\OperatorTok{==}\DecValTok{8}
+\NormalTok{ist <-}\StringTok{ }\NormalTok{list[list}\OperatorTok{==}\OtherTok{TRUE}\NormalTok{] }\CommentTok{# Keep only those with 12 observations}
+\NormalTok{list <-}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{names}\NormalTok{(list)) }\CommentTok{# Extract the row indices}
+\NormalTok{myPixel <-}\StringTok{ }\NormalTok{myPixel[myPixel}\OperatorTok{$}\NormalTok{Dog }\OperatorTok{%in%}\StringTok{ }\NormalTok{list,] }\CommentTok{# Match against the data}
+
+\CommentTok{#box plot to compare the tensions}
+\KeywordTok{boxplot}\NormalTok{(pixel}\OperatorTok{~}\NormalTok{dayFact, }\DataTypeTok{data=}\NormalTok{myPixel,}
+       \DataTypeTok{border=}\StringTok{"orange"}\NormalTok{, }
+       \DataTypeTok{col=}\StringTok{"steelblue"}\NormalTok{,}
+       \DataTypeTok{freq=}\OtherTok{FALSE}\NormalTok{,}
+       \DataTypeTok{las=}\DecValTok{1}\NormalTok{, }
+       \CommentTok{# breaks=10,}
+       \CommentTok{# notch = TRUE,}
+       \DataTypeTok{horizontal =} \OtherTok{FALSE}\NormalTok{ ,}\DataTypeTok{main=}\StringTok{" Balanced data - Distribution of pixel vs day"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW10_Rajendiran_files/figure-latex/unnamed-chunk-7-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Repeated measures ANOVA}
+\NormalTok{aovpixelOut <-}\StringTok{ }\KeywordTok{aov}\NormalTok{(pixel }\OperatorTok{~}\StringTok{ }\NormalTok{dayFact}\OperatorTok{+}\KeywordTok{Error}\NormalTok{(Dog), }\DataTypeTok{data=}\NormalTok{myPixel)}
+\KeywordTok{summary}\NormalTok{(aovpixelOut)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Error: Dog
+##           Df Sum Sq Mean Sq F value Pr(>F)
+## dayFact    2   2887    1444   0.208  0.817
+## Residuals  7  48506    6929               
+## 
+## Error: Within
+##           Df Sum Sq Mean Sq F value Pr(>F)  
+## dayFact    3   1572   523.9   2.993 0.0383 *
+## Residuals 57   9978   175.1                 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\emph{as the starting point for cleaning up the data set.}
+
+\hypertarget{chapter-11-exercise-5}{%
+\section{Chapter 11, Exercise 5}\label{chapter-11-exercise-5}}
+
+\emph{Given that the built-in AirPassengers data set (see ``?
+AirPassengers'' for documentation) has a substantial growth trend, use
+diff() to create a differenced data set. (1 pt) Use plot() to examine
+and interpret the results of differencing. Use cpt.var() to find the
+change point in the variability of the differenced time series. (1 pt)
+Plot the result and describe in your own words what the change point
+signifies. (1 pt)}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{EnsurePackage}\NormalTok{(}\StringTok{"changepoint"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: changepoint
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: zoo
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'zoo'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     as.Date, as.Date.numeric
+\end{verbatim}
+
+\begin{verbatim}
+## Successfully loaded changepoint package version 2.2.2
+##  NOTE: Predefined penalty values changed in version 2.2.  Previous penalty values with a postfix 1 i.e. SIC1 are now without i.e. SIC and previous penalties without a postfix i.e. SIC are now with a postfix 0 i.e. SIC0. See NEWS and help files for further details.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{EnsurePackage}\NormalTok{(}\StringTok{"tseries"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: tseries
+\end{verbatim}
+
+\begin{verbatim}
+## Registered S3 method overwritten by 'quantmod':
+##   method            from
+##   as.zoo.data.frame zoo
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{? AirPassengers}
+\CommentTok{# Monthly Airline Passenger Numbers 1949-1960}
+\CommentTok{# Description: The classic Box & Jenkins airline data. }
+\CommentTok{# Monthly totals of international airline passengers, 1949 to 1960.}
+\CommentTok{# Usage : AirPassengers}
+\CommentTok{# Format: A monthly time series, in thousands.}
+\KeywordTok{summary}\NormalTok{(AirPassengers)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   104.0   180.0   265.5   280.3   360.5   622.0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{str}\NormalTok{(AirPassengers) }\CommentTok{# Time-Series [1:144] from 1949 to 1961}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  Time-Series [1:144] from 1949 to 1961: 112 118 132 129 121 135 148 148 136 119 ...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# View(AirPassengers)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# AirPassengers undifferential plot}
+\KeywordTok{plot}\NormalTok{(AirPassengers,}\DataTypeTok{col=}\StringTok{"blue"}\NormalTok{,}\DataTypeTok{main=}\StringTok{"AirPassengers undifferential plot"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW10_Rajendiran_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# differenced data set}
+\NormalTok{diffAirPassengers <-}\StringTok{ }\KeywordTok{diff}\NormalTok{(AirPassengers)}
+\KeywordTok{plot}\NormalTok{(diffAirPassengers,}\DataTypeTok{col=}\StringTok{"steelblue"}\NormalTok{,}\DataTypeTok{main=}\StringTok{"AirPassengers differential time series"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW10_Rajendiran_files/figure-latex/unnamed-chunk-11-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# change point in the variability of the differenced time series}
+\NormalTok{dAPcp <-}\StringTok{ }\KeywordTok{cpt.var}\NormalTok{(diffAirPassengers)}
+\KeywordTok{plot}\NormalTok{(dAPcp,}\DataTypeTok{cpt.col=}\StringTok{"orange"}\NormalTok{,}\DataTypeTok{cpt.width=}\DecValTok{5}\NormalTok{,}\DataTypeTok{col=}\StringTok{"steelblue"}
+\NormalTok{     ,}\DataTypeTok{main=}\StringTok{"change point variance on differenced time series"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW10_Rajendiran_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(dAPcp)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Created Using changepoint version 2.2.2 
+## Changepoint type      : Change in variance 
+## Method of analysis    : AMOC 
+## Test Statistic  : Normal 
+## Type of penalty       : MBIC with value, 14.88853 
+## Minimum Segment Length : 2 
+## Maximum no. of cpts   : 1 
+## Changepoint Locations : 76
+\end{verbatim}
+
+\hypertarget{chapter-11-exercise-6}{%
+\section{Chapter 11, Exercise 6}\label{chapter-11-exercise-6}}
+
+\emph{Use cpt.mean() on the undifferenced AirPassengers time series. (1
+pt) Plot and interpret the results. Compare the change point of the mean
+that you uncovered in this case to the change point in the variance that
+you uncovered in Exercise 5. What do these change points suggest about
+the history of air travel? (1 pt)}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# change point in the variability of the differenced time series}
+\NormalTok{APcpm <-}\StringTok{ }\KeywordTok{cpt.mean}\NormalTok{(AirPassengers)}
+\KeywordTok{plot}\NormalTok{(APcpm,}\DataTypeTok{cpt.col=}\StringTok{"steelblue"}\NormalTok{,}\DataTypeTok{cpt.width=}\DecValTok{5}\NormalTok{,}\DataTypeTok{col=}\StringTok{"brown"}
+\NormalTok{     ,}\DataTypeTok{main=}\StringTok{"change point mean on undifferenced time series"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW10_Rajendiran_files/figure-latex/unnamed-chunk-13-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(APcpm)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Created Using changepoint version 2.2.2 
+## Changepoint type      : Change in mean 
+## Method of analysis    : AMOC 
+## Test Statistic  : Normal 
+## Type of penalty       : MBIC with value, 14.90944 
+## Minimum Segment Length : 1 
+## Maximum no. of cpts   : 1 
+## Changepoint Locations : 77
+\end{verbatim}
+
+\hypertarget{chapter-11-exercise-7}{%
+\section{Chapter 11, Exercise 7}\label{chapter-11-exercise-7}}
+
+\emph{Find historical information about air travel on the Internet
+and/or in reference materials that sheds light on the results from
+Exercises 5 and 6. Write a mini-article (less than 250 words) that
+interprets your statistical findings from Exercises 5 and 6 in the
+context of the historical information you found. (1 pt)}
+
+\hypertarget{chapter-11-exercise-8}{%
+\section{Chapter 11, Exercise 8}\label{chapter-11-exercise-8}}
+
+\emph{Use bcp() on the AirPassengers time series. (1 pt) Plot and
+interpret the results. Make sure to contrast these results with those
+from Exercise 6. (1 pt)}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{EnsurePackage}\NormalTok{(}\StringTok{"bcp"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: bcp
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: grid
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Bayesian Change point analysis}
+\NormalTok{bAPcpm <-}\StringTok{ }\KeywordTok{bcp}\NormalTok{(}\KeywordTok{as.vector}\NormalTok{(AirPassengers))}
+\KeywordTok{plot}\NormalTok{(bAPcpm)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW10_Rajendiran_files/figure-latex/unnamed-chunk-14-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# summary(bAPcpm)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(bAPcpm}\OperatorTok{$}\NormalTok{posterior.prob }\OperatorTok{>}\NormalTok{.}\DecValTok{95}\NormalTok{,}\DataTypeTok{col=}\StringTok{"blue"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW10_Rajendiran_files/figure-latex/unnamed-chunk-15-1.pdf}
+
+\end{document}

@@ -1,0 +1,138 @@
+---
+title: "Week 6 Breakout"
+---
+
+Instructions: In the Google Drive folder, there is a file called insurance.csv that contains n=1338 observations on seven variables. The data originate with author Brett Lantz and were developed for a book called Machine Learning with R. These data have many interesting possibilities, but for today we will just be comparing medical procedure charges (variable name: charges) by region of the country (variable name: region). Your goal is to conduct a thorough ANOVA analysis using both conventional and Bayesian techniques and to write a paragraph that integrates the statistical results. 
+
+1.	Read in the data using the read.csv() function in base (not readr) for this dataset: it will automatically turn the region names (which are character data in the csv file) into a factor. You can use read.csv() as part of the “Import Data” dialog under the Environment tab in the upper right corner of R-studio, or you can write a line of code like this:
+
+```{r}
+#import csv files into data frames
+
+#define file path
+fpath <- "/Users/sathishrajendiran/Documents/R/IST772/insurance.csv"
+
+#import into a dataframe
+insurance <- data.frame(read.csv(fpath),stringsAsFactors=FALSE)
+
+#View the data set
+View(insurance)
+
+colnames(insurance)
+# [1] "age"      "sex"      "bmi"      "children" "smoker"   "region"   "charges"
+
+# display Summary information to console
+summary(insurance)
+
+head(insurance)
+
+```
+
+You will need to add the path name or use the setwd() command to indicate the folder where R should look for the file.
+
+2.	Visualize the data with boxplot(). You will need to use the formula notation in your call to boxplot(). Remember to use the tilde character like this: depVar ~ indepVar
+Note the results in a comment for later reference.
+
+```{r}
+#box plot to compare the age
+boxplot(charges~age, data=insurance,
+       border="orange", 
+       col="steelblue",
+       freq=FALSE,
+       las=1, 
+       breaks=10,
+       # notch = TRUE,
+       horizontal = TRUE ,main=" Distribution of charges vs age")
+```
+```{r}
+#box plot to compare the regions
+boxplot(charges~region, data=insurance,
+       border="orange", 
+       col="steelblue",
+       freq=FALSE,
+       las=1, 
+       breaks=10,
+       # notch = TRUE,
+       horizontal = TRUE ,main=" Distribution of charges vs region")
+```
+
+
+```{r}
+#box plot to compare the sex
+boxplot(charges~sex, data=insurance,
+       border="orange", 
+       col="steelblue",
+       freq=FALSE,
+       las=1, 
+       breaks=10,
+       # notch = TRUE,
+       horizontal = TRUE ,main=" Distribution of charges vs sex")
+```
+
+
+
+3.	Report the means and SDs of each group in a comment. Here’s a trick to run group means and standard deviations: the tapply() command (prounounced “tee-apply):
+
+```{r}
+cat("\ngroup means:\n")
+tapply(insurance$charges, insurance$region, mean)
+cat("\ngroup standard deviations:\n")
+tapply(insurance$charges, insurance$region, sd)
+```
+
+4.	Run a conventional ANOVA using the aov() command and report an overview of the results in a comment.
+
+```{r}
+set.seed(10)  
+insuranceAmount <- sample(insurance$charges,60,replace=TRUE)
+insurancepGrp <- as.factor(rep(seq(from=1,to=3,by=1),20))
+insuranceDF <- data.frame(insuranceAmount, insurancepGrp)
+insuranceOut <- aov(insuranceAmount ~ insurancepGrp, data=insuranceDF)
+summary(insuranceOut) 
+```
+
+5.	Now conduct a Bayesian analysis. Refer to pages 104-109 of the text as needed. Don’t forget that after running anovaBF, you will need to run the posterior() command to obtain the MCMC posterior distributions of the parameters from the ANOVA. Report an overview of the results in a comment.
+
+```{r}
+options(scipen=999) # to handle scientific notions 
+# install.packages("BayesFactor")
+library("BayesFactor")
+set.seed(10)  
+insuranceAmount <- sample(insurance$charges,60,replace=TRUE)
+insurancepGrp <- as.factor(rep(seq(from=1,to=3,by=1),20))
+insuranceDF <- data.frame(insuranceAmount, insurancepGrp)
+insuranceBayesOut <- anovaBF(insuranceAmount ~ insurancepGrp, data=insuranceDF)
+insuranceBayesOut
+mcmcOut <- posterior(insuranceBayesOut,iterations=10000)
+summary(mcmcOut)
+```
+
+```{r}
+mcmcOut
+```
+
+6.	Finally, write a paragraph-length comment that integrates the various pieces of evidence. It would be great to document the group means (from your answer to #3 above) before doing a read-out on the ANOVA results. You should also state a null hypothesis (and, optionally, an alternative hypothesis) as well as the alpha level.
+
+group means:
+northeast northwest southeast southwest 
+ 13406.38  12417.58  14735.41  12346.94 
+
+group standard deviations:
+northeast northwest southeast southwest 
+ 11255.80  11072.28  13971.10  11557.18 
+ 
+               Df    Sum Sq   Mean Sq F value Pr(>F)
+insurancepGrp  2 5.673e+08 283654026   2.119   0.13
+Residuals     57 7.630e+09 133865701              
+
+
+Bayes factor analysis
+--------------
+[1] insurancepGrp : 0.6360265 ±0.01%
+
+Against denominator:
+  Intercept only 
+  
+  
+
+7.	Share your code and comments at: https://codeshare.io/aJDyRX   

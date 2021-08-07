@@ -1,0 +1,61 @@
+---
+title: "IST772– Week10 Async"
+author: "Sathish Kumar Rajendiran"
+output: pdf_document
+---
+
+
+
+```{r}
+chwBal <- ChickWeight # Copy the dataset
+chwBal$TimeFact <- as.factor(chwBal$Time) #  Time to a factor
+list <- rowSums(table(chwBal$Chick,chwBal$TimeFact))==12
+list <- list[list==TRUE] # Keep only those with 12 observations
+list <- as.numeric(names(list)) # Extract the row indices
+chwBal <- chwBal[chwBal$Chick %in% list,] # Match against the data
+chwBal
+# Run ezANOVA
+install.packages("ez")
+library("ez")
+ezANOVA(data=chwBal, dv=.(weight), within=.(TimeFact), wid=.(Chick), detailed=TRUE)
+
+
+ChickWeight
+```
+
+```{r}
+?beaver1
+cor(beaver1$temp[1:100],beaver2$temp)
+ts.plot(beaver1$temp[1:100])
+ts.plot(beaver2$temp)
+
+beaver1$temp[1:100]
+
+db1 <- diff(beaver1$temp[1:100])
+db2 <- diff(beaver2$temp)
+ts.plot(db1)
+ts.plot(db2)
+cor(db1, db2)
+```
+
+```{r}
+install.packages("changepoint")
+library(changepoint)
+dEUstocks <- diff(EuStockMarkets)
+dSMI <- dEUstocks[,2]
+
+dSMIcp <- cpt.var(dSMI)
+plot(dSMIcp,cpt.col="grey",cpt.width=5)
+dSMIcp
+```
+
+```{r}
+library(changepoint)
+dEUstocks <- diff(EuStockMarkets)
+dSMI <- dEUstocks[,2]
+
+dSMIcp <- cpt.mean(dSMI)
+plot(dSMIcp,cpt.col="grey",cpt.width=5)
+dSMIcp
+```
+

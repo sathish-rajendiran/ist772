@@ -1,0 +1,32 @@
+---
+title: "Week 10—Balancing data"
+---
+
+The approach to balancing a dataset for repeated-measures ANOVA in the textbook (p. 242) only works if the identifiers for the items are numbers. You could drop the "as.numeric" command so it work for non-numeric IDs. 
+
+An alternative approach is to use the restructuring routines in the tidyverse package (among others). There are two formats for repeated measures data: "long", which has one row per observation (and so multiple rows per subject) and "wide", which has one row per subject with the observations in different columns. We want long format for the ANOVA, but it's easier to check for complete cases in wide format. The trick is to pivot the data from long to wide, filter the complete cases and then pivot back to long. This code will do the trick (the %>% is a pipe operator that takes the output of the first command and applies the second to it):  
+
+```{r}
+library(tidyverse)
+chwBal <- as.data.frame(ChickWeight) %>%      # ChickWeight is not a data frame, so need to convert
+          pivot_wider(names_from=Time, values_from=weight) %>%   
+          filter(complete.cases(.)) %>%       # keep only complete cases
+          pivot_longer(-c(Chick,Diet), names_to="Time", values_to="weight")
+chwBal$Chick<-droplevels(chwBal$Chick)        # We dropped some chicks, so drop them from the factor
+```
+
+Check the results. 
+
+```{r}
+table(myData.bal$Chick,chwBal$Time)
+```
+
+Note that Time ends up as a character string, rather than an integer. Since we're doing an ANOVA where we're treating Time as a factor, that's actually what we want, but if we were doing a regression, we'd want to turn it back into a number.  
+
+The results from the ANOVA are the same as in the book. 
+
+```{r}
+summary(aov(weight ~ Time + Error(Chick), data=chwBal))
+```
+
+

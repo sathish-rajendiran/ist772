@@ -1,0 +1,149 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+----------------------------------------------------------------------------------
+Title: "IST772 Week3 - Random Distributions"
+Name: Sathish Kumar Rajendiran
+Date: 10/16/2020
+-----------------------------------------------------------------------------------
+
+
+
+```{r}
+gumballs <- rep.int(1:2,25)
+gumballs <- factor(gumballs,labels=c("Red","Blue"))
+gumballs
+```
+```{r}
+sample(gumballs,size=10,replace = TRUE)
+sum(sample(gumballs,size=10,replace = TRUE)=="Red")
+sum(sample(gumballs,size=1000,replace = TRUE)=="Red")
+```
+
+```{r}
+runif(n=10,min=1,max=5)
+rnorm(n=10,mean=5,sd=1)
+rbinom(n=10,size = 1,prob = 0.5)
+```
+```{r}
+runif(n=100,min=0,max=50)
+runif(n=10)
+runif(n=50,min=0,max=100)
+```
+
+```{r}
+toastAngleData <- runif(1000,0,180) # Random numbers from uniform distribution
+head(toastAngleData) # Look at the first few numbers in the list
+tail(toastAngleData) # Look at the last few numbers in the list
+mean(toastAngleData) # Look at the last few numbers in the list
+hist(toastAngleData) # Plot a histogram of all 1000 data points
+
+```
+
+```{r}
+set.seed(5)
+toastAngleData <- runif(1000,0,180)
+mean(toastAngleData)
+
+```
+
+```{r}
+#Repetitious Sampling With R
+toastAngleData
+sample(toastAngleData,size=14,replace=TRUE)
+
+mean(sample(toastAngleData,size=14,replace=TRUE))
+```
+
+
+```{r}
+#replcate() to repeate the process
+replicate(4, mean(sample(toastAngleData,size=14,replace=TRUE)),simplify = TRUE)
+samplingDistribution <- replicate(10000, mean(sample(toastAngleData,size=14,replace=TRUE)),simplify = TRUE)
+```
+
+```{r}
+#png("Figure03_1.png", width = 6, height = 6, units = 'in', res = 300)
+hist(samplingDistribution, main=NULL)
+#dev.off()
+```
+
+
+```{r}
+hist(samplingDistribution)
+```
+
+```{r}
+mean(samplingDistribution)
+mean(toastAngleData)
+
+summary(toastAngleData)
+summary(samplingDistribution)
+```
+
+```{r}
+hist(replicate(10000,mean(sample(1:1000,size=100,replace=TRUE))))
+```
+
+```{r}
+quantile(samplingDistribution, c(.01, .05,  .50, .95, .99))
+```
+
+```{r}
+#png("Figure03_2.png", width = 6, height = 6, units = 'in', res = 300)
+hist(samplingDistribution, main=NULL)
+abline(v=quantile(samplingDistribution,.01))
+abline(v=quantile(samplingDistribution,.05))
+abline(v=quantile(samplingDistribution,.95))
+
+
+
+#dev.off()
+```
+```{r}
+samplingDistribution[ samplingDistribution<= quantile(samplingDistribution,.01) ]
+summary( samplingDistribution[samplingDistribution <= quantile(samplingDistribution,.01)] )
+```
+
+```{r}
+quantile(0:100,probs=0.75)
+```
+```{r}
+plot(seq(-4,4,0.01),dnorm(seq(-4,4,0.01)))
+abline(v=qnorm(0.50))
+abline(v=qnorm(0.75))
+abline(v=qnorm(0.25))
+abline(v=qnorm(0.975))
+abline(v=qnorm(0.025))
+
+
+qnorm(0.75)
+qnorm(0.25)
+qnorm(0.975)
+qnorm(0.025)
+
+```
+
+```{r}
+samplingDistribution <- replicate(10000, mean(sample(toastAngleData,size=14,replace=TRUE)),simplify = TRUE)
+hist(samplingDistribution, main=NULL)
+plot(seq(-4,4,0.01),dnorm(seq(-4,4,0.01)))
+# abline(v=qnorm(0.50))
+abline(v=quantile(samplingDistribution,0.025))
+abline(v=quantile(samplingDistribution,0.975))
+```
+
+```{r}
+sample(0:100, size=3)
+mean(sample(0:100,size = 3))
+replicate(10000,mean(sample(0:100, size=3)))
+mean(replicate(10000,mean(sample(0:100, size=3))))
+
+```
+
+
+```{r}
+mean(replicate(10000,mean(sample(0:100, size=3))))
+```
+

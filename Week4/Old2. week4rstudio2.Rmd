@@ -1,0 +1,109 @@
+---
+title: "Week 4 – Build and Evaluate 100 Confidence Intervals"
+---
+
+Instructions: In the previous exercise, you created a 95% confidence interval around the mean difference of a sample of n=86 NiCad batteries and a sample of n=86 Li-Ion batteries. Usually we only have access to one sample of data and no matter how large or small that sample may be, it is our only view of what may be happening in the population.
+
+But today, with the help of a bit of imagination, we actually have the complete population of battery data available to us! Using this data, we can obtain not one sample, not two samples, but 100 samples of battery lifespan data. In this exercise, you will use some R code to draw 100 samples of n=172 batteries (which will be about half NiCad and half Li-Ion) from our population. Then you will calculate a confidence interval for each one using t.test(). Then you will plot the results and count how many of your confidence intervals actually contain the mean difference.
+
+1. Read the population data from the provided file, BattPop.csv. Store the resulting data set in a data frame called BattPop. Use summary(BattPop) or View(BattPop) to examine the variables. Report the names and purpose of each variable here:
+
+```{r}
+library(psych)
+#import csv files into data frames
+
+#define file path
+fpath <- "/Users/sathishrajendiran/Documents/R/IST772/BattPop.csv"
+
+#import into a dataframe
+BattPop <- data.frame(read.csv(fpath),stringsAsFactors=FALSE)
+
+#View the data set
+View(BattPop)
+
+colnames(BattPop)
+# [1] "Obs"     "Battery" "Time"  
+
+# display Summary information to console
+summary(BattPop)
+
+# display detailed descriptive statistics information to console
+describe(BattPop)
+
+```
+
+
+2. You can calculate the true population mean life of NiCads with this line of code:
+
+```{r}
+nicadMean <- mean(BattPop$Time[BattPop$Battery==1]) # [1] 1372.947
+```
+
+Add a line to calculate the population mean life for Li-ion batteries. Finally, calculate the true population mean difference between the life of NiCad and Li-Ion batteries. Store the result in a new variable called popMeanDiff. 
+```{r}
+liionMean <- mean(BattPop$Time[BattPop$Battery==2]) # [1] 1396.585
+
+#calculate population mean difference
+popMeanDiff <- (nicadMean - liionMean)
+
+cat("Population mean differnce betwen the life of Nicad and Li-Ion batteries is:",popMeanDiff)
+
+```
+
+3. In order to use the replicate() function to draw samples and calculate confidence intervals, we need to build a small custom function. Add comments to each line of code explaining what it does. 
+
+```{r}
+replBattCI <- function() {
+  mySamp <- sample(BattPop, size=172, replace=TRUE)  # random trial with sample of 172 observations with replacement
+  nicad <- mySamp$Time[mySamp$Battery==1] #random sample trial of Nicad battery life
+  liion <- mySamp$Time[mySamp$Battery==2] #random sample trial of Li-Ion battery life
+  return(t.test(nicad,liion)$conf.int) # t-test of the sampling distribution of nicad and liion with confidence interval
+}
+```
+
+Don’t forget that you need to run these lines of code once to define the function so that it is available to call.
+
+4. Use replicate() to run your function 100 times and store the resulting list of confidence intervals. This line of code will do that:
+
+```{r}
+CIlist <- t(replicate(100,replBattCI()) # replicate/repeat the sample defined above but 100 times; each trial constitutes drawing 172 observations
+
+
+```
+
+(The t() function is a matrix transposition, which flips the rows and columns of the result. For plotting and other purposes it's more convenient to have two columns and 100 rows rather than the other way around.) Use View(CIlist) or summary(CIlist) to examine the results. Which of the columns is the lower bound of the confidence interval and which is the upper bound?
+```{r}
+View(CIlist)
+summary(CIlist)
+
+#V1 - lower bound
+#V2 - upper bound
+```
+
+5. Plot the lower bounds of the 100 CIs using plot. By default plot plots points, but if you add the argument type="l", it will plot a line. Here’s a line of code that does the job:
+
+```{r}
+plot(CIlist[,1],type="l",col="red", ylim=c(-40,-10))
+```
+
+Note that we have set the limits on the Y-axis to range from -10 down to -40. This makes sure that there is room for the upper bound as well. Examine the resulting plot and report the minimum and maximum values of the lower bound.
+
+6. Now add the upper bounds of the 100 Cis using the lines() command. The line command  adds a new line to an existing plot. (Note that because each part of a notebook is separate, we have to repeat the previous plot command first.) 
+
+```{r}
+plot(CIlist[,1],type="l",col="red", ylim=c(-40,-10))
+lines(CIlist[,2], col="green")
+```
+
+Examine the resulting plot and report the minimum and maximum values of the upper bound.
+
+7. Finally, plot a horizontal line that shows the true population mean difference. If you did Question #2 correctly, this should work:
+
+```{r}
+plot(CIlist[,1],type="l",col="red", ylim=c(-40,-10))
+lines(CIlist[,2], col="green")
+abline(h=popMeanDiff)
+```
+
+8. And finally, the most important step of all. Count the number of times that either the red or the green line crosses the black horizontal line (preferably with a bit of R code). Explain what this crossing means. Is it bad? What if you drew one of those samples in your own research, that is, where the upper or lower bound crossed the line? Would you have any way of knowing that this had occurred? Write a paragraph providing your responses to these questions.
+

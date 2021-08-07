@@ -1,0 +1,124 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+----------------------------------------------------------------------------------
+Title: "IST772 Week2 - Random Distributions"
+Name: Sathish Kumar Rajendiran
+Date: 10/12/2020
+-----------------------------------------------------------------------------------
+
+
+```{r}
+#create a function to ensure the libraries are imported
+EnsurePackage <- function(x){
+  x <- as.character(x)
+    if (!require(x,character.only = TRUE)){
+      install.packages(pkgs=x, repos = "http://cran.us.r-project.org")
+      require(x, character.only = TRUE)
+    }
+  }
+# usage example, to load the necessary library for further processing...
+EnsurePackage("modeest")
+EnsurePackage("ggplot2")
+EnsurePackage("RColorBrewer")
+cat("All Packages are available")
+```
+
+```{r}
+# Explore the standard deviation" 
+cat("\n standard deviation from discoveries dataset is:",sd(discoveries))
+cat("\n variance from discoveries dataset is:",var(discoveries))
+cat("\n mean from discoveries dataset is:",mean(discoveries))
+cat("\n range from discoveries dataset is:",range(discoveries))
+```
+
+```{r}
+# Identify certain shapes 
+#binomial distribution; low tails on both side
+rbinom(n=20,size=6,prob = 0.5)
+hist(rbinom(n=20,size=6,prob = 0.5))
+```
+```{r}
+#random distribution; low tails on both side
+table(rbinom(n=20,size=6,prob = 0.5))
+```
+```{r}
+rbinom(n=100,size=6,prob = 0.5)
+table(rbinom(n=100,size=6,prob = 0.5))
+table(rbinom(n=100,size=6,prob = 0.5))/100
+```
+
+```{r}
+probtable <- table(rbinom(n=100,size=6,prob = 0.5))/100
+cumsum(probtable)
+barplot(cumsum(probtable))
+```
+```{r}
+#histogram
+hist(c(1,1,2,2,2))
+```
+
+```{r}
+barplot(table(rbinom(n=100,size=6,prob = 0.5)))
+
+```
+
+```{r}
+set.seed(100)
+barplot(table(rbinom(n=100,size=6,prob = 0.5)))
+```
+
+```{r}
+probtable1k <- table( rbinom(n=100000, size=6, prob=0.5) )/100000
+probtable1k
+barplot(probtable1k)
+```
+
+1.	Create a Pascal’s Triangle with this R code:
+
+
+
+```{r}
+pascalTriangle<- function(n) {
+lapply(0:n, function(i) choose(i, 0:i))
+}
+```
+
+```{r}
+pascalTriangle(6)
+```
+```{r}
+#Create Pascal's Triangle
+lapply(0:7, function(i) choose(i, 0:i))
+
+```
+
+
+```{r}
+#Create Pascal's Triangle
+p = lapply(0:7, function(i) choose(i, 0:i))
+unlist(lapply(p, sum))
+```
+
+```{r}
+toast <- matrix(c(2,1,3,4),ncol = 2,byrow = TRUE)
+colnames(toast) <- c("Down","Up")
+rownames(toast) <- c("Jelly","Butter")
+toast
+
+toast <- as.table(toast)
+toast
+toastMargin <- margin.table(toast)
+margin.table(toast,1)
+margin.table(toast,2)
+
+toastProbs <- toast/toastMargin
+toastProbs
+toastProbs <- addmargins(toastProbs)
+toastProbs
+
+```
+
+
+

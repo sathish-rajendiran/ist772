@@ -1,0 +1,1186 @@
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\usepackage{hyperref}
+\hypersetup{
+            pdftitle={IST772-- Problem Set 8},
+            pdfauthor={Sathish Kumar Rajendiran},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+
+\title{IST772-- Problem Set 8}
+\author{Sathish Kumar Rajendiran}
+\date{}
+
+\begin{document}
+\maketitle
+
+Attribution statement: 1. I did this homework by myself, with help from
+the book and the professor.
+
+\hypertarget{chapter-8-exercise-2}{%
+\section{Chapter 8, Exercise 2}\label{chapter-8-exercise-2}}
+
+\emph{The data sets package in R contains a small data set called swiss
+that contains n = 47 observations of socio-economic indicators for each
+of 47 French-speaking provinces of Switzerland at about 1888. Use
+``?swiss'' to display help about the data set. }
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{?swiss }
+\CommentTok{# Swiss Fertility and Socioeconomic Indicators (1888) Data}
+\CommentTok{# Standardized fertility measure and socio-economic indicators for each of 47 French-speaking provinces of Switzerland at about 1888.}
+
+\CommentTok{# A data frame with 47 observations on 6 variables, each of which is in percent, i.e., in [0, 100].}
+\CommentTok{# }
+\CommentTok{# [,1]  Fertility   Ig, ‘common standardized fertility measure’}
+\CommentTok{# [,2]  Agriculture % of males involved in agriculture as occupation}
+\CommentTok{# [,3]  Examination % draftees receiving highest mark on army examination}
+\CommentTok{# [,4]  Education   % education beyond primary school for draftees.}
+\CommentTok{# [,5]  Catholic    % ‘catholic’ (as opposed to ‘protestant’).}
+\CommentTok{# [,6]  Infant.Mortality    live births who live less than 1 year.}
+\CommentTok{# All variables but ‘Fertility’ give proportions of the population.}
+
+\CommentTok{# summary(swiss)}
+
+\KeywordTok{dim}\NormalTok{(swiss)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 47  6
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# View(swiss)}
+\CommentTok{# define variables}
+\NormalTok{Fertility <-}\StringTok{ }\NormalTok{swiss}\OperatorTok{$}\NormalTok{Fertility}
+\NormalTok{Education <-}\StringTok{ }\NormalTok{swiss}\OperatorTok{$}\NormalTok{Education}
+\NormalTok{Examination <-}\StringTok{ }\NormalTok{swiss}\OperatorTok{$}\NormalTok{Examination}
+\NormalTok{Catholic <-}\StringTok{ }\NormalTok{swiss}\OperatorTok{$}\NormalTok{Catholic}
+\NormalTok{Infant <-}\StringTok{ }\NormalTok{swiss}\OperatorTok{$}\NormalTok{Infant}
+\NormalTok{Agriculture <-}\StringTok{ }\NormalTok{swiss}\OperatorTok{$}\NormalTok{Agriculture}
+\end{Highlighting}
+\end{Shaded}
+
+\emph{Create and interpret a bivariate correlation matrix using
+cor(swiss) keeping in mind the idea that you will be trying to predict
+the Fertility variable. Which other variable might be the single best
+predictor? (1 pt)}
+
+\hypertarget{question-1-bivariate-normalitycorrelation-matrix}{%
+\section{1) Question 1: BiVariate normality/Correlation
+matrix}\label{question-1-bivariate-normalitycorrelation-matrix}}
+
+\begin{itemize}
+\tightlist
+\item
+  cor(swiss)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Based on the correlation matrix, We find that Education variable has
+    higher (negative) impact on the Feritility (dependent) variable.
+  \item
+    Please find the table below,
+  \end{itemize}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#correlation on swiss dataset}
+\KeywordTok{cor}\NormalTok{(swiss)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                   Fertility Agriculture Examination   Education   Catholic
+## Fertility         1.0000000  0.35307918  -0.6458827 -0.66378886  0.4636847
+## Agriculture       0.3530792  1.00000000  -0.6865422 -0.63952252  0.4010951
+## Examination      -0.6458827 -0.68654221   1.0000000  0.69841530 -0.5727418
+## Education        -0.6637889 -0.63952252   0.6984153  1.00000000 -0.1538589
+## Catholic          0.4636847  0.40109505  -0.5727418 -0.15385892  1.0000000
+## Infant.Mortality  0.4165560 -0.06085861  -0.1140216 -0.09932185  0.1754959
+##                  Infant.Mortality
+## Fertility              0.41655603
+## Agriculture           -0.06085861
+## Examination           -0.11402160
+## Education             -0.09932185
+## Catholic               0.17549591
+## Infant.Mortality       1.00000000
+\end{verbatim}
+
+\begin{verbatim}
+* Based on our selection, Please find the correlation plot between the predictor (education) and outcome/dependent variable "feritility" below
+* It clearly shows that , lesser the Education , stronger the fertility rate is.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Correlation plot}
+\KeywordTok{plot}\NormalTok{(Education, Fertility}
+\NormalTok{     ,}\DataTypeTok{main=}\StringTok{"Corellation between Education and Fertility"}
+\NormalTok{     ,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW8_Rajendiran_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\hypertarget{please-find-more-details-from-the-r-code-below}{%
+\section{Please find more details from the R code
+below,}\label{please-find-more-details-from-the-r-code-below}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{cor}\NormalTok{(swiss)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                   Fertility Agriculture Examination   Education   Catholic
+## Fertility         1.0000000  0.35307918  -0.6458827 -0.66378886  0.4636847
+## Agriculture       0.3530792  1.00000000  -0.6865422 -0.63952252  0.4010951
+## Examination      -0.6458827 -0.68654221   1.0000000  0.69841530 -0.5727418
+## Education        -0.6637889 -0.63952252   0.6984153  1.00000000 -0.1538589
+## Catholic          0.4636847  0.40109505  -0.5727418 -0.15385892  1.0000000
+## Infant.Mortality  0.4165560 -0.06085861  -0.1140216 -0.09932185  0.1754959
+##                  Infant.Mortality
+## Fertility              0.41655603
+## Agriculture           -0.06085861
+## Examination           -0.11402160
+## Education             -0.09932185
+## Catholic               0.17549591
+## Infant.Mortality       1.00000000
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Correlation plot}
+\KeywordTok{plot}\NormalTok{(Education, Fertility}
+\NormalTok{     ,}\DataTypeTok{main=}\StringTok{"Corellation between Education and Fertility"}
+\NormalTok{     ,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW8_Rajendiran_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+\hypertarget{question-2-most-correlated}{%
+\section{2) Question 2: Most
+Correlated}\label{question-2-most-correlated}}
+
+\begin{itemize}
+\tightlist
+\item
+  Scatter Plot/Correlation between variables,Based on the correlation
+  matrix
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Education variable has higher (negative) impact on the Feritility
+    (dependent) variable.
+  \item
+    Examination does have negative impact on the Fertility
+    variable.However, thre are possible outliers that impacts the
+    baseline curve between these two variables
+  \item
+    Catholic has two extreme cases. Either strong/greater Catholic
+    values increases Fertility rate or lowest/much less Catholic
+    increases Fertility rate. In between, there very few entries
+    suggesting either possible outliers or defines thats how the
+    equation is.
+  \item
+    Infant mortality and Agriculture both favors postive impact. Howver,
+    with more outlier/spread data - these two may impact the prediction
+    accuracy. In other words - may induce more residuals/R-Squared
+    values.
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{please-find-more-details-from-the-plots-below}{%
+\section{Please find more details from the Plots
+below,}\label{please-find-more-details-from-the-plots-below}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Correlation plot}
+\CommentTok{# Corellation between Education and Fertility}
+\KeywordTok{plot}\NormalTok{(Education, Fertility}
+\NormalTok{     ,}\DataTypeTok{main=}\StringTok{"Corellation between Education and Fertility"}
+\NormalTok{     ,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW8_Rajendiran_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# arrows(min(Education),Fertility[which.min(Education)],min(Education),min(Education)*56)}
+
+\CommentTok{# Corellation between Examination and Fertility}
+
+\KeywordTok{plot}\NormalTok{(Examination, Fertility}
+\NormalTok{     ,}\DataTypeTok{main=}\StringTok{"Corellation between Examination and Fertility"}
+\NormalTok{     ,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW8_Rajendiran_files/figure-latex/unnamed-chunk-5-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Corellation between Catholic and Fertility}
+\KeywordTok{plot}\NormalTok{(Catholic, Fertility}
+\NormalTok{     ,}\DataTypeTok{main=}\StringTok{"Corellation between Catholic and Fertility"}
+\NormalTok{     ,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW8_Rajendiran_files/figure-latex/unnamed-chunk-5-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Corellation between Infant and Fertility}
+\KeywordTok{plot}\NormalTok{(Infant, Fertility}
+\NormalTok{     ,}\DataTypeTok{main=}\StringTok{"Corellation between Infant and Fertility"}
+\NormalTok{     ,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW8_Rajendiran_files/figure-latex/unnamed-chunk-5-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Corellation between Agriculture and Fertility}
+\KeywordTok{plot}\NormalTok{(Agriculture, Fertility}
+\NormalTok{     ,}\DataTypeTok{main=}\StringTok{"Corellation between Agriculture and Fertility"}
+\NormalTok{     ,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW8_Rajendiran_files/figure-latex/unnamed-chunk-5-5.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{options}\NormalTok{(}\DataTypeTok{scipen=}\DecValTok{999}\NormalTok{)  }\CommentTok{# turn-off scientific notation like 1e+48}
+\CommentTok{# install.packages("dlookr")  # note: requires version 3.5.2 or higher}
+\KeywordTok{library}\NormalTok{(dlookr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: mice
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'mice'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:stats':
+## 
+##     filter
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     cbind, rbind
+\end{verbatim}
+
+\begin{verbatim}
+## Registered S3 method overwritten by 'quantmod':
+##   method            from
+##   as.zoo.data.frame zoo
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'dlookr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:base':
+## 
+##     transform
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{diagnose_outlier}\NormalTok{(swiss)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          variables outliers_cnt outliers_ratio outliers_mean with_mean
+## 1        Fertility            2       4.255319          38.9  70.14255
+## 2      Agriculture            0       0.000000           NaN  50.65957
+## 3      Examination            0       0.000000           NaN  16.48936
+## 4        Education            5      10.638298          34.2  10.97872
+## 5         Catholic            0       0.000000           NaN  41.14383
+## 6 Infant.Mortality            1       2.127660          10.8  19.94255
+##   without_mean
+## 1    71.531111
+## 2    50.659574
+## 3    16.489362
+## 4     8.214286
+## 5    41.143830
+## 6    20.141304
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot_outlier}\NormalTok{(swiss)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW8_Rajendiran_files/figure-latex/unnamed-chunk-6-1.pdf}
+\includegraphics{HW8_Rajendiran_files/figure-latex/unnamed-chunk-6-2.pdf}
+\includegraphics{HW8_Rajendiran_files/figure-latex/unnamed-chunk-6-3.pdf}
+\includegraphics{HW8_Rajendiran_files/figure-latex/unnamed-chunk-6-4.pdf}
+\includegraphics{HW8_Rajendiran_files/figure-latex/unnamed-chunk-6-5.pdf}
+\includegraphics{HW8_Rajendiran_files/figure-latex/unnamed-chunk-6-6.pdf}
+
+\hypertarget{chapter-8-exercise-3}{%
+\section{Chapter 8, Exercise 3}\label{chapter-8-exercise-3}}
+
+\emph{Run a multiple regression analysis on the swiss data with lm(),
+using Fertility as the dependent variable and Education and Agriculture
+as the predictors. (1 pt) Check the diagnostics. (1 pt) Say whether or
+not the overall R‐squared was significant. If it was significant, report
+the value and say in your own words whether it seems like a strong
+result or not. Review the significance tests on the coefficients
+(B‐weights). For each one that was significant, report its value and say
+in your own words whether it seems like a strong result or not. (1 pt)}
+
+\hypertarget{question-3-linear-regression-analysis}{%
+\section{3) Question 3: Linear Regression
+Analysis}\label{question-3-linear-regression-analysis}}
+
+\begin{itemize}
+\tightlist
+\item
+  lm() \textbar{} Dependent variable (Fertility) \& Education and
+  Agriculture as Predictors/Independent variables
+
+  \begin{itemize}
+  \tightlist
+  \item
+    lm(Fertility \textasciitilde{} Education + Agriculture,data=swiss)
+    is stored on a variable ``swiss.lm''
+  \item
+    above code runs a regression analysis on Fertility as the dependent
+    variable and Education and Agriculture as the predictors from
+    ``swiss'' dataset.
+  \end{itemize}
+\item
+  Diagnostics:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    From the lm(formula = Fertility \textasciitilde{} Education +
+    Agriculture, data = swiss); this formula predicts ``Fertility''
+    values from Education and Agriculture combined from the dataset
+    ``swiss''
+  \item
+    As stated in earlier sections, Education and Agriculture had
+    different impact on the fertility effect.
+  \item
+    Procedure lm() is similar to aov() procedure and expects the
+    dependent variable (variable, in question for prediction) first.
+    Followed by, independent/prdictor variable. It can have number of
+    predictor variables follows after ``\textasciitilde{}'' symbol.
+    ``.'' after ``\textasciitilde{}'' means - it expects to include all
+    the remaining variables from the dataset. In this case, we are only
+    trying to predict ``fertility'' rate based on ``Education'' \&
+    ``Agriculture'' variable.
+  \item
+    In addition, ``data=swiss'' implies what is the sample/population
+    the prediction is run against from the observations it contains.
+  \item
+    Successul execution of the lm() procedure provides results as shown
+    below.
+
+    \begin{itemize}
+    \tightlist
+    \item
+      call
+    \item
+      Residuals
+    \item
+      Coefficients
+    \item
+      Significant codes
+    \item
+      Residual standard error with degrees of freedom
+    \item
+      Multiple R-Squared
+    \item
+      F-Static and p-value
+    \end{itemize}
+  \end{itemize}
+\item
+  Results:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Once the lm() procedure executes successfuly, it returns various
+    data points as an outcome. The first two lines defines the model, we
+    wanted.
+
+    \begin{itemize}
+    \tightlist
+    \item
+      lm(formula = Fertility \textasciitilde{} Education + Agriculture,
+      data = swiss)
+    \end{itemize}
+  \item
+    Next, Summary of residuals that gives an overview of errors of
+    prediction.
+
+    \begin{itemize}
+    \tightlist
+    \item
+      With min as -17.3072 and max of 20.5291 shows, larger spread
+      between -ve to positive almost spreading equally on both sides,
+      with Median almost 0 ( -0.9443).
+    \item
+      It seems the residuals are symmetrically distributed.
+    \end{itemize}
+  \item
+    Coefficients shows the key results.
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Intercept in high above Y-axis at 84.08
+    \item
+      Slopes for Education variable is -0.96276 and Agriculture is
+      -0.06648 are way off from the intercept or or B-weights. It
+      defines the orientation of the best fitting hyperplane.
+    \item
+      Std.Errors around the estimates of slope and intercept shows the
+      estimated sampling distribution around these point estimates.
+    \item
+      t-value shows the student's t-test of the null hypothesis test
+      that each estimated coefficients is equal to zero.
+    \item
+      three asterik (*) indicates the significance level of alpha at p
+      \textless{} 0.001.
+    \item
+      With above p-value; Education has the strong coefficient value as
+      0.0000071 far less than the test of significance (p \textless{}
+      0.001); Where as Agriculture has p-value as 0.411. This shows that
+      , we can ignore the ``Agriculture''
+    \item
+      Multiple R-Squared value is at 0.4492 - which means
+      \textasciitilde{}45\% variability in Fertility is based on these
+      predictor variables. its comparatively better for a bivariate
+      predictor model.
+    \item
+      The standard error of the residuals is shown as 9.479 on 44
+      degrees of freedom. Starting with 47 observations, two degrees of
+      freedom is lost for calculating the slopes (coeffients on
+      Education and Agriculture or B-weights) and one degree of freedom
+      is lost for calculating the Y-intercept.
+    \item
+      Finally, F-Statistic (2,44) with 17.95 with p-value 0.000002 tests
+      the null hypothesis that R-Squared value is equal to 0. Clearly,
+      based on these results we can reject the null hypothesis.
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{please-find-more-details-from-the-r-code-below-1}{%
+\section{Please find more details from the R code
+below,}\label{please-find-more-details-from-the-r-code-below-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{options}\NormalTok{(}\DataTypeTok{scipen=}\DecValTok{999}\NormalTok{)  }\CommentTok{# turn-off scientific notation like 1e+48}
+\NormalTok{swiss.lm <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(Fertility }\OperatorTok{~}\StringTok{ }\NormalTok{Education }\OperatorTok{+}\StringTok{ }\NormalTok{Agriculture,}\DataTypeTok{data=}\NormalTok{swiss)}
+\KeywordTok{summary}\NormalTok{(swiss.lm)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = Fertility ~ Education + Agriculture, data = swiss)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -17.3072  -6.6157  -0.9443   8.7028  20.5291 
+## 
+## Coefficients:
+##             Estimate Std. Error t value             Pr(>|t|)    
+## (Intercept) 84.08005    5.78180  14.542 < 0.0000000000000002 ***
+## Education   -0.96276    0.18906  -5.092            0.0000071 ***
+## Agriculture -0.06648    0.08005  -0.830                0.411    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.479 on 44 degrees of freedom
+## Multiple R-squared:  0.4492, Adjusted R-squared:  0.4242 
+## F-statistic: 17.95 on 2 and 44 DF,  p-value: 0.000002
+\end{verbatim}
+
+\hypertarget{chapter-8-exercise-4}{%
+\section{Chapter 8, Exercise 4}\label{chapter-8-exercise-4}}
+
+\emph{Using the results of the analysis from Exercise 2, construct a
+prediction equation for Fertility using all three of the coefficients
+from the analysis (the intercept along with the two B‐weights). If you
+observed a province with scores for Education of 8 and Agriculture of
+35, what would you predict the Fertility rate to be (you can use your
+equation or the predict function)? Show your calculation and the
+resulting value of Fertility. (1 pt)}
+
+\hypertarget{question-4-predict-new-value}{%
+\section{4) Question 4: Predict New
+value}\label{question-4-predict-new-value}}
+
+\begin{itemize}
+\tightlist
+\item
+  New value of predictor variable (Fertility) is calculated in linear
+  formula as below
+
+  \begin{itemize}
+  \tightlist
+  \item
+    NewFertility = 84.08005 + (-0.96276 * Education) + (-0.06648 *
+    Agriculture)
+  \item
+    result is \textasciitilde{}74 at scores for Education of 8 and
+    Agriculture of 35 with above resulting values.
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{please-find-more-details-from-the-r-code-below-2}{%
+\section{Please find more details from the R code
+below,}\label{please-find-more-details-from-the-r-code-below-2}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Predict manually the "feritility value from above variables "}
+\NormalTok{NewFertility =}\StringTok{ }\FloatTok{84.08005} \OperatorTok{+}\StringTok{ }\NormalTok{(}\OperatorTok{-}\FloatTok{0.96276} \OperatorTok{*}\StringTok{ }\NormalTok{Education) }\OperatorTok{+}\StringTok{ }\NormalTok{(}\OperatorTok{-}\FloatTok{0.06648} \OperatorTok{*}\StringTok{ }\NormalTok{Agriculture)}
+\NormalTok{NewFertility <-}\StringTok{ }\FloatTok{84.08005} \OperatorTok{+}\StringTok{ }\NormalTok{(}\OperatorTok{-}\FloatTok{0.96276} \OperatorTok{*}\StringTok{ }\DecValTok{8}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{(}\OperatorTok{-}\FloatTok{0.06648} \OperatorTok{*}\StringTok{ }\DecValTok{35}\NormalTok{)}
+\NormalTok{NewFertility}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 74.05117
+\end{verbatim}
+
+\hypertarget{chapter-8-exercise-5}{%
+\section{Chapter 8, Exercise 5}\label{chapter-8-exercise-5}}
+
+\emph{Run a multiple regression analysis on the swiss data with lmBF(),
+using Fertility as the dependent variable and Education and Agriculture
+as the predictors. (1 pt) Interpret the resulting Bayes factor in terms
+of the odds in favor of the alternative hypothesis (be sure to note the
+hypotheses being compared). Do these results strengthen or weaken your
+conclusion to exercise 2? (1 pt)}
+
+\hypertarget{question-5-bayesian-approach-to-multiple-regression-analysis}{%
+\section{5) Question 5: Bayesian Approach to Multiple Regression
+Analysis}\label{question-5-bayesian-approach-to-multiple-regression-analysis}}
+
+\begin{itemize}
+\tightlist
+\item
+  lmBF() \textbar{} Dependent variable (Fertility) \& Education and
+  Agriculture as Predictors/Independent variables
+
+  \begin{itemize}
+  \tightlist
+  \item
+    lmBF(Fertility \textasciitilde{} Education + Agriculture, data =
+    swiss) is stored on a variable ``swissOutBF''
+  \item
+    above code runs a bayesian regression analysis on Fertility as the
+    dependent variable and Education and Agriculture as the predictors
+    from ``swiss'' dataset.
+  \end{itemize}
+\item
+  Results:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Once the lmBF() procedure executes successfuly, it returns Bayes
+    factor analyis as an outcome. The first two lines defines the model,
+    we wanted.
+
+    \begin{itemize}
+    \tightlist
+    \item
+      {[}1{]} Education + Agriculture : 8927.474 ±0\%
+    \item
+      It shows that the odds are overwhelmingly in favor of alternate
+      hypothesis at 8927.474 ±0\% ratio, in the sense that a model
+      containing Education and Agriculture as predictors is hugley
+      favored over a model that only contains the Y-intercept.
+    \item
+      i.e.~Y-Intercept only model means that we are forcing all of the
+      B-weights on the predictors to be 0
+    \item
+      Bayes factor is an odds ratio showing the likelihood of the
+      alternative hypothesis (in this case a model with nonzero wieghts
+      for the predictors) divided by the liklihood of the null model (in
+      this case intercept- only model)
+    \end{itemize}
+  \item
+    Bayes factor type: BFlinearModel, JZS
+  \item
+    Comparison to lm(): NHST vs Alternative Hypothesis
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Earlier, linear regression analysis proved that p-value is much
+      lower than the alpha value, hence we rejected the Null hypothesis
+    \item
+      Bayesian factor also, favored alternate hypothesis at 8927.474
+      ±0\% ratio. So, it does strenghten our exercise 2.
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{please-find-more-details-from-the-r-code-below-3}{%
+\section{Please find more details from the R code
+below,}\label{please-find-more-details-from-the-r-code-below-3}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{options}\NormalTok{(}\DataTypeTok{scipen=}\DecValTok{999}\NormalTok{)  }\CommentTok{# turn-off scientific notation like 1e+48}
+\CommentTok{# install.packages("BayesFactor")}
+\KeywordTok{library}\NormalTok{(}\StringTok{"BayesFactor"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: coda
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: Matrix
+\end{verbatim}
+
+\begin{verbatim}
+## ************
+## Welcome to BayesFactor 0.9.12-4.2. If you have questions, please contact Richard Morey (richarddmorey@gmail.com).
+## 
+## Type BFManual() to open the manual.
+## ************
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{swissOutBF <-}\StringTok{ }\KeywordTok{lmBF}\NormalTok{(Fertility }\OperatorTok{~}\StringTok{ }\NormalTok{Education }\OperatorTok{+}\StringTok{ }\NormalTok{Agriculture, }\DataTypeTok{data =}\NormalTok{ swiss)}
+\KeywordTok{summary}\NormalTok{(swissOutBF)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Bayes factor analysis
+## --------------
+## [1] Education + Agriculture : 8927.474 ±0%
+## 
+## Against denominator:
+##   Intercept only 
+## ---
+## Bayes factor type: BFlinearModel, JZS
+\end{verbatim}
+
+\hypertarget{chapter-8-exercise-6}{%
+\section{Chapter 8, Exercise 6}\label{chapter-8-exercise-6}}
+
+\emph{Run lmBF() with the same model as for Exercise 4, but with the
+options posterior=TRUE and iterations=10000. (1 pt) Interpret the
+resulting information about the coefficients. (1 pt)}
+
+\hypertarget{question-6-bayesian-approach-to-multiple-regression-analysis-with-posterior-distribution}{%
+\section{6) Question 6: Bayesian Approach to Multiple Regression
+Analysis with Posterior
+distribution}\label{question-6-bayesian-approach-to-multiple-regression-analysis-with-posterior-distribution}}
+
+\begin{itemize}
+\tightlist
+\item
+  lmBF() \textbar{} Dependent variable (Fertility) \& Education and
+  Agriculture as Predictors/Independent variables with Posterior = True
+  and Iterations =10000
+
+  \begin{itemize}
+  \tightlist
+  \item
+    lmBF(Fertility \textasciitilde{} Education + Agriculture, data =
+    swiss, posterior=TRUE, iterations=10000) is stored on a variable
+    ``swissOutMCMC''
+  \item
+    above code runs a bayesian regression analysis on Fertility as the
+    dependent variable and Education and Agriculture as the predictors
+    from ``swiss'' dataset with Posterior distribution having 10000
+    iterations
+  \end{itemize}
+\item
+  Results:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Once the lmBF() procedure executes successfuly, summary results
+    shares several similarities with conventional analysis along with
+    striking differences
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Mean B-weights of differences of Education (-0.8898) and
+      Agriculture(-0.0621) are similar to what the conventional analysis
+      provided
+    \item
+      95\% HDI shows that there is a overlap between these two B-weights
+    \item
+      95\% HDI of Agriculture overlaps with 0, providing evidence that
+      the population value of that B-weight dies not credibly differ
+      from 0
+    \item
+      mean of the the R-Squarded values is 0.3888445.Slighlty lesser
+      than the Adjusted R-Squared value of conventional analysis.
+    \item
+      95\% HDI for the posterior distribution of R-Squaed values is
+      between 0.08113708 (2.5\%) and 0.5994509 (97.5\%)
+    \item
+      In addition, -0.06089 of Agriculture shows that the valus is much
+      lower than the conventional analysis claiming that this variable
+      is not a strong predictor.
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{please-find-more-details-from-the-r-code-below-4}{%
+\section{Please find more details from the R code
+below,}\label{please-find-more-details-from-the-r-code-below-4}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{options}\NormalTok{(}\DataTypeTok{scipen=}\DecValTok{999}\NormalTok{)  }\CommentTok{# turn-off scientific notation like 1e+48}
+\CommentTok{# install.packages("BayesFactor")}
+\KeywordTok{library}\NormalTok{(}\StringTok{"BayesFactor"}\NormalTok{)}
+
+\NormalTok{swissOutMCMC <-}\StringTok{ }\KeywordTok{lmBF}\NormalTok{(Fertility }\OperatorTok{~}\StringTok{ }\NormalTok{Education }\OperatorTok{+}\StringTok{ }\NormalTok{Agriculture, }\DataTypeTok{data =}\NormalTok{ swiss, }\DataTypeTok{posterior=}\OtherTok{TRUE}\NormalTok{, }\DataTypeTok{iterations=}\DecValTok{10000}\NormalTok{)}
+\KeywordTok{summary}\NormalTok{(swissOutMCMC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Iterations = 1:10000
+## Thinning interval = 1 
+## Number of chains = 1 
+## Sample size per chain = 10000 
+## 
+## 1. Empirical mean and standard deviation for each variable,
+##    plus standard error of the mean:
+## 
+##                 Mean      SD Naive SE Time-series SE
+## mu          70.16208  1.4062 0.014062      0.0140618
+## Education   -0.89026  0.1973 0.001973      0.0021481
+## Agriculture -0.06156  0.0796 0.000796      0.0007774
+## sig2        95.36443 21.7466 0.217466      0.2417405
+## g            0.78193  3.0919 0.030919      0.0309189
+## 
+## 2. Quantiles for each variable:
+## 
+##                2.5%     25%      50%        75%     97.5%
+## mu          67.4151 69.2346 70.14897  71.088527  72.96755
+## Education   -1.2692 -1.0233 -0.89065  -0.760427  -0.50131
+## Agriculture -0.2177 -0.1138 -0.06159  -0.009035   0.09554
+## sig2        62.5462 79.9485 92.47774 107.081633 145.05111
+## g            0.0671  0.1814  0.33138   0.675694   3.99380
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rsqList <-}\StringTok{ }\DecValTok{1} \OperatorTok{-}\StringTok{ }\NormalTok{(swissOutMCMC[,}\StringTok{"sig2"}\NormalTok{] }\OperatorTok{/}\StringTok{ }\KeywordTok{var}\NormalTok{(swiss}\OperatorTok{$}\NormalTok{Fertility))}
+\NormalTok{MeanrsqList <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(rsqList)}
+\NormalTok{MeanrsqList}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.388856
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{quantile}\NormalTok{(rsqList,}\KeywordTok{c}\NormalTok{(}\FloatTok{0.025}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       2.5% 
+## 0.07043845
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{quantile}\NormalTok{(rsqList,}\KeywordTok{c}\NormalTok{(}\FloatTok{0.975}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     97.5% 
+## 0.5991723
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# histogram of 95% HDI mean differences on Agriculture | overlaps with 0}
+\KeywordTok{hist}\NormalTok{(swissOutMCMC[,}\StringTok{"Agriculture"}\NormalTok{],}\DataTypeTok{col=}\StringTok{"#CBB43D"}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{v=}\KeywordTok{quantile}\NormalTok{(swissOutMCMC[,}\StringTok{"Agriculture"}\NormalTok{],}\KeywordTok{c}\NormalTok{(}\FloatTok{0.025}\NormalTok{)),}\DataTypeTok{col=}\StringTok{"blue"}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{v=}\KeywordTok{quantile}\NormalTok{(swissOutMCMC[,}\StringTok{"Agriculture"}\NormalTok{],}\KeywordTok{c}\NormalTok{(}\FloatTok{0.975}\NormalTok{)),}\DataTypeTok{col=}\StringTok{"green"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW8_Rajendiran_files/figure-latex/unnamed-chunk-11-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# histogram of 95% HDI mean differences on Education | does not overlaps with 0}
+\KeywordTok{hist}\NormalTok{(swissOutMCMC[,}\StringTok{"Education"}\NormalTok{],}\DataTypeTok{col=}\StringTok{"#4DAFD4"}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{v=}\KeywordTok{quantile}\NormalTok{(swissOutMCMC[,}\StringTok{"Education"}\NormalTok{],}\KeywordTok{c}\NormalTok{(}\FloatTok{0.025}\NormalTok{)),}\DataTypeTok{col=}\StringTok{"blue"}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{v=}\KeywordTok{quantile}\NormalTok{(swissOutMCMC[,}\StringTok{"Education"}\NormalTok{],}\KeywordTok{c}\NormalTok{(}\FloatTok{0.975}\NormalTok{)),}\DataTypeTok{col=}\StringTok{"green"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW8_Rajendiran_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+\hypertarget{chapter-8-exercise-7}{%
+\section{Chapter 8, Exercise 7}\label{chapter-8-exercise-7}}
+
+\emph{Run install.packages() and library() for the ``car'' package. The
+car package is ``companion to applied regression'' rather than more data
+about automobiles. Read the help file for the vif() procedure and then
+look up more information online about how to interpret the results. Then
+write down in your own words a ``rule of thumb'' for interpreting vif.
+(1 pt)}
+
+\hypertarget{question-7-vif-procedure}{%
+\section{7) Question 7: Vif()
+procedure}\label{question-7-vif-procedure}}
+
+\begin{itemize}
+\tightlist
+\item
+  In multiple regression (Chapter @ref(linear-regression)), two or more
+  predictor variables might be correlated with each other. This
+  situation is referred as collinearity.There is an extreme situation,
+  called multicollinearity, where collinearity exists between three or
+  more variables even if no pair of variables has a particularly high
+  correlation. This means that there is redundancy between predictor
+  variables. In the presence of multicollinearity, the solution of the
+  regression model becomes unstable.
+\item
+  For a given predictor (p), multicollinearity can assessed by computing
+  a score called the variance inflation factor (or VIF), which measures
+  how much the variance of a regression coefficient is inflated due to
+  multicollinearity in the model.
+\item
+  The smallest possible value of VIF is one (absence of
+  multicollinearity). As a rule of thumb, a VIF value that exceeds 5 or
+  10 indicates a problematic amount of collinearity (James et al.~2014).
+\item
+  When faced to multicollinearity, the concerned variables should be
+  removed, since the presence of multicollinearity implies that the
+  information that this variable provides about the response is
+  redundant in the presence of the other variables (James et al.~2014,P.
+  Bruce and Bruce (2017)).
+\end{itemize}
+
+\hypertarget{please-find-more-details-from-the-r-code-below-5}{%
+\section{Please find more details from the R code
+below,}\label{please-find-more-details-from-the-r-code-below-5}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{options}\NormalTok{(}\DataTypeTok{scipen=}\DecValTok{999}\NormalTok{)  }\CommentTok{# turn-off scientific notation like 1e+48}
+\CommentTok{# install.packages(pkgs=c("car"),repos = "http://cran.us.r-project.org")}
+\KeywordTok{library}\NormalTok{(car)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: carData
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#“companion to applied regression”}
+
+
+\NormalTok{?}\KeywordTok{vif}\NormalTok{() }\CommentTok{#Variance Inflation Factors}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{chapter-8-exercise-8}{%
+\section{Chapter 8, Exercise 8}\label{chapter-8-exercise-8}}
+
+\emph{Run vif() on the results of the model from Exercise 3. (1 pt)
+Interpret the results. Then run a model that predicts Fertility from all
+five of the predictors in swiss. Run vif() on those results and
+interpret what you find. (1 pt)}
+
+\hypertarget{question-8-vif-on-conventional-model-with-2-predictors-from-exercise-3}{%
+\section{8) Question 8: vif() on conventional model with 2 predictors
+\textbar{} from Exercise
+3}\label{question-8-vif-on-conventional-model-with-2-predictors-from-exercise-3}}
+
+\begin{itemize}
+\tightlist
+\item
+  vif(swiss.lm) \textbar{} Variance inflation factor analysis on a
+  linear model with predictor variables Education and Agriculture
+
+  \begin{itemize}
+  \tightlist
+  \item
+    vif factor on Education and Agriculture variable is 1.692016
+  \item
+    Values are in range of 1. Based on the rule of thumb the values are
+    far less that 5 or 10. Showing not possible multi collinearity in
+    the model
+  \end{itemize}
+\item
+  vif(swiss.lmAll) \textbar{} Variance inflation factor analysis on a
+  linear model with all variables
+
+  \begin{itemize}
+  \tightlist
+  \item
+    predictor variables Infant.Mortality (1.107542), Catholic (1.937160)
+    are far better variance inflation factors with values less than 2.
+  \item
+    predictor variables Agriculture just above (2.284129)
+  \item
+    predictor variables Education just below 3 (2.774943)
+  \item
+    predictor variables Examination well above 3 (3.675420)
+  \item
+    It is possible that when the variables are combined, Examination
+    variable may lead towards multi-collinearity becoming a reduntant
+    variable.
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{please-find-more-details-from-the-r-code-below-6}{%
+\section{Please find more details from the R code
+below,}\label{please-find-more-details-from-the-r-code-below-6}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(swiss.lm)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = Fertility ~ Education + Agriculture, data = swiss)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -17.3072  -6.6157  -0.9443   8.7028  20.5291 
+## 
+## Coefficients:
+##             Estimate Std. Error t value             Pr(>|t|)    
+## (Intercept) 84.08005    5.78180  14.542 < 0.0000000000000002 ***
+## Education   -0.96276    0.18906  -5.092            0.0000071 ***
+## Agriculture -0.06648    0.08005  -0.830                0.411    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.479 on 44 degrees of freedom
+## Multiple R-squared:  0.4492, Adjusted R-squared:  0.4242 
+## F-statistic: 17.95 on 2 and 44 DF,  p-value: 0.000002
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{vif}\NormalTok{(swiss.lm) }\CommentTok{# vif() procedure on execise 3 linear regression model}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   Education Agriculture 
+##    1.692016    1.692016
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Run multiple linear regression with all variables}
+\KeywordTok{options}\NormalTok{(}\DataTypeTok{scipen=}\DecValTok{999}\NormalTok{)  }\CommentTok{# turn-off scientific notation like 1e+48}
+\NormalTok{swiss.lmAll <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(Fertility }\OperatorTok{~}\StringTok{ }\NormalTok{.,}\DataTypeTok{data=}\NormalTok{swiss) }
+\KeywordTok{summary}\NormalTok{(swiss.lmAll)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = Fertility ~ ., data = swiss)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.2743  -5.2617   0.5032   4.1198  15.3213 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value    Pr(>|t|)    
+## (Intercept)      66.91518   10.70604   6.250 0.000000191 ***
+## Agriculture      -0.17211    0.07030  -2.448     0.01873 *  
+## Examination      -0.25801    0.25388  -1.016     0.31546    
+## Education        -0.87094    0.18303  -4.758 0.000024306 ***
+## Catholic          0.10412    0.03526   2.953     0.00519 ** 
+## Infant.Mortality  1.07705    0.38172   2.822     0.00734 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.165 on 41 degrees of freedom
+## Multiple R-squared:  0.7067, Adjusted R-squared:  0.671 
+## F-statistic: 19.76 on 5 and 41 DF,  p-value: 0.0000000005594
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{vif}\NormalTok{(swiss.lmAll) }\CommentTok{# vif() procedure on all variables from swiss.lmAll model}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Agriculture      Examination        Education         Catholic 
+##         2.284129         3.675420         2.774943         1.937160 
+## Infant.Mortality 
+##         1.107542
+\end{verbatim}
+
+\end{document}

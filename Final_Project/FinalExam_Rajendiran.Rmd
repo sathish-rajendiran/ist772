@@ -1,0 +1,1443 @@
+---
+title: "Week 11: Final Examination"
+author: "Sathish Kumar Rajendiran"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+Attribution statement: 
+1. I did this homework by myself, with help from the book and the professor. 
+
+# allSchoolsReportStatus.RData – 
+<!-- A list of California kindergartens and whether they reported vaccination data to the state in 2013 -->
+<!-- 'data.frame': 7381 obs. of 3 variables: $ name : Name of the school -->
+<!-- $ pubpriv : “PUBLIC” or “PRIVATE” -->
+<!-- $ reported: “Y” or “N” -->
+
+# usVaccines.Rdata – 
+<!-- Time series data from the World Health Organization reporting vaccination rates in the U.S. for five common vaccines -->
+<!-- Time-Series [1:38, 1:5] from 1980 to 2017: - attr(*, "dimnames")=List of 2 -->
+<!-- ..$ : NULL -->
+<!-- ..$ : chr [1:5] "DTP1" "HepB_BD" "Pol3" "Hib3" “MCV1”... -->
+<!-- (Note: DTP1 = First dose of Diphtheria/Pertussis/Tetanus vaccine; HepB_BD = Hepatitis B, Birth Dose; Pol3 = Polio third dose; Hib3 – Influenza third dose; MCV1 = Measles first dose) -->
+
+#reportSampleX.RData – 
+<!-- (Where X is the number of your particular dataset) A sample of California kindergartens that reported vaccination data, along with specific numbers and percentages for each school in the sample: -->
+<!-- 'data.frame': 698 obs. of 13 variables: -->
+<!-- $ code $ name -->
+<!-- : CA School Code Number (included for completeness, can be ignored) : Name of the school -->
+<!-- $ pubpriv -->
+<!-- $ enrollment : An integer indicating the number of students enrolled at the school -->
+<!-- $ allvaccs : The percent of enrolled students who had documented all required vaccinations $ conditional: The percent of enrolled students needed follow-up on their records -->
+<!-- $ medical : The percent of enrolled students with a medical exemption -->
+<!-- $ religious : The percent of enrolled students with a religious/belief exemption -->
+<!-- : The percent of students missing the Diphtheria/Pertussis/Tetanus vaccine : The percent of students missing the Polio vaccine -->
+<!-- : The percent of students missing the Measles/Mumps/Rubella vaccine : The percent of students missing the Hepatitis vaccine -->
+<!-- : The percent of students missing the Varicella (chickenpox) vaccine -->
+
+# Introductory/Descriptive Reports
+  
+  *  1. What proportion of public schools reported vaccination data?
+  *  2. What proportion of private schools reported vaccination data?
+  *  3. Have U.S. vaccinations rates been stable over time?
+  *  4. Are there any notable patterns in U.S. vaccinations rates over time?
+     
+# Public vs. Private School Comparisons:
+  *  5. Was there any credible difference in overall reporting proportions between public and private schools?
+  *  6. Compare overall vaccination rates (allvaccs) between public and private schools. Are there any credible differences?
+  *  7. Compare medical exemptions between public and private schools. Are there any credible differences?
+  *  8. Compare religious/belief exemptions between public and private schools. Are there any credible differences?
+  
+# Predictive Analyses:
+  *  9.  Is it possible to predict whether a school is public or private based on conditional, medical, and religious percentages? 
+         If so, what are the specifics?
+  *  10. Is it possible to predict conditional percentage, based on the percentages of specific vaccines that are missing? 
+         If so, what are the specifics?
+  *  11. Is it possible to predict medical percentage, based on the percentages of specific vaccines that are missing? 
+         If so, what are the specifics?
+  *  12. Is it possible to predict religious percentage, based on the percentages of specific vaccines that are missing? 
+         If so, what are the specifics?
+  *  13. What’s the big picture, based on all of the foregoing analyses?
+
+# Please find more details from the R code below, 
+
+```{r}
+# import libraries 
+#create a function to ensure the libraries are imported
+EnsurePackage <- function(x){
+  x <- as.character(x)
+    if (!require(x,character.only = TRUE)){
+      install.packages(pkgs=x, repos = "http://cran.us.r-project.org")
+      require(x, character.only = TRUE)
+    }
+  }
+```
+
+```{r}
+EnsurePackage("nlme")
+load("~/Documents/R/IST772/allSchoolsReportStatus.RData")
+# data(allSchoolsReportStatus)
+allSchools <- data.frame(allSchoolsReportStatus)
+
+str(allSchools)
+
+summary(allSchools)
+# View(allSchools)
+dim(allSchools) #  7381    3
+
+colnames(allSchools) # "name"     "pubpriv"  "reported"
+
+# table(allSchools$reported)
+# table(allSchools$pubpriv)
+# table(allSchools$isreported)
+# table(allSchools$ispubpriv)
+
+# define variables
+# name <- allSchools$name
+# pubpriv <- allSchools$pubpriv
+# reported <- allSchools$reported
+# allSchools$isreported <- as.numeric(as.factor(allSchools$reported))-1 # Fix the factor
+# allSchools$ispubpriv <- as.numeric(as.factor(allSchools$pubpriv))-1 # Adjust the outcome
+# head(allSchools)
+
+allSchoolsDF <- data.frame(allSchools$name
+                           ,as.numeric(as.factor(allSchools$pubpriv))-1
+                           ,as.numeric(as.factor(allSchools$reported))-1,val=1,stringsAsFactors=FALSE)
+colnames(allSchoolsDF) <- c("schoolName","isPublicPrivate","isReported","value")
+
+str(allSchoolsDF)
+# head(allSchoolsDF)
+
+# allSchoolsDF[which(allSchoolsDF$schoolName=="AGUA DULCE ELEMENTARY"),]
+
+#create a dataset for Public Schools
+publicSchools <- subset(allSchoolsDF,allSchoolsDF$isPublicPrivate==1)
+nrow(publicSchools)     #5732  
+
+#create a dataset for Public Schools
+privateSchools <- subset(allSchoolsDF,allSchoolsDF$isPublicPrivate==0)
+nrow(privateSchools)     #1649  
+
+# PRIVATE = 0
+# PUBLIC = 1
+table(allSchools$pubpriv)   
+table(allSchoolsDF$isPublicPrivate)
+
+table(allSchools$reported)   
+table(allSchoolsDF$isReported)
+```
+
+# Outlier Analysis 
+
+```{r}
+# install.packages("dlookr")  # note: requires version 3.5.2 or higher
+EnsurePackage("dlookr")
+diagnose_outlier(allSchoolsDF)
+plot_outlier(allSchoolsDF)
+```
+
+# Exploratory Analysis  - Violin plot to unerstand the difference between Public vs Private schools reporting the cases
+
+```{r}
+EnsurePackage("tidyverse")
+
+#data distribution
+# violin plot with median points
+
+allSchools %>%
+  pivot_longer(cols=-c(name), names_to="variable", values_to="value", values_drop_na = TRUE) %>% 
+  ggplot(aes(x=variable, y=value)) + geom_violin(trim=FALSE, fill='steelblue', color="orange") + 
+  facet_wrap( ~ variable, scales="free") + 
+  stat_summary(fun=mean, geom="point", shape=23, size=4,color="red")  + 
+  theme_minimal()
+
+```
+
+# Exploratory Analysis  - Overall Public vs Private schools reporting the cases
+
+```{r}
+# Summary table
+agg <- count(allSchoolsDF, isPublicPrivate, isReported)
+totSchools <- sum(agg$n)
+ratio <- round(agg$n/totSchools,2)
+aggDF <- data.frame(agg,ratio)
+aggDF
+```
+
+# Exploratory Analysis  - Consolidated Public vs Private schools reporting the cases
+
+```{r}
+EnsurePackage("gridExtra")
+ecols <- c("steelblue","orange")
+agg_ord <- mutate(agg, 
+                  isReported = reorder(isReported, -n, sum),
+                  isPublicPrivate = reorder(isPublicPrivate, -n, sum))
+
+p1 <- ggplot(agg_ord) +
+      geom_col(aes(x = isPublicPrivate, y = n, fill = isReported)) +
+      scale_fill_manual(values = ecols)
+
+p2 <- ggplot(agg_ord) +
+      geom_col(aes(x = isPublicPrivate, y = n, fill = isReported), position = "dodge") +
+      scale_fill_manual(values = ecols)
+
+grid.arrange(p1, p2, nrow = 1)
+
+```
+
+```{r}
+barplot(table(allSchoolsDF$isReported),
+main="All Schools reported",
+xlab="Reported",
+ylab="Schools",
+border="orange",
+col="steelblue",
+density=10
+)
+```
+
+```{r}
+barplot(table(allSchools$pubpriv),
+main="Public/Private Schools",
+xlab="School",
+ylab="Number of Schools",
+border="orange",
+col="steelblue",
+density=10
+)
+```
+
+
+
+# 1. Percentage of public schools reporting vaccination data
+  *  Based on the data split, 
+      * There are about 5732 (~78%) schools marked as Public Schools out of 7381 total schools 
+      * Out of 5732 Public schools, 97% (5584) of the schools reported vaccination data
+ 
+```{r}
+
+# total schools split
+table(allSchools$pubpriv) 
+
+# 5732/7381 ( ~78%)
+# PRIVATE = 0
+# PUBLIC = 1
+
+# Public Schools table
+aggPublic <- count(publicSchools, isPublicPrivate, isReported)
+# aggPublic
+totPublicSchools <- sum(aggPublic$n)
+ratioPublic <- round(aggPublic$n/totPublicSchools,2)
+aggPublicDF <- data.frame(aggPublic,ratioPublic)
+aggPublicDF
+```
+
+```{r}
+barplot(table(publicSchools$isReported),
+main="Public Schools Reported",
+xlab="Reported",
+ylab="Number of Schools",
+border="orange",
+col="steelblue",
+density=10
+)
+
+```
+
+# 2. What proportion of private schools reported vaccination data?
+  *  Based on the data split, 
+      * There are about 1649 (22%) schools marked as Private Schools out of 7381 total schools 
+      * Out of 1649 Private schools, 85% (1397) of the schools reported vaccination data
+      
+```{r}
+# total schools split
+table(allSchools$pubpriv) 
+
+# PRIVATE = 0
+# PUBLIC = 1
+
+# 1649/7381 ( ~22%)
+
+# Private Schools table
+aggPrivate <- count(privateSchools, isPublicPrivate, isReported)
+# aggPrivate
+totPrivateSchools <- sum(aggPrivate$n)
+ratioPrivate <- round(aggPrivate$n/totPrivateSchools,2)
+aggPrivateDF <- data.frame(aggPrivate,ratioPrivate)
+aggPrivateDF
+```
+
+
+```{r}
+barplot(table(privateSchools$isReported),
+main="Private Schools Reported",
+xlab="Reported",
+ylab="Schools",
+border="orange",
+col="steelblue",
+density=10
+)
+```
+
+# usVaccines.RData #
+
+# 3. Have U.S. vaccinations rates been stable over time?
+
+  * Vaccinations had inconsistent rates over time.Especially, there is lot of missing values (30%) between 1980 until 2002.
+  * Once, we removed the null data, started analyzing with more balanced data,
+         DTP1          HepB_BD           Pol3            Hib3            MCV1      
+      Min.   :97.00   Min.   :21.00   Min.   :90.00   Min.   :84.00   Min.   :90.00  
+      1st Qu.:98.00   1st Qu.:50.00   1st Qu.:92.75   1st Qu.:93.00   1st Qu.:91.75  
+      Median :98.00   Median :62.00   Median :93.00   Median :93.00   Median :92.00  
+      Mean   :98.19   Mean   :57.94   Mean   :92.88   Mean   :92.25   Mean   :91.75  
+      3rd Qu.:99.00   3rd Qu.:69.75   3rd Qu.:94.00   3rd Qu.:93.25   3rd Qu.:92.00  
+      Max.   :99.00   Max.   :74.00   Max.   :94.00   Max.   :94.00   Max.   :93.00  
+    
+      * DTP1, seems more consistent/stable across 2002 until 2017
+      * HepB_BD, median to maximum hasconsistent/stable across 2002 until 2017. However, has very low value at 21 in 2002. 
+        There is a consistent increase in the rates, though.
+      * Pol3 , seems to have stable vaccination rate over time.However, there was a drop in 2009,2010.
+      * Hib3, had consistent raise and drop across.
+      * MCV1, also had sudden drop and raise in between.
+    
+      
+  
+# 4. Are there any notable patterns in U.S. vaccinations rates over time?
+  * Vaccinations had inconsistent rates over time.Especially, there is lot of missing values (30%) between 1980 until 2002.
+  * diff(usVaccinesTSnew) plot showed significant spikes in the vaccinations over time. With, HepB_BD continuously dropping over time.
+  * Pol3,MCV1 , had sudden spikes across as well.
+  * 2009 was hit hard across for reason
+  * After 2014, the vaccination pattern is stable across.
+  * Please find change point variance analysis below
+    Created Using changepoint version 2.2.2 
+    Changepoint type      : Change in variance 
+    Method of analysis    : AMOC 
+    Test Statistic  : Normal 
+    Type of penalty       : MBIC with value, 8.124151 
+    Minimum Segment Length : 2 
+    Maximum no. of cpts   : 1 
+    Changepoint Locations :
+
+# Please find more details from the R code below,  
+```{r}
+# Import data
+load("~/Documents/R/IST772/usVaccines.RData")
+str(usVaccines)
+usVaccinesTS <- usVaccines
+ts.plot(usVaccinesTS)
+# View(usVaccinesTS)
+
+
+
+```
+
+```{r}
+EnsurePackage("mice") # missing data 
+EnsurePackage("visdat") # missing data 
+
+usVaccinesDF <- data.frame(usVaccinesTS)
+str(usVaccinesDF)
+# View(usVaccinesDF)
+
+# missing data 
+md.pattern(usVaccinesDF, plot=FALSE)
+
+# missing data visualization
+vis_miss(usVaccinesDF)
+```
+
+
+
+```{r}
+EnsurePackage("changepoint")
+EnsurePackage("tseries")
+EnsurePackage("timeSeries")
+
+class(usVaccinesTS)
+
+usVaccinesTSnew <- removeNA(usVaccinesTS)
+# usVaccinesTSnew
+
+# start(usVaccinesTSnew)
+# end(usVaccinesTSnew)
+# frequency(usVaccinesTSnew)
+summary(usVaccinesTSnew)
+
+plot.ts(usVaccinesTSnew)
+```
+
+```{r}
+dusVaccines <- diff(usVaccinesTSnew)
+# dusVaccines
+
+dusMI <- dusVaccines[,2]
+dSMIcp <- cpt.var(dusMI)
+summary(dSMIcp)
+
+plot(dSMIcp,cpt.col="red",cpt.width=5)
+
+ts.plot(usVaccinesTSnew)
+
+plot(usVaccinesTSnew,col="blue",main="VaccinesTSnew undifferential plot")
+
+plot(dusVaccines,col="orange",main="VaccinesTSnew differential plot")
+```
+
+
+```{r}
+EnsurePackage("bcp")
+# Bayesian Change point analysis
+bAPcpm <- bcp(as.vector(usVaccinesTSnew))
+plot(bAPcpm)
+# summary(bAPcpm)
+```
+
+# reportSample12.RData #
+
+
+```{r}
+# reportSample
+load("~/Documents/R/IST772/reportSample12.RData")
+str(reportSample)
+# head(reportSample)
+# View(reportSample)
+dim(reportSample)
+```
+
+```{r}
+# summary(reportSample)
+```
+
+```{r}
+EnsurePackage("tidyverse")
+
+#data distribution
+# violin plot with median points
+
+reportSample %>%
+  pivot_longer(cols=-c(code,name,pubpriv), names_to="variable", values_to="value", values_drop_na = TRUE) %>% 
+  ggplot(aes(x=variable, y=value)) + geom_violin(trim=FALSE, fill='steelblue', color="orange") + 
+  facet_wrap( ~ variable, scales="free") + 
+  stat_summary(fun=mean, geom="point", shape=23, size=4,color="red")  + 
+  theme_minimal()
+```
+
+```{r}
+EnsurePackage("dlookr") # outlier analysis
+# # #outlier analysis
+plot_outlier(reportSample)
+```
+
+```{r}
+str(allSchools)
+str(allSchoolsDF)
+str(reportSample)
+```
+
+
+```{r}
+# Pre-Processing
+
+# 1. Add new column "isPublicPrivate" with boolean value as 0 or 1
+reportSampleDF <- data.frame(reportSample
+                           ,as.numeric(as.factor(reportSample$pubpriv))-1
+                           ,val=1,stringsAsFactors=FALSE)
+reportSampleDF$pubpriv=as.character(reportSampleDF$pubpriv)
+reportSampleDF$name=as.character(reportSampleDF$name)
+names(reportSampleDF)[14] <- "isPublicPrivate"
+str(reportSampleDF)
+```
+
+# Public vs. Private School Comparisons:
+
+# 5. Was there any credible difference in overall reporting proportions between public and private schools?
+  * Overall, Population wise there are more public schools than private schools.
+  * Surprisingly, from the sample, Private school had less outliers than the public school
+  * On average 85% of the Private schools reported vs 90% from Public schools.
+  * As its a sample data, considering the number of observations 78% are Public and only 22% are Private. Out of these almost more than 
+    80% of the schools from each category has reported the vaccinations.
+
+# Please find more details from the R code below, 
+
+```{r}
+# table(reportSampleDF$pubpriv)
+
+barplot(table(reportSampleDF$pubpriv),
+main="Public/Private Schools reported",
+xlab="School",
+ylab="Number of Schools",
+border="orange",
+col="steelblue",
+density=10
+)
+```
+
+```{r}
+# Public Schools table
+aggSamples <- count(reportSampleDF,isPublicPrivate)
+totSamples <- sum(aggSamples$n)
+ratioPublic <- round(aggSamples$n/totSamples,2)
+aggSamplesDF <- data.frame(aggSamples,ratioPublic)
+aggSamplesDF
+```
+
+```{r}
+#box plot to compare the tensions
+boxplot(allvaccs~pubpriv, data=reportSampleDF,
+       border="orange", 
+       col="steelblue",
+       freq=FALSE,
+       xlab="",
+       las=1, 
+       breaks=10,
+       # notch = TRUE,
+       horizontal = FALSE ,main=" vaccination rates (allvaccs) between public and private schools")
+```
+
+
+# Public vs. Private School Comparisons:
+
+# 6. Compare overall vaccination rates (allvaccs) between public and private schools. Are there any credible differences?
+  * Null hypothesis significance test(NHST)
+      * Based on the comparison between the means overall vaccination rates (allvaccs) between public and private schools,
+        t(179.7)= -3.7023, p-value =0.000284 is less than alpha value (0.05) - it shows that the differnce is  statistically 
+        significant and we can to reject the null hypothesis.i.e true difference in means is equal to 0
+
+  * Confidence Interval (CI) - 
+      * 95% confidence interval is between -8.939025 (lower band) and -2.723307 (higher band) which doesnt include 0.
+      * 95% confidence suggests that if we ran this experiment a large number of times(each time generating a new sample), 
+        then 95% of the confidence intervals constructed from those repetition would actually contain the population mean difference.
+      * mean in group PRIVATE  is 84.45064 
+      * mean in group PUBLIC is 90.28181
+                          
+ 
+  * Bayesian distribution- Highest density interval (HDI)
+      * BESTmcmc() way to compare the means overall vaccination rates (allvaccs) between public and private schools ran with 100,002 
+        simulations suggests that the highest density interval (HDI) lie in the bell-shaped area between 0.766818 (HDIlo) and 5.832254 (HDIup).         It doesnt include 0. Range is totally differnt than the confidence interval. 
+      * mean value from HDI plot is 3.23
+      * 50% quantile (median) is 3.207067. Almost aligning with mean of the mean differences from the distribution.
+      * From plotAll(bayesAllvaccs), we can see the Group 2 has better distribution and densed packaged standard deviation.
+
+# Please find more details from the R code below,    
+
+```{r}
+#box plot to compare the tensions
+boxplot(allvaccs~pubpriv, data=reportSampleDF,
+       border="orange", 
+       col="steelblue",
+       freq=FALSE,
+       xlab="",
+       las=1, 
+       breaks=10,
+       # notch = TRUE,
+       horizontal = FALSE ,main=" vaccination rates (allvaccs) between public and private schools")
+```
+```{r}
+EnsurePackage("zoo")
+reportSampleDF$allvaccs <- na.aggregate(reportSampleDF$allvaccs)
+sum(is.na(reportSampleDF$allvaccs))
+```
+
+
+```{r}
+# Confidence Interval Test
+t.test(allvaccs~pubpriv, data=reportSampleDF)
+```
+
+
+```{r}
+# Bayesian distribution
+EnsurePackage("BEST")
+bayesAllvaccs <- BESTmcmc(reportSampleDF$allvaccs[reportSampleDF$pubpriv=="PUBLIC"]
+                          ,reportSampleDF$allvaccs[reportSampleDF$pubpriv=="PRIVATE"]) 
+bayesAllvaccs
+
+```
+
+
+
+
+```{r}
+diffBest <- bayesAllvaccs$mu1 - bayesAllvaccs$mu2
+# summary(diffBest)
+quantile(diffBest, c(0.025, 0.5, 0.975))
+```
+
+```{r}
+#Bayesian probability distribution of the differences between two means
+plot(bayesAllvaccs)
+abline(v=quantile(diffBest,0.025),col="blue")  # low end HDI differences in proportion
+abline(v=quantile(diffBest,0.975),col="green") # high end HDI differences in proportion
+abline(v=quantile(diffBest,0.50),col="red") # median  in proportion
+```
+
+```{r}
+plotAll(bayesAllvaccs)
+```
+
+
+# Public vs. Private School Comparisons:
+
+# 7. Compare medical exemptions between public and private schools. Are there any credible differences?
+
+  * Null hypothesis significance test(NHST)
+      * Based on the comparison between the means overall vaccination rates (allvaccs) between public and private schools,
+        t(159.92)= 1.3321, p-value =0.1847 is greater than alpha value (0.05) - it shows that the differnce is  not statistically 
+        significant and we fail to reject the null hypothesis.
+
+  * Confidence Interval (CI) - 
+      * 95% confidence interval is between -0.0870064 (lower band) and 0.4475860 (higher band) which doesnt include 0.
+      * 95% confidence suggests that if we ran this experiment a large number of times(each time generating a new sample), 
+        then 95% of the confidence intervals constructed from those repetition would actually contain the population mean difference.
+      * mean in group PRIVATE  is 0.3169112 
+      * mean in group PUBLIC is 0.1366214
+                          
+ 
+  * Bayesian distribution- Highest density interval (HDI)
+      * BESTmcmc() way to compare the means overall vaccination rates (allvaccs) between public and private schools ran with 100,002 
+        simulations suggests that the highest density interval (HDI) lie in the bell-shaped area between -0.0001204695969 (HDIlo) 
+        and 0.0001201430744 (HDIup). It does include 0. Range is much lower than the confidence interval. 
+      * mean value from HDI plot is 0.000000136. Is almost 0 suggesting does not support alternate hypothesis.
+      * 50% quantile (median) is 0.0000002639815. Almost aligning with mean of the mean differences from the distribution.
+      * From plotAll(bayesmedical), we can see the Group 2 has better distribution and densed packaged standard deviation.
+
+# Please find more details from the R code below,    
+
+```{r}
+#box plot to compare the tensions
+boxplot(medical~pubpriv, data=reportSampleDF,
+       border="orange", 
+       col="steelblue",
+       freq=FALSE,
+       xlab="",
+       las=1, 
+       # breaks=10,
+       # notch = TRUE,
+       horizontal = FALSE ,main=" medical excemption between public and private schools")
+```
+
+```{r}
+EnsurePackage("zoo")
+reportSampleDF$medical <- na.aggregate(reportSampleDF$medical)
+sum(is.na(reportSampleDF$medical))
+```
+
+```{r}
+# Confidence Interval Test
+t.test(medical~pubpriv, data=reportSampleDF)
+```
+
+```{r}
+# Bayesian distribution
+EnsurePackage("BEST")
+bayesmedical <- BESTmcmc(reportSampleDF$medical[reportSampleDF$pubpriv=="PUBLIC"]
+                         ,reportSampleDF$medical[reportSampleDF$pubpriv=="PRIVATE"]) 
+bayesmedical
+```
+
+```{r}
+bayesmedicalDiffBest <- bayesmedical$mu1 - bayesmedical$mu2
+# summary(diffBest)
+quantile(bayesmedicalDiffBest, c(0.025, 0.5, 0.975))
+```
+
+
+```{r}
+#Bayesian probability distribution of the differences between two means
+plot(bayesmedical)
+abline(v=quantile(bayesmedicalDiffBest,0.025),col="blue")  # low end HDI differences in proportion
+abline(v=quantile(bayesmedicalDiffBest,0.975),col="green") # high end HDI differences in proportion
+abline(v=quantile(bayesmedicalDiffBest,0.50),col="red") # median  in proportion
+```
+
+
+```{r}
+plotAll(bayesmedical)
+```
+
+
+# Public vs. Private School Comparisons:
+
+# 8. Compare religious/belief exemptions between public and private schools. Are there any credible differences?
+
+  * Null hypothesis significance test(NHST)
+      * Based on the comparison between the means overall vaccination rates (allvaccs) between public and private schools,
+        t(178.55)= 1.9052, p-value =0.05836 is greater than alpha value (0.05) - it shows that the difference is  not statistically 
+        significant and we fail to reject the null hypothesis.
+
+  * Confidence Interval (CI) - 
+      * 95% confidence interval is between  -0.09940198 (lower band) and 5.66035299 (higher band) which does include 0.
+      * 95% confidence suggests that if we ran this experiment a large number of times(each time generating a new sample), 
+        then 95% of the confidence intervals constructed from those repetition would actually contain the population mean difference.
+      * mean in group PRIVATE  is 6.623709
+      * mean in group PUBLIC is 3.843233
+                          
+ 
+  * Bayesian distribution- Highest density interval (HDI)
+      * BESTmcmc() way to compare the means overall vaccination rates (allvaccs) between public and private schools ran with 100,002 
+        simulations suggests that the highest density interval (HDI) lie in the bell-shaped area between 0.4336272(HDIlo) and 0.7514417 (HDIup).         It doesnt include 0. Range is slightly higher than the lower bound confidence interval but lot less than the upper bound.
+      * mean value from HDI plot is 0.586
+      * 50% quantile (median) is 0.5845066. Almost aligning with mean of the mean differences from the distribution.
+      * From plotAll(bayesreligious), we can see the Group 2 has better distribution and densed packaged standard deviation.
+
+# Please find more details from the R code below,  
+  
+```{r}
+#box plot to compare the tensions
+boxplot(religious~pubpriv, data=reportSampleDF,
+       border="orange", 
+       col="steelblue",
+       freq=FALSE,
+       xlab="",
+       las=1, 
+       breaks=10,
+       # notch = TRUE,
+       horizontal = FALSE ,main=" religious belief between public and private schools")
+```
+
+```{r}
+EnsurePackage("zoo")
+reportSampleDF$religious <- na.aggregate(reportSampleDF$religious)
+sum(is.na(reportSampleDF$religious))
+```
+
+
+```{r}
+# Confidence Interval Test
+t.test(religious~pubpriv, data=reportSampleDF)
+```
+
+
+```{r}
+# Bayesian distribution
+EnsurePackage("BEST")
+bayesreligious <- BESTmcmc(reportSampleDF$religious[reportSampleDF$pubpriv=="PUBLIC"]
+                           ,reportSampleDF$religious[reportSampleDF$pubpriv=="PRIVATE"]) 
+bayesreligious
+```
+
+
+
+```{r}
+bayesreligiousDiffBest <- bayesreligious$mu1 - bayesreligious$mu2
+# summary(diffBest)
+quantile(bayesreligiousDiffBest, c(0.025, 0.5, 0.975))
+```
+
+
+```{r}
+#Bayesian probability distribution of the differences between two means
+plot(bayesreligious)
+abline(v=quantile(bayesreligiousDiffBest,0.025),col="blue")  # low end HDI differences in proportion
+abline(v=quantile(bayesreligiousDiffBest,0.975),col="green") # high end HDI differences in proportion
+abline(v=quantile(bayesreligiousDiffBest,0.50),col="red") # median  in proportion
+```
+
+
+```{r}
+plotAll(bayesreligious)
+```
+
+
+```{r}
+summary(reportSampleDF)
+```
+
+# Predictive Analysis:
+
+# 9.  Is it possible to predict whether a school is public or private based on conditional, medical, and religious percentages? If so, what are the specifics?
+  *  Yes, We can predict whether a school is public or private (categorical) based on the conditional, medical, and religious (continuous values) percentages. 
+     However, it needs few data transformation/pre-processing.
+  *  New column is added as "isPublicPrivate" with boolean value as 0 or 1 based on the "pubpriv" column
+  *  Once the value is converted into numberic with categorical value as 0 or 1 - It can be further used as dependent variable with 
+     linear regression models.
+  *  First, general linear model is built using the formula below with link function as "binomial" invoking inverse logit/logististic regression 
+     glm(isPublicPrivate ~ conditional + medical + religious ,data=reportSampleDF,family = binomial(link = "logit")) 
+      
+      *  With level of significance as 0.05, following observation were made,
+      *  Intercept is at 1.593445
+      *  conditional variable with p-value ( 0.00149) shows highly significant correlation ( coefficient value : -0.025150)
+      *  medical variable with p-value (0.04056) shows significant correlation (coefficient value : -0.188283)
+      *  religious variable with p-value (0.01477) shows significant correlation (coefficient value : -0.017045)
+      *  there are about 697 degrees of freedom among these observations
+      *  AIC score as 720.46
+      *  With min as -1.8860 and max of 1.4426  shows, distribution of residuals between -ve to positive almost spreading equally on both sides,          with Median above 0 (0.6360).
+      *  It seems the residuals are symmetrically distributed.
+      *  Null Hypothesis
+              * Null hypothesis is that the log odds of isPublicPrivate is equal to 0 in the population.
+                Since the log odds of the predictor variables are statistically significant and less than thier respective alpha 
+                level - we can reject the null hypothesis.
+      *  The conversion from log odds to regular output exp(coef(school.glm)),
+          (Intercept) conditional     medical   religious 
+          4.9206691   0.9751638   0.8283803   0.9830997 
+      *  In addition, Chi-Square analysis also proves that the test is significant with all variables
+          * 8.7474 is the chi-square value ( residual deviance from top line - residual deviance from 2nd line) 731.59 - 722.85 = 8.7474 
+            is tested for significance on one degree of freedom.
+      *  VIF() - to test for multi colleniarity; For the given predictor (isPublicPrivate), multicollinearity can assessed by 
+         computing a score called the variance inflation factor (or VIF). All the values are in the range of around 1. 
+         Shows that there is no collinearity among the variables.
+          conditional     medical   religious 
+          1.001352    1.000499    1.000863 
+  * Second, Multiple linear regression is built as well with the same variables,
+      *  formula = lm(isPublicPrivate ~ conditional + medical + religious ,data=reportSampleDF)
+      *  F-statistic: 7.494 on 3 and 694 DF,  p-value: 0.00006093
+      *  Adjusted R-squared:  0.02719
+      *  Having strong F score and p-value < alpha level ; We can reject the NULL hypothesis.
+  * Third, Bayesian Approach to Multiple Regression Analysis
+      *  formula = lmBF(isPublicPrivate ~ conditional + medical + religious ,data=reportSampleDF, posterior=TRUE, iterations=10000)
+      *  mean squared value is 0.02775056
+      *  HDI Interval overaps with 0 siggesting the test is significant and confirms the significance of alternative hypothesis.
+          * 2.5% Lower HDI is -0.08191668 
+          * 97.5% Upper HDI is 0.1240995
+      *  Bayes factor analysis on conditional + medical + religious is 80.08021 ±0.01% with Intercept only  denominator. 
+         Strongly confirms the existence of alternate hypothesis.
+   
+  * Finally, Comparison to lm(): NHST vs Alternative Hypothesis
+       * Earlier, linear regression analysis proved that p-value is much lower than the alpha value, hence we rejected the Null hypothesis
+       * Bayesian factor also, favored alternate hypothesis at 80.08021 ±0.01% ratio. So, it does strenghten our predictive exercise.
+
+# Please find more details from the R code below,
+
+```{r}
+# dim(reportSampleDF)
+# Create glm model
+options(scipen=999)  # turn-off scientific notation like 1e+48
+
+school.glm <- glm(isPublicPrivate ~ conditional + medical + religious ,data=reportSampleDF,family = binomial(link = "logit")) 
+summary(school.glm)
+
+hist(residuals(school.glm))
+```
+
+```{r}
+# Create lm model
+options(scipen=999)  # turn-off scientific notation like 1e+48
+
+school.lm <- lm(isPublicPrivate ~ conditional + medical + religious ,data=reportSampleDF)
+summary(school.lm)
+```
+
+```{r}
+EnsurePackage("VIF")
+EnsurePackage("car")
+vif(school.lm)
+
+vif(school.glm)
+```
+
+```{r}
+EnsurePackage("MCMCpack")
+#histogram on residuals chile.glm
+hist(residuals(school.glm))
+
+```
+
+```{r}
+#Chi-Square analysis on logistic regression
+anova(school.glm, test="Chisq")
+
+```
+
+```{r}
+# Convert the log odds for the coefficient on the predictor into regular odds
+exp(coef(school.glm))
+
+```
+
+```{r}
+#confusion matrix
+table(round(predict(school.glm,type="response")),reportSampleDF$isPublicPrivate)
+
+```
+
+```{r}
+EnsurePackage("MASS") # AIC
+stepOut <- stepAIC(school.glm)
+stepOut$anova
+```
+
+
+```{r}
+#bayesian estimation of logistic regression
+options(scipen=999)  # turn-off scientific notation like 1e+48
+EnsurePackage("BayesFactor")
+
+schoolMCMCout <- lmBF(isPublicPrivate ~ conditional + medical + religious ,data=reportSampleDF, posterior=TRUE, iterations=10000)
+summary(schoolMCMCout)
+# schoolMCMCout
+rsqList <- 1 - (schoolMCMCout[,"sig2"] / var(reportSampleDF$isPublicPrivate))
+MeanrsqList <- mean(rsqList)
+MeanrsqList
+quantile(rsqList,c(0.025))
+quantile(rsqList,c(0.975))
+```
+
+```{r}
+# Bayes factor analysis
+schoolMCMCoutBF <- lmBF(isPublicPrivate ~ conditional + medical + religious ,data=reportSampleDF)
+summary(schoolMCMCoutBF)
+```
+
+
+```{r}
+# histogram of 95% HDI mean differences on conditional | overlaps with 0
+hist(schoolMCMCout[,"conditional"],col="#CBB43D")
+abline(v=quantile(schoolMCMCout[,"conditional"],c(0.025)),col="blue")
+abline(v=quantile(schoolMCMCout[,"conditional"],c(0.975)),col="green")
+```
+
+```{r}
+# histogram of 95% HDI mean differences on medical | overlaps with 0
+hist(schoolMCMCout[,"medical"],col="#4DAFD4")
+abline(v=quantile(schoolMCMCout[,"medical"],c(0.025)),col="blue")
+abline(v=quantile(schoolMCMCout[,"medical"],c(0.975)),col="green")
+```
+
+```{r}
+# histogram of 95% HDI mean differences on religious | overlaps with 0
+hist(schoolMCMCout[,"religious"],col="pink")
+abline(v=quantile(schoolMCMCout[,"religious"],c(0.025)),col="blue")
+abline(v=quantile(schoolMCMCout[,"religious"],c(0.975)),col="green")
+```
+
+
+# Predictive Analysis:
+
+# 10. Is it possible to predict conditional percentage, based on the percentages of specific vaccines that are missing? If so, what are the specifics
+  *  Yes, We can predict conditional percentage (continuous value) based on the dptMiss + polMiss + mmrMiss + varMiss (continuous values)  
+     However, it needs few data transformation/pre-processing.
+  *  replace NAs from the polMiss and mmrMiss with aggregate mean values
+  *  First, linear model (multiple linear regression) is built using the formula below 
+      *  formula = lm(conditional ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF)
+      *  With level of significance as 0.05, following observation were made,
+      *  Intercept is at 1.04211
+      *  Variables dptMiss, mmrmiss,varMiss with p-value lot less than 0.05 shows highly significant correlation 
+      *  However, polmiss variable with p-value (0.294117) shows that its not significant and can be ignored.
+      *  there are about 693 degrees of freedom among these observations with overall p-value: < 0.00000000000000022.
+         Sugesting the model is significant.
+      *  With min as -18.797 and max of 42.043  with median -1.042 shows, distribution of residuals between -ve to positive almost 
+         spreading equally on both sides.It seems the residuals are symmetrically distributed.
+      *  Null Hypothesis
+              * Null hypothesis is that the log odds of conditional precentage is equal to 0 in the population.
+                Since the log odds of the predictor variables are statistically significant and less than thier respective alpha 
+                level - we can reject the null hypothesis.
+      *  F-statistic: 440.2 on 4 and 693 DF,  p-value: < 0.00000000000000022
+      *  Adjusted R-squared:  0.716
+      *  Having strong F score and p-value < alpha level ; We can reject the NULL hypothesis.
+      
+      *  The conversion from log odds to regular output exp(coef(conditional.lm)),
+          (Intercept)     dptMiss     polMiss     mmrMiss     varMiss 
+          2.835203    1.919370    1.087528    2.046004    0.285728 
+     *  VIF() - to test for multi colleniarity; For the given predictor (conditional), multicollinearity can assessed by 
+         computing a score called the variance inflation factor (or VIF). dptMiss and polMiss clearly suggesting signs of multi colleniarity.
+         So, its recommened to ignore these values.However, based on the correlatio coeffient values, if we reject polMiss then there 
+         could be better output.
+          dptMiss   polMiss   mmrMiss   varMiss 
+          14.262805 16.377165  7.110362  3.513100 
+
+  * Second, Bayesian Approach to Multiple Regression Analysis
+      *  formula = lmBF(conditional ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF, posterior=TRUE, iterations=10000)
+      *  mean squared value is 0.7147291
+      *  HDI Interval doesnt overaps with 0; however, it is densely packed between lower and upper HDI values with no overlap amng the variables.
+         suggesting the test is significant and confirms the significance of alternative hypothesis.
+          * 2.5% Lower HDI is  0.6828211
+          * 97.5% Upper HDI is 0.7429705
+      *  Bayes factor analysis:
+          * formula= lmBF(conditional ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF)
+          * on dptMiss + polMiss + mmrMiss + varMiss : is Very high with Intercept only  denominator. 
+          * Strongly confirms the support of alternate hypothesis.
+   
+  * Finally, Comparison to lm(): NHST vs Alternative Hypothesis
+       * Earlier, linear regression analysis proved that p-value is much lower than the alpha value, hence we rejected the Null hypothesis
+       * Bayesian factor also, favored alternate hypothesis at stronger bayes factor ratio. So, it does strenghten our predictive exercise.
+
+# Please find more details from the R code below,
+
+
+```{r}
+# Pre-Processing
+EnsurePackage("mice") # missing data 
+EnsurePackage("visdat") # missing data 
+EnsurePackage("zoo")
+
+summary(reportSampleDF)
+
+# missing data 
+md.pattern(reportSampleDF, plot=FALSE)
+
+# missing data visualization
+vis_miss(reportSampleDF)
+
+#replace missing values
+reportSampleDF$polMiss <- na.aggregate(reportSampleDF$polMiss)
+sum(is.na(reportSampleDF$polMiss))
+
+reportSampleDF$mmrMiss <- na.aggregate(reportSampleDF$mmrMiss)
+sum(is.na(reportSampleDF$mmrMiss))
+
+```
+
+
+```{r}
+options(scipen=999)  # turn-off scientific notation like 1e+48
+# summary(reportSampleDF)
+# str(reportSampleDF)
+# Crete lm model
+conditional.lm <- lm(conditional ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF) 
+summary(conditional.lm)
+```
+
+
+```{r}
+options(scipen=999)  # turn-off scientific notation like 1e+48
+# summary(reportSampleDF)
+# str(reportSampleDF)
+
+# Crete glm model
+
+# conditional.glm <- glm(conditional ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF,family = binomial(link = "logit")) 
+
+## Error in eval(family$initialize) : y values must be 0 <= y <= 1
+```
+
+```{r}
+EnsurePackage("VIF")
+EnsurePackage("car")
+vif(conditional.lm)
+# vif(conditional.glm)
+```
+
+
+```{r}
+EnsurePackage("MCMCpack")
+#histogram on residuals chile.glm
+hist(residuals(conditional.lm))
+
+```
+
+```{r}
+#Chi-Square analysis on logistic regression
+anova(conditional.lm, test="Chisq")
+```
+
+```{r}
+# Convert the log odds for the coefficient on the predictor into regular odds
+exp(coef(conditional.lm))
+
+```
+
+
+```{r}
+EnsurePackage("MASS") # AIC
+stepOut_conditional <- stepAIC(conditional.lm)
+stepOut_conditional$anova
+```
+
+```{r}
+# Bayesian regression with Posterior iterations
+options(scipen=999)  # turn-off scientific notation like 1e+48
+EnsurePackage("BayesFactor")
+
+MCMCout_conditional <- lmBF(conditional ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF, posterior=TRUE, iterations=10000)
+summary(MCMCout_conditional)
+rsqList <- 1 - (MCMCout_conditional[,"sig2"] / var(reportSampleDF$conditional))
+MeanrsqList <- mean(rsqList)
+MeanrsqList
+quantile(rsqList,c(0.025))
+quantile(rsqList,c(0.975))
+```
+
+```{r}
+# Bayes factor analysis
+conditionalMCMCoutBF <- lmBF(conditional ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF)
+summary(conditionalMCMCoutBF)
+```
+
+
+```{r}
+# histogram of 95% HDI mean differences on dptMiss | overlaps with 0
+hist(MCMCout_conditional[,"dptMiss"],col="#CBB43D")
+abline(v=quantile(MCMCout_conditional[,"dptMiss"],c(0.025)),col="blue")
+abline(v=quantile(MCMCout_conditional[,"dptMiss"],c(0.975)),col="green")
+```
+
+```{r}
+# histogram of 95% HDI mean differences on polMiss | overlaps with 0
+hist(MCMCout_conditional[,"polMiss"],col="#4DAFD4")
+abline(v=quantile(MCMCout_conditional[,"polMiss"],c(0.025)),col="blue")
+abline(v=quantile(MCMCout_conditional[,"polMiss"],c(0.975)),col="green")
+```
+
+```{r}
+# histogram of 95% HDI mean differences on mmrMiss | overlaps with 0
+hist(MCMCout_conditional[,"mmrMiss"],col="pink")
+abline(v=quantile(MCMCout_conditional[,"mmrMiss"],c(0.025)),col="blue")
+abline(v=quantile(MCMCout_conditional[,"mmrMiss"],c(0.975)),col="green")
+```
+
+
+```{r}
+# histogram of 95% HDI mean differences on varMiss | overlaps with 0
+hist(MCMCout_conditional[,"varMiss"],col="orange")
+abline(v=quantile(MCMCout_conditional[,"varMiss"],c(0.025)),col="blue")
+abline(v=quantile(MCMCout_conditional[,"varMiss"],c(0.975)),col="green")
+```
+
+# Predictive Analysis:
+
+# 11. Is it possible to predict medical percentage, based on the percentages of specific vaccines that are missing? If so, what are the specifics?
+  *  Yes, We can predict medical percentage (continuous value) based on the dptMiss + polMiss + mmrMiss + varMiss continuous percentages. 
+     However, it needs few data transformation/pre-processing.
+  *  replace NAs from the polMiss and mmrMiss with aggregate mean values
+  *  First, linear model (multiple linear regression) is built using the formula below 
+      *  formula = lm(medical ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF) 
+      *  With level of significance as 0.05, following observation were made,
+      *  Intercept is at 0.124270
+      *  Variables varMiss is the only one with p-value less than 0.05 shows highly significant correlation 
+      *  However, all other variables with p-value lot higher than alpha level (>0.05) shows that its not significant and can be ignored.
+      *  there are about 693 degrees of freedom among these observations with overall p-value: 0.02392.
+         Even though, the its Sugesting the model is significant.Howver, I wouldnt recommend this combination.
+      *  With min as -1.0651 and max of 13.9291  with median -0.1368 shows, distribution of residuals between -ve to positive almost 
+         spreading more on the postive side.It seems the residuals are not symmetrically distributed.
+      *  Null Hypothesis
+              * Null hypothesis is that the log odds of medical precentage is equal to 0 in the population.
+                Since the log odds of the predictor variables are statistically significant and less than thier respective alpha 
+                level - we can reject the null hypothesis.
+      *  F-statistic: 2.831 on 4 and 693 DF,  p-value: 0.02392
+      *  Adjusted R-squared:  0.0104 
+      *  Having strong F score and p-value < alpha level ; We can reject the NULL hypothesis.
+      *  The conversion from log odds to regular output exp(coef(medical.lm)),
+          (Intercept)     dptMiss     polMiss     mmrMiss     varMiss 
+          2.835203    1.919370    1.087528    2.046004    0.285728 
+     *  VIF() - to test for multi colleniarity; For the given predictor (medical), multicollinearity can assessed by 
+         computing a score called the variance inflation factor (or VIF). dptMiss and polMiss clearly suggesting signs of multi colleniarity.
+         So, its recommened to ignore these values.However, based on the correlatio coeffient values, if we reject polMiss then there 
+         could be better output.
+          dptMiss   polMiss   mmrMiss   varMiss 
+          14.262805 16.377165  7.110362  3.513100
+     *  Step wise analysis results,
+            Step Df   Deviance Resid. Df Resid. Dev       AIC
+              1                               693   558.0653 -146.1727
+              2 - mmrMiss  1 0.04140344       694   558.1067 -148.1209
+              3 - dptMiss  1 0.33621569       695   558.4429 -149.7006
+              4 - polMiss  1 1.01450526       696   559.4574 -150.4337
+
+  * Second, Bayesian Approach to Multiple Regression Analysis
+      *  formula = lmBF(medical ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF, posterior=TRUE, iterations=10000)
+      *  mean squared value is 0.01275961
+      *  HDI Interval overaps with 0; almost symmetrical on both sides.
+         suggesting the test is significant and confirms the significance of alternative hypothesis.
+          * 2.5% Lower HDI is  -0.09929317 
+          * 97.5% Upper HDI is 0.1115672 
+      *  Bayes factor analysis
+          * formula = lmBF(medical ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF)
+          * on dptMiss + polMiss + mmrMiss + varMiss : 0.07607594 ±0.01% is weak with Intercept only  denominator. 
+          * Not a strong support for alternate hypothesis.
+   
+  * Finally, Comparison to lm(): NHST vs Alternative Hypothesis
+       * Earlier, linear regression analysis proved that p-value is lower only on one variable where as the overall model performed 
+         slighlty better with than the alpha value (0.02) hence we rejected the Null hypothesis.
+       * Bayesian factor favored alternate hypothesis with stronger bayes factor ratio. 
+        So, it doesnt strenghten our predictive exercise.
+
+
+# Please find more details from the R code below,
+
+```{r}
+options(scipen=999)  # turn-off scientific notation like 1e+48
+# summary(reportSampleDF)
+# str(reportSampleDF)
+# Crete lm model
+medical.lm <- lm(medical ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF) 
+summary(medical.lm)
+```
+
+
+```{r}
+EnsurePackage("VIF")
+EnsurePackage("car")
+vif(medical.lm)
+```
+
+```{r}
+EnsurePackage("MASS") # AIC
+stepOut_medical <- stepAIC(medical.lm)
+stepOut_medical$anova
+```
+
+
+```{r}
+EnsurePackage("MCMCpack")
+#histogram on residuals medical.lm
+hist(residuals(medical.lm))
+
+```
+
+```{r}
+#Chi-Square analysis on logistic regression
+anova(medical.lm, test="Chisq")
+```
+
+
+```{r}
+# Convert the log odds for the coefficient on the predictor into regular odds
+exp(coef(medical.lm))
+
+```
+
+
+```{r}
+#confusion matrix
+# table(round(predict(medical.lm,type="response")),reportSampleDF$medical)
+```
+
+
+```{r}
+options(scipen=999)  # turn-off scientific notation like 1e+48
+EnsurePackage("BayesFactor")
+
+MCMCout_medical <- lmBF(medical ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF, posterior=TRUE, iterations=10000)
+summary(MCMCout_medical)
+rsqList <- 1 - (MCMCout_medical[,"sig2"] / var(reportSampleDF$medical))
+MeanrsqList <- mean(rsqList)
+MeanrsqList
+quantile(rsqList,c(0.025))
+quantile(rsqList,c(0.975))
+```
+
+```{r}
+# Bayes Factor Analysis
+medicalBF <- lmBF(medical ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF)
+summary(medicalBF)
+```
+
+
+```{r}
+# histogram of 95% HDI mean differences on dptMiss | overlaps with 0
+hist(MCMCout_medical[,"dptMiss"],col="#CBB43D")
+abline(v=quantile(MCMCout_medical[,"dptMiss"],c(0.025)),col="blue")
+abline(v=quantile(MCMCout_medical[,"dptMiss"],c(0.975)),col="green")
+```
+
+```{r}
+# histogram of 95% HDI mean differences on polMiss | overlaps with 0
+hist(MCMCout_medical[,"polMiss"],col="#4DAFD4")
+abline(v=quantile(MCMCout_medical[,"polMiss"],c(0.025)),col="blue")
+abline(v=quantile(MCMCout_medical[,"polMiss"],c(0.975)),col="green")
+```
+
+```{r}
+# histogram of 95% HDI mean differences on mmrMiss | overlaps with 0
+hist(MCMCout_medical[,"mmrMiss"],col="pink")
+abline(v=quantile(MCMCout_medical[,"mmrMiss"],c(0.025)),col="blue")
+abline(v=quantile(MCMCout_medical[,"mmrMiss"],c(0.975)),col="green")
+```
+
+```{r}
+# histogram of 95% HDI mean differences on varMiss | overlaps with 0
+hist(MCMCout_medical[,"varMiss"],col="orange")
+abline(v=quantile(MCMCout_medical[,"varMiss"],c(0.025)),col="blue")
+abline(v=quantile(MCMCout_medical[,"varMiss"],c(0.975)),col="green")
+```
+
+
+# Predictive Analyses:
+# 12. Is it possible to predict religious percentage, based on the percentages of specific vaccines that are missing? If so, what are the specifics?
+
+  *  Yes, We can predict religious percentage (continuous value) based on the dptMiss + polMiss + mmrMiss + varMiss continuous percentages. 
+     However, it needs few data transformation/pre-processing.
+  *  replace NAs from the polMiss and mmrMiss with aggregate mean values
+  *  First, linear model (multiple linear regression) is built using the formula below 
+      *  formula = lm(religious ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF) 
+      *  With level of significance as 0.05, following observation were made,
+      *  Intercept is at -0.24661
+      *  Variables dptMiss  & varMiss are the two  with p-value less than 0.05 shows highly significant correlation 
+      *  However, all other variables with p-value lot higher than alpha level (>0.05) shows that its not significant and can be ignored.
+      *  there are about 693 degrees of freedom among these observations with overall p-value: 0.00000000000000022
+         Even though, the its Sugesting the model is significant. 
+      *  With min as -40.639 and max of 104.436   with median 0.282 shows, distribution of residuals between -ve to positive almost 
+         spreading more on the postive side.It seems the residuals are somewhat symmetrically distributed.
+      *  Null Hypothesis
+              * Null hypothesis is that the log odds of religious precentage is equal to 0 in the population.
+                Since the log odds of the predictor variables are statistically significant and less than thier respective alpha 
+                level - we can reject the null hypothesis.
+      *  F-statistic: 161.9 on 4 and 693 DF,  p-value: < 0.00000000000000022
+      *  Adjusted R-squared:  0.4801  
+      *  Having strong F score and p-value < alpha level ; We can reject the NULL hypothesis.
+      *  The conversion from log odds to regular output exp(coef(religious.lm)),
+          (Intercept)     dptMiss     polMiss     mmrMiss     varMiss 
+            0.7814467   0.7812570   1.2560020   0.9540644   2.7153276 
+     *  VIF() - to test for multi colleniarity; For the given predictor (religious), multicollinearity can assessed by 
+         computing a score called the variance inflation factor (or VIF). dptMiss and polMiss clearly suggesting signs of multi colleniarity.
+         So, its recommened to ignore these values.However, based on the correlatio coeffient values, if we reject polMiss then there 
+         could be better output.
+          dptMiss   polMiss   mmrMiss   varMiss 
+          14.262805 16.377165  7.110362  3.513100
+     *  Step wise analysis results,
+          Initial Model:
+            religious ~ dptMiss + polMiss + mmrMiss + varMiss
+
+          Final Model:
+            religious ~ dptMiss + polMiss + varMiss
+               Step Df Deviance Resid. Df Resid. Dev      AIC
+          1                             693   50352.60 2996.453
+          2 - mmrMiss  1 28.25718       694   50380.86 2994.845
+
+  * Second, Bayesian Approach to Multiple Regression Analysis
+      *  formula = lmBF(religious ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF, posterior=TRUE, iterations=10000)
+      *  mean squared value is 0.4779204
+      *  HDI Interval overaps with 0; almost symmetrical on both sides.
+         suggesting the test is significant and confirms the significance of alternative hypothesis.
+          * 2.5% Lower HDI is  0.4203966 
+          * 97.5% Upper HDI is 0.5296358 
+      *  Bayes factor analysis
+          * formula = lmBF(religious ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF)
+          * on dptMiss + polMiss + mmrMiss + varMiss very strong with Intercept only  denominator. 
+          * strong support for alternate hypothesis.
+   
+  * Finally, Comparison to lm(): NHST vs Alternative Hypothesis
+       * Earlier, linear regression analysis proved that p-value is lower only on one variable where as the overall model performed 
+         slighlty better with than the alpha value (0.02) hence we rejected the Null hypothesis.
+       * Bayesian factor favored alternate hypothesis with stronger bayes factor ratio. 
+        So, it doesnt strengthen our predictive exercise.
+
+
+# Please find more details from the R code below,
+```{r}
+#multiple linear regression
+options(scipen=999)  # turn-off scientific notation like 1e+48
+# summary(reportSampleDF)
+# str(reportSampleDF)
+# Crete lm model
+religious.lm <- lm(religious ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF) 
+summary(religious.lm)
+```
+
+
+```{r}
+EnsurePackage("VIF")
+EnsurePackage("car")
+vif(religious.lm)
+```
+
+```{r}
+EnsurePackage("MASS") # AIC
+stepOut_religious <- stepAIC(religious.lm)
+stepOut_religious$anova
+```
+
+```{r}
+EnsurePackage("MCMCpack")
+#histogram on residuals religious.lm
+hist(residuals(religious.lm))
+```
+
+```{r}
+#Chi-Square analysis on logistic regression
+anova(religious.lm, test="Chisq")
+
+```
+
+```{r}
+# Convert the log odds for the coefficient on the predictor into regular odds
+exp(coef(religious.lm))
+```
+
+
+```{r}
+#confusion matrix
+# table(round(predict(religious.lm,type="response")),reportSampleDF$religious)
+```
+
+
+```{r}
+options(scipen=999)  # turn-off scientific notation like 1e+48
+EnsurePackage("BayesFactor")
+
+MCMCout_religious <- lmBF(religious ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF, posterior=TRUE, iterations=10000)
+summary(MCMCout_religious)
+rsqList <- 1 - (MCMCout_religious[,"sig2"] / var(reportSampleDF$religious))
+MeanrsqList <- mean(rsqList)
+MeanrsqList
+quantile(rsqList,c(0.025))
+quantile(rsqList,c(0.975))
+```
+
+```{r}
+religiousBF <- lmBF(religious ~ dptMiss + polMiss + mmrMiss + varMiss ,data=reportSampleDF)
+summary(religiousBF)
+```
+
+
+```{r}
+# histogram of 95% HDI mean differences on dptMiss | overlaps with 0
+hist(MCMCout_religious[,"dptMiss"],col="#CBB43D")
+abline(v=quantile(MCMCout_religious[,"dptMiss"],c(0.025)),col="blue")
+abline(v=quantile(MCMCout_religious[,"dptMiss"],c(0.975)),col="green")
+```
+
+```{r}
+# histogram of 95% HDI mean differences on polMiss | overlaps with 0
+hist(MCMCout_religious[,"polMiss"],col="#4DAFD4")
+abline(v=quantile(MCMCout_religious[,"polMiss"],c(0.025)),col="blue")
+abline(v=quantile(MCMCout_religious[,"polMiss"],c(0.975)),col="green")
+```
+
+```{r}
+# histogram of 95% HDI mean differences on mmrMiss | overlaps with 0
+hist(MCMCout_religious[,"mmrMiss"],col="pink")
+abline(v=quantile(MCMCout_religious[,"mmrMiss"],c(0.025)),col="blue")
+abline(v=quantile(MCMCout_religious[,"mmrMiss"],c(0.975)),col="green")
+```
+
+```{r}
+# histogram of 95% HDI mean differences on varMiss | doesnt overlap with 0
+hist(MCMCout_religious[,"varMiss"],col="orange")
+abline(v=quantile(MCMCout_religious[,"varMiss"],c(0.025)),col="blue")
+abline(v=quantile(MCMCout_religious[,"varMiss"],c(0.975)),col="green")
+```
+
+```{r}
+summary(reportSampleDF)
+```
+
+# Predictive Analyses:
+#  13. What’s the big picture, based on all of the foregoing analyses?
+  *  We ran multiple regression analysis with various combinations, that required few data transformation/pre-processing.
+      *  replace NAs from the polMiss and mmrMiss with aggregate mean values
+  *  First, the comparison was to find if there were any medical exemptions between public and private schools.
+      * with p-value =0.1847, we fail to Null hypothesis that the the difference in mean is not equal to 0. With Private and Public mean 
+        values were totally differnt.
+      * Bayesian version also suggested that the means of the population mean is significant with median and mean values almost merging
+        at the center of the distribution
+  *  Second, we ran the analysis to find out -   Is it possible to predict whether a school is public or private based on
+     conditional, medical, and religious percentages. In this case,
+      * Comparison to lm(): NHST vs Alternative Hypothesis
+        * Earlier, linear regression analysis proved that p-value is much lower than the alpha value, hence we rejected the Null hypothesis
+        * Bayesian factor also, favored alternate hypothesis at 80.08021 ±0.01% ratio. 
+        * So, it does strenghten our predictive exercise.
+  *  Third, we ran an analyis to find out - Is it possible to predict conditional percentage, based on the percentages of specific 
+    vaccines that are missing
+      * Comparison to lm(): NHST vs Alternative Hypothesis
+        * Earlier, linear regression analysis proved that p-value is much lower than the alpha value, hence we rejected the Null hypothesis
+        * Bayesian factor also, favored alternate hypothesis at stronger bayes factor ratio. 
+        * So, it does strenghten our predictive exercise.
+  *  Next, we ran an analysis to find out - Is it possible to predict medical percentage, based on the percentages of specific 
+     vaccines that are missing
+      * Comparison to lm(): NHST vs Alternative Hypothesis
+        * Earlier, linear regression analysis proved that p-value is lower only on one variable where as the overall model performed 
+           slighlty better with than the alpha value (0.02) hence we rejected the Null hypothesis.
+        * Bayesian factor factor favored alternate hypothesis with stronger bayes factor ratio.  
+        * So, it doesnt strenghten our predictive exercise.
+  *  Finally, we ran an analysis to find out - Is it possible to predict religious percentage, based on the percentages of specific 
+     vaccines that are missing
+      * Comparison to lm(): NHST vs Alternative Hypothesis
+        * Earlier, linear regression analysis proved that p-value is lower only on one variable where as the overall model performed 
+          slighlty better with than the alpha value (0.02) hence we rejected the Null hypothesis.
+        * Bayesian factor favored alternate hypothesis with stronger bayes factor ratio. 
+        * So, may be with better dataset, we can strengthen our predictive exercise.
+
+ 
+ 
+

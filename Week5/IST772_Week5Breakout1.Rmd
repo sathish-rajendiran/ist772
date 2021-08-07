@@ -1,0 +1,117 @@
+---
+title: "Week 5 – Bayesian Inference Exercise"
+author: "Sathish Kumar Rajendiran"
+output: pdf_document
+---
+
+
+Instructions: We will reuse the battery life data from Week 4. The data set represents battery life in minutes for mobile phones for two different types of batteries: NiCad and Li-Ion. The research question is whether the Li-Ion batteries (labelled as type 2 in the data set) offer a better battery life than the NiCads.
+
+Read in the data in the CSV file from Week 4 (batterydata.r.csv) using the Import Data dialog in R-Studio. Once imported, the data should show in a View() window in the upper left pane of R-Studio.
+
+```{r}
+#import csv files into data frames
+
+#define file path
+fpath <- "/Users/sathishrajendiran/Documents/R/IST772/batterydata.r.csv"
+
+#import into a dataframe
+batterydata_r <- data.frame(read.csv(fpath),stringsAsFactors=FALSE)
+
+#View the data set
+View(batterydata_r)
+
+colnames(batterydata_r)
+# [1] "Obs"     "Battery" "Time"  
+```
+
+
+1.	Using R, display a boxplot that depicts the distribution of battery life (Time) comparing NiCad and Li-Ion batteries (Battery==1 vs. Battery==2).  
+
+```{r}
+#box plot to compare the batteries
+# with(batterydata_r, boxplot(Time~Battery))
+boxplot(Time~Battery, data=batterydata_r,
+       border="orange", 
+       col="steelblue",
+       freq=FALSE,
+       las=1, 
+       breaks=10,
+       # notch = TRUE,
+       horizontal = TRUE ,main=" Distribution of battery type vs life time")
+```
+
+
+2.	Write R code calculating the value of the “point estimate” of the mean difference in battery life between the two types of battery. 
+
+```{r}
+#mean battery life in minutes
+
+nicad <- batterydata_r$Time[batterydata_r$Battery==1] 
+liion <- batterydata_r$Time[batterydata_r$Battery==2]
+
+meanDiff <- mean(nicad)-mean(liion)
+
+cat("Average life of nicad battery is:",mean(nicad),"\n")
+cat("Average life of Li-Ion battery is:",mean(liion),"\n")
+cat("Mean Differebce life of Ni-Cad & Li-Ion battery is:",meanDiff,"\n")
+
+cat("\nstandard deviation of the life of nicad battery is:",sd(nicad),"\n")
+cat("standard deviation of the life of Li-Ion battery is:",sd(liion),"\n")
+```
+
+
+```{r}
+#t-test
+t.test(batterydata_r$Time[batterydata_r$Battery==1] ,batterydata_r$Time[batterydata_r$Battery==2])
+```
+
+3.	Run the BEST procedure comparing the life of the two types of battery. If you don't have JAGS software installed on your computer and the BEST package loaded in R (as described in Chapter 5), you can use the website http://www.sumsar.net/best_online/ to run the BEST procedure on the data. For your convenience, the data are listed here to cut and paste into the boxes on the webpage:  
+
+NiCad: 
+1227 1220 1232 1221 1233 1229 1225 1239 1261 1248 1248 1245 1255 1236 1262 1274 1262 1261 1252 1287 1269 1269 1259 1280 1273 1276 1294 1300 1304 1294 1283 1314 1266 1311 1308 1290 1287 1346 1315 1332 1329 1297 1325 1301 1318 1336 1362 1322 1359 1349 1369 1353 1339 1388 1383 1343 1373 1379 1390 1356 1393 1376 1366 1388 1397 1388 1388 1388 1386 1388 1388 1388 1388 1388 1388 1388 1388 1388 1388 1388 1388 1397 1388 1388 1388 1388
+
+Li-Ion: 
+1395 1395 1395 1395 1395 1395 1395 1395 1397 1397 1397 1397 1397 1395 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1397 1388 1397 1397 1397 1397 1397 1397 1397 1397 1397 1388 1397 1388 1388 1388 1397 1388 1388 1388 1388 1388 1388 1388 1388 1388 1388 1388 1388 1397 1388 1388 1388 1388
+
+```{r}
+#install.packages("BEST")
+library(BEST)
+batteryBest <- BESTmcmc(batterydata_r$Time[batterydata_r$Battery==1], 
+                        batterydata_r$Time[batterydata_r$Battery==2])
+batteryBest
+```
+```{r}
+plot(batteryBest)
+```
+
+
+```{r}
+summary(batteryBest)
+```
+
+
+4.	What are the lower and upper limits of the highest density interval (HDI) for the difference in means? Explain what an HDI is. Hint: what can you say about the probability that the population value for the mean difference lies between the upper and lower limits of the HDI? 
+
+```{r}
+diffBest <- batteryBest$mu1 - batteryBest$mu2
+quantile(diffBest, c(0.025, 0.5, 0.975))
+
+```
+
+5.	Does the HDI overlap with zero? What percentage of the estimates under the HDI curve is above zero? What implications does this have for the credibility of a non-zero difference in battery life between the two types of battery?
+
+No.
+
+6.	The web page output shows “Density – SD Group 1” and “Density – SD Group 2” plots. You can also view these plots in R-Studio with plotAll(bestOut). For which type of battery does the life span seem to have greater variability in the population? 
+
+```{r}
+plotAll(batteryBest)
+```
+
+
+7.	Based on the results of the Bayesian t-test, which battery do you prefer? 
+
+Li-Ion - would be preferred
+
+Please post your code and comments to https://codeshare.io/aJDyRX. If you used the http://www.sumsar.net/best_online/ website instead of the BEST package in R, leave a comment describing the difficulty you had installing JAGS, the rjags package, or the BEST package.

@@ -1,0 +1,43 @@
+---
+title: "IST772 Problem Set 8"
+author: "Your name here"
+output:
+  pdf_document: default
+---
+
+The homework for week 8 is based on exercises 2-8 on pages 181-182 but with changes as noted in this notebook (i.e., follow the problems as given in this document and not the textbook). 
+
+Attribution statement: (choose only one)
+1. I did this homework by myself, with help from the book and the professor
+2. I did this homework with help from the book and the professor and these Internet sources:
+3. I did this homework with help from <Name of another student> but did not cut and paste any code
+
+# Chapter 8, Exercise 2
+
+_The data sets package in R contains a small data set called swiss that contains n = 47 observations of socio-economic indicators for each of 47 French-speaking provinces of Switzerland at about 1888. Use “?swiss” to display help about the data set. _
+
+_Create and interpret a bivariate correlation matrix using cor(swiss) keeping in mind the idea that you will be trying to predict the Fertility variable. Which other variable might be the single best predictor? (1 pt)_
+
+# Chapter 8, Exercise 3
+
+_Run a multiple regression analysis on the swiss data with lm(), using Fertility as the dependent variable and Education and Agriculture as the predictors. (1 pt) Check the diagnostics. (1 pt) Say whether or not the overall R‐squared was significant. If it was significant, report the value and say in your own words whether it seems like a strong result or not. Review the significance tests on the coefficients (B‐weights). For each one that was significant, report its value and say in your own words whether it seems like a strong result or not. (1 pt)_
+
+# Chapter 8, Exercise 4
+
+_Using the results of the analysis from Exercise 2, construct a prediction equation for Fertility using all three of the coefficients from the analysis (the intercept along with the two B‐weights). If you observed a province with scores for Education of 8 and Agriculture of 35, what would you predict the Fertility rate to be (you can use your equation or the predict function)? Show your calculation and the resulting value of Fertility. (1 pt)_
+
+# Chapter 8, Exercise 5
+
+_Run a multiple regression analysis on the swiss data with lmBF(), using Fertility as the dependent variable and Education and Agriculture as the predictors. (1 pt) Interpret the resulting Bayes factor in terms of the odds in favor of the alternative hypothesis (be sure to note the hypotheses being compared). Do these results strengthen or weaken your conclusion to exercise 2? (1 pt)_
+
+# Chapter 8, Exercise 6
+
+_Run lmBF() with the same model as for Exercise 4, but with the options posterior=TRUE and iterations=10000. (1 pt) Interpret the resulting information about the coefficients. (1 pt)_
+
+# Chapter 8, Exercise 7
+
+_Run install.packages() and library() for the “car” package. The car package is “companion to applied regression” rather than more data about automobiles. Read the help file for the vif() procedure and then look up more information online about how to interpret the results. Then write down in your own words a “rule of thumb” for interpreting vif. (1 pt)_
+
+# Chapter 8, Exercise 8
+
+_Run vif() on the results of the model from Exercise 3. (1 pt) Interpret the results. Then run a model that predicts Fertility from all five of the predictors in swiss. Run vif() on those results and interpret what you find. (1 pt)_

@@ -1,0 +1,45 @@
+---
+title: "IST772 Problem Set 10"
+author: "Your name here"
+output:
+  pdf_document: default
+---
+
+The homework for week 10 is based on exercises 2, 5, 6, 7, and 8 on pages 272 and 273 but with changes as noted in this notebook (i.e., follow the problems as given in this document and not the textbook). 
+
+Attribution statement: (choose only one)
+1. I did this homework by myself, with help from the book and the professor
+2. I did this homework with help from the book and the professor and these Internet sources:
+3. I did this homework with help from <Name of another student> but did not cut and paste any code
+
+# Chapter 11, Exercise 1
+
+_Download and library the nlme package and use data("Pixel") to activate the Pixel data set and "? Pixel" for documentation. Inspect the data and create a box plot showing the Pixel intensities on different days. (1 pt) Run a repeated measures ANOVA to compare pixel intensities on days 4, 6, 10 and 14 using aov() (1 pt) and report the results. (1 pt) You can use a command like:_
+
+```{r}
+myData <-subset(Pixel, day %in% c(4,6,10,14))
+```
+
+_to subset the data. Keeping in mind that the data will need to be balanced before you can conduct this analysis. (1 pt) Try running a command like:_
+
+```{r}
+table(myData$Dog,myData$day)
+```
+
+_as the starting point for cleaning up the data set._
+
+# Chapter 11, Exercise 5
+
+_Given that the built-in AirPassengers data set (see "? AirPassengers" for documentation) has a substantial growth trend, use diff() to create a differenced data set. (1 pt) Use plot() to examine and interpret the results of differencing. Use cpt.var() to find the change point in the variability of the differenced time series. (1 pt) Plot the result and describe in your own words what the change point signifies. (1 pt)_
+
+# Chapter 11, Exercise 6
+
+_Use cpt.mean() on the undifferenced AirPassengers time series. (1 pt) Plot and interpret the results. Compare the change point of the mean that you uncovered in this case to the change point in the variance that you uncovered in Exercise 5. What do these change points suggest about the history of air travel? (1 pt)_
+
+# Chapter 11, Exercise 7
+
+_Find historical information about air travel on the Internet and/or in reference materials that sheds light on the results from Exercises 5 and 6. Write a mini-article (less than 250 words) that interprets your statistical findings from Exercises 5 and 6 in the context of the historical information you found. (1 pt)_
+
+# Chapter 11, Exercise 8
+
+_Use bcp() on the AirPassengers time series. (1 pt) Plot and interpret the results. Make sure to contrast these results with those from Exercise 6. (1 pt)_

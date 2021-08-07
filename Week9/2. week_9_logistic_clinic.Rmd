@@ -1,0 +1,263 @@
+---
+title: "Week 9 Logistic Regression Clinic"
+---
+
+# Instructions
+
+Your instructor will supply a CSV file (Week9hiringData.csv) to read into R. It is recommended that you assign the imported data set to a data frame called "hiredata".
+This data set contains a list of n=295 survey responses from raters who participated in an employee hiring process.
+The ultimate dependent variable, "hired", is a binary variable with 0 for a candidate who was subsequently not hired and 1 for a candidate who was.
+The "recommend" variable is each survey participant’s recommendation of whether to hire, with 1 = "Definitely Hire", 2 = "Possibly Hire", and 3 = "Do Not Hire". 
+In addition, there are six belief questions all on 1 to 4 scales (with 1 as most favorable and 4 as least favorable) with assessments of the candidates on issues like leadership and collaboration. 
+The ultimate research question is to understand the connection between survey participant responses and the ultimate hiring decisions: do survey respondents accurately assess who will be hired?
+
+```{r}
+#import csv files into data frames
+fpath <- "/Users/sathishrajendiran/Documents/R/IST772/Week9hiringData.csv"
+
+# function readFiles
+readFiles <- function(fpath)
+  {
+  dftemp <- data.frame(read.csv(fpath),stringsAsFactors=FALSE)
+  return(dftemp)
+  }
+
+hiredata <- readFiles(fpath) 
+# View(hiredata)
+summary(hiredata)
+
+dim(hiredata)
+# [1] 295  10
+
+table(hiredata$hired)
+# 0   1 
+# 221  74 
+
+table(hiredata$recommend)
+ #  1   2   3 
+ # 85 133  77 
+
+colnames(hiredata)
+#  [1] "row"       "hired"     "rater"     "recommend" "vision"    "issues"    "trends"    "consult"   "lead"      "collab" 
+```
+
+
+This clinic unfolds in three phases: 1) creating an initial logistic regression model using the recommend variable as a predictor; 2) running the Bayesian model of logistic regression; and 3) finding additional predictor(s) that may improve the model.
+
+# Phase 1 Instructions
+
+In this first phase of the clinic, read the data into R, inspect the data, and develop a basic logistic regression model with one predictor – namely the hire recommendation. The dependent variable will be the actual hiring decision.
+
+1.	Use the "Import Dataset" dialog to import the data into R. It is recommend to used read.csv() (the first option on the drop down menu: "From Text (base)...". Assign the result to a data frame called "hiredata". Run summary(hiredata). Take special note of the min and max of the survey variables: recommend, vision, issues, trends, consult, lead, and collab.
+```{r}
+summary(hiredata)
+```
+
+2.	Run histograms on each of the numeric variables to ascertain the shape of their distributions. Note any anomalies.
+```{r}
+options(scipen=999)  # turn-off scientific notation like 1e+48
+# install.packages("dlookr")  # note: requires version 3.5.2 or higher
+library(dlookr)
+diagnose_outlier(hiredata)
+plot_outlier(hiredata)
+```
+```{r}
+#install.packages("tidyverse")
+library(tidyverse)
+hiredata %>% 
+  pivot_longer(cols=-rater, names_to="variable", values_to="value", values_drop_na = TRUE) %>% 
+  ggplot(aes(x=variable, y=value)) + geom_violin() + facet_wrap( ~ variable, scales="free")
+```
+
+```{r}
+diagnose(hiredata)
+```
+
+You can see the pattern of NAs across variables with the md.pattern() function from the mice library: 
+
+```{r}
+# install.packages("mice")
+library(mice)
+md.pattern(hiredata, plot=FALSE)
+```
+
+
+You can also get a sense of what's going on with a visualization. 
+
+```{r}
+# install.packages("visdat")
+library(visdat)
+vis_miss(hiredata)
+```
+
+3.	Create a correlation matrix of the data and paste it below. The cor() procedure will not work on text or factor data, so you need to select the subset of numerical values. This statement should work: 
+
+```{r}
+cor(hiredata[,4:10])
+```
+
+Add any comments that you may have about the correlation matrix.
+
+4.	Run a basic logistic regression model using glm(). The formula should specify the dependent variable (hired) and the predictor (recommend). Here’s a command that should work:
+
+```{r}
+glmOut <- glm(formula = hired ~ recommend, family = binomial(link="logit"), data = hiredata)
+glmOut
+```
+
+5. Examine the residuals. The plot command works on a glm object, but because the dependent variable is binary, the raw residuals are not very informative. The DHARMa library use a "simulation-based" approach to create more readily interpretable residuals, and provides several plots and tests of those residuals. (You should read the documentation for the details, the vignette in particular.) The simulation is run as follows:  
+
+```{r}
+#install.package("DHARMa")
+library(DHARMa)
+simulationOutput <- simulateResiduals(fittedModel = glmOut, n = 250)
+plot(simulationOutput)
+```
+
+The tests are run as follows:
+
+```{r}
+testResiduals(simulationOutput)
+```
+
+6. Run summary() on the glmOut object and paste in the results below. Write a brief statement summarizing the results. Is the predictor statistically significant?
+
+```{r}
+summary(glmOut)
+```
+
+7. Use the exp() and confint() commands as described on page 225 of the textbook to convert the log odds for the coefficient on the predictor into regular odds. Add a one sentence interpretation:
+
+```{r}
+exp(coef(glmOut))
+```
+
+
+8. You will note that the plain odds version of the coefficient on the predictor is fractional because the recommendation is coded with 1 as best and 3 as worst. This inversion can make interpretation of the results messier, particularly for non-statisticians to whom you may wish to communicate your results. You can invert the sense of the recommend variable with this simple statement:
+
+```{r}
+hiredata$recInv <- 4 - hiredata$recommend
+```
+
+Try the math in your head by plugging in the minimum value of recommend (1) and the maximum value of recommend (3). Note that this command adds a new variable to your existing data set. To cross check your results, you could correlate the new variable with the old one. Report and briefly explain the result below:
+
+9.	Rerun the code for Questions 4-7 using the new version of the predictor variable. Provide a new interpretation of the plain odds ratio, based on the output you get from applying exp() and confint() to the coefficient.
+
+10.	Produce and interpret a Nagelkerke pseudo-R-squared using this code:
+
+```{r}
+
+install.packages(pkgs=c("BaylorEdPsych"),repos = "https://CRAN.R-project.org/package=BaylorEdPsych ")
+
+library(BaylorEdPsych)
+PseudoR2(glmOut) 
+```
+
+11. Another helpful view of the performance of a model is a confusion matrix, a comparison of the predictions of the model to the actual outcome. The caret library has a helpful function to analyze these, reporting a bunch of different measures of performance. 
+
+```{r }
+# install.packages("caret")
+library(caret)
+
+predictedhire<-round(predict(glmOut,type="response"))
+
+sum(predictedhire) # number we predict to be hired
+sum(hiredata$hired) # number actually hired
+
+confusion<-table(predictedhire, hiredata$hired)
+addmargins(confusion)
+
+confusionMatrix(confusion, positive="1")
+```
+
+Write a brief paragraph that reports the full set of results you have obtained so far. Be sure to report the overall significance, the psuedo-R-squared, and any significant predictors, using the plain odds ratio. 
+
+# Phase 2 Instructions
+
+Conduct a Bayesian logistic regression analysis, using the facilities in the MCMCpack package. 
+
+11. Install the MCMCpack package and library it using the appropriate menus or command. Paste in the output produced by the library() command below:
+
+```{r}
+# install.packages("MCMCpack")    # Download MCMCpack package
+library("MCMCpack")
+```
+
+12. Run the MCMClogit() function using the same model as for Question 7 above. The following code should work:
+
+```{r}
+bayesLogitOut <- MCMClogit(formula = hired ~ recInv, data = hiredata)
+```
+
+Run summary() on the output object and paste the results below. Comment on how the Bayesian (MCMC) mean of the coefficient parameter on the predictor compares with the corresponding result from the conventional glm() analysis. 
+```{r}
+summary(bayesLogitOut)
+```
+
+
+13.	Create a plot of the MCMC output by running plot(bayesLogitOut). Take note of any anomalies in the trace plot. Does the distribution of parameter estimates on the predictor appear to overlap with zero?
+```{r}
+plot(bayesLogitOut)
+
+```
+
+
+14.	We can improve our view of the parameter estimates of the coefficient by converting the distribution from log odds to plain odds. The following code develops a histogram of the posterior distribution of plain odds:
+
+```{r}
+recLogOdds <- as.matrix(bayesLogitOut[,"recInv"])
+recOdds <- exp(recLogOdds) 
+hist(recOdds, main=NULL) 
+```
+
+15.	Add details to your histogram by marking off the HDI:
+
+```{r}
+hist(recOdds, main=NULL) 
+abline(v=quantile(recOdds,c(0.025)),col="orange") 
+abline(v=quantile(recOdds,c(0.975)),col="blue") 
+abline(v=quantile(recOdds,c(0.50)),col="green") 
+```
+
+16.	Write an interpretation of all of the Bayesian output. Obtain and report specific values for the mean of the posterior distribution as well as the upper and lower bounds of its HDI. Hint: The code to get the upper and lower bounds is already embedded in the code provided for Question 15. 
+
+# Phase 3 Instructions
+
+Everything we have done so far has focused on the recommend variable provided by the survey respondents. Conceptually, that is the most proximal variable to the actual hiring decision that we have used as our dependent variable. There are six additional attitude/belief variables in the data set, however, and it would be interesting to know if any of them could add to our predictive capability.
+
+17.	Create and assess an lm() model that predicts the survey respondent's recommendation (recommend) from the six attitude/belief variables: vision, issues, trends, consult, lead, and collab. 
+
+```{r}
+glmOut <- glm(hired ~ vision + issues + trends + consult + lead + collab,data=hiredata,family = binomial(link = "logit")) 
+summary(glmOut)
+
+vif(glmOut)
+```
+
+```{r}
+lmOut <- lm(recommend~vision + issues + trends + consult + lead + collab,data=hiredata)
+summary(lmOut)
+```
+```{r}
+vif(lmOut)
+```
+
+18.	Here’s a curious bit of logic: We know that if two predictors are highly correlated, that they will "fight" each other in a linear prediction equation. Because the two predictors have so much in common, once you have placed either one of them in the prediction model, the other one does not have much to contribute when added. As a result, what we are looking for in the output of Question 17 is one or more of the six attitude/belief variables that is a poor predictor of recommend. If it is a poor predictor of recommend, that means that it is substantially independent of recommend, and as such it may have a shot at being a workable additional predictor of hired. Based on the results of Question 17, name one, two or three poor predictors of recommend
+
+
+
+19. Create a series of glm() models with two predictors, namely recommend and something else. For example, the following glm() model would be for recommend and trends:
+
+```{r}
+glmOut <- glm(formula = hired ~ recommend + trends, family = binomial(link="logit"), data = hiredata)
+```
+
+If you find a model where both recommend and the other variable are significant predictors, note it below:
+
+20. Using your favorite model from Question 19, create the other output we need to interpret the model and provide a brief interpretation. 
+
+21. If time permits, repeat Questions 19 and 20 using the inverted version of recommend. It will also be helpful to invert your other predictor variable. Pay close attention to the min and max of that other variable as you develop a line of code to invert it.
+
+22.	If time permits, create a Bayesian version of your final model from Question 19. Paste the results below. It is especially important to include the posterior distribution of plain odds, with numeric statements of the mean of the distribution and the lower and upper bounds of the HDI.
+
+23.	If time permits, write an integration interpretation of Questions 21 and 22. Try to answer the original research question: Can survey respondents accurately assess who will be hired?

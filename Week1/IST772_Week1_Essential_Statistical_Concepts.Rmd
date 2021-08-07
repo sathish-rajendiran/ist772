@@ -1,0 +1,99 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+----------------------------------------------------------------------------------
+Title: "IST772 Week1- Essential Statistical Concepts and Vocabulary"
+Name: Sathish Kumar Rajendiran
+Date: 10/05/2020
+-----------------------------------------------------------------------------------
+
+
+```{r}
+#create a function to ensure the libraries are imported
+EnsurePackage <- function(x){
+  x <- as.character(x)
+    if (!require(x,character.only = TRUE)){
+      install.packages(pkgs=x, repos = "http://cran.us.r-project.org")
+      require(x, character.only = TRUE)
+    }
+  }
+# usage example, to load the necessary library for further processing...
+EnsurePackage("modeest")
+EnsurePackage("ggplot2")
+EnsurePackage("RColorBrewer")
+cat("All Packages are available")
+```
+
+```{r}
+# Intro to Vector creation
+x <- c(0,0,0,2,3,4,5)
+x
+```
+
+```{r}
+# Explore the most frequent value from "discoveries" 
+m <- mfv(discoveries)
+cat("\n most frequent value from discoveries dataset is:",m)
+```
+```{r}
+#Yearly Numbers of Important Discoveries
+?discoveries
+```
+
+```{r}
+# Use R to Calculate Standard Deviation
+
+votes <- c(200,300,400)
+(votes-mean(votes))^2
+sum((votes-mean(votes))^2)
+sqrt(sum((votes-mean(votes))^2)/length(votes))
+
+votes1 <- c(200,300,400)
+votes2 <- c(299,300,301)
+
+sqrt(sum((votes1-mean(votes1))^2)/length(votes1)) #81.64966
+sqrt(sum((votes2-mean(votes2))^2)/length(votes2)) #0.8164966
+```
+```{r}
+# Explore the standard deviation" 
+cat("\n standard deviation from discoveries dataset is:",sd(discoveries))
+cat("\n variance from discoveries dataset is:",var(discoveries))
+cat("\n mean from discoveries dataset is:",mean(discoveries))
+cat("\n range from discoveries dataset is:",range(discoveries))
+```
+
+```{r}
+# Identify certain shapes 
+#random distribution; low tails on both side
+hist(rnorm(n=120,mean=85,sd=5))
+```
+```{r}
+#random distribution; low tails on both side
+hist(rnorm(n=120,mean=85,sd=15))
+```
+```{r}
+#random distribution; low tails on both side
+hist(rnorm(n=120,mean=0,sd=15))
+```
+```{r}
+# uniform distribution
+hist(runif(120,min=50,max=80))
+```
+
+```{r}
+# uniform distribution
+hist(runif(1200,min=50,max=80))
+```
+```{r}
+#poisson distribution
+hist(rpois(n=120,lambda = 3))
+```
+```{r}
+#poisson distribution
+hist(rpois(n=120,lambda = 30))
+```
+```{r}
+hist(rexp(10000,1))
+```
+

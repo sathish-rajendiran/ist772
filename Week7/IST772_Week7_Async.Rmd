@@ -1,0 +1,183 @@
+---
+title: "IST772– Week7 Async"
+author: "Sathish Kumar Rajendiran"
+output: pdf_document
+---
+
+```{r}
+set.seed(12345)
+
+wood <- rnorm(24)
+heat <- rnorm(24)
+
+mean(wood)
+mean(heat)
+     
+sd(wood)
+sd(heat)
+```
+
+```{r}
+#png("Figure07_1.png", width = 6, height = 6, units = 'in', res = 300)
+plot(wood,heat, main=NULL) 
+#dev.off()
+```
+
+
+
+```{r}
+#png("Figure07_2.png", width = 6, height = 6, units = 'in', res = 300)
+plot(wood,(wood-mean(wood)), main=NULL)
+#dev.off()
+```
+```{r}
+cpWH <- wood * heat
+#png("Figure07_3.png", width = 6, height = 6, units = 'in', res = 300)
+hist(cpWH, main=NULL)
+#dev.off()
+mean(cpWH)
+
+```
+```{r}
+x <- c(1,2,3)
+y <- c(1,3,2)
+plot(x,y)
+cor(x,y)
+```
+
+```{r}
+x <- c(1,2,3)
+y <- c(3,1,2)
+plot(x,y)
+cor(x,y)
+```
+
+
+```{r}
+pairs(iris[,1:4])
+```
+
+
+
+```{r}
+cor(iris[,1:4])
+```
+
+```{r}
+round( cor(iris[,1:4]), 2 )
+```
+
+```{r}
+round( cor(iris[,1:3]), 2 )
+```
+
+
+```{r}
+set.seed(12345)  # Start with a random number seed
+wood <- rnorm(2400)  # Make two vectors of N=2400
+heat <- rnorm(2400)
+fireDF <- data.frame(wood, heat)  # Put them in a dataframe
+nrow(fireDF)  # Verifying 2400 rows of two variables
+fireDF[sample(nrow(fireDF), 24), ] # Generates one sample of n=24  
+```
+
+```{r}
+cor(fireDF[sample(nrow(fireDF), 24), ])
+cor(fireDF[sample(nrow(fireDF), 24), ])[1,2]
+
+corDist <- replicate(5000,cor(fireDF[sample(nrow(fireDF), 24), ])[1,2])
+#png("Figure07_6.png", width = 6, height = 6, units = 'in', res = 300)
+hist(corDist, main=NULL)
+#dev.off()
+mean(corDist)
+```
+```{r}
+# Conduct a null hypothesis test on one correlation
+set.seed(12345)
+wood <- rnorm(24)
+heat <- rnorm(24)
+cor.test(wood,heat)
+```
+
+```{r}
+install.packages("BayesFactor")
+library("BayesFactor")
+
+bfCorTest <- function (x,y) # Get r from BayesFactor
+{
+  zx <- scale(x) # Standardize X
+  zy <- scale(y) # Standardize Y
+  zData <- data.frame(x=zx,rhoNot0=zy) # Put in a data frame
+  bfOut <- generalTestBF(x ~ rhoNot0, data=zData) # linear coefficient
+  mcmcOut <- posterior(bfOut,iterations=10000) # posterior samples
+  print(summary(mcmcOut[,"rhoNot0"])) # Get the HDI for rho
+  return(bfOut) # Return Bayes factor object
+}
+
+bfCorTest(iris[,"Sepal.Length"],iris[,"Sepal.Width"])
+```
+```{r}
+# Chi-square section
+
+make2x2table <- function(ul) # The user supplies the count for the upper left cell
+{
+  ll <- 50 - ul # Calculate the lower left cell
+  ur <- 30 - ul # Calculate the upper right cell
+  lr <- 50 - ur # Calculate the lower right cell
+  
+  # Put all of the cells into a 2x2 matrix
+  matrix(c(ul,ur,ll,lr), nrow=2, ncol=2, byrow=TRUE)
+}
+
+make2x2table(10) # Should be like Table 7.2
+make2x2table(0)   # Should be like Table 7.3
+make2x2table(30)  # Should be like Table 7.4
+
+calcChiSquared <- function(actual, expected) # Calculate chi-squared
+{
+  diffs <- actual - expected         # Take the raw difference for each cell
+  diffsSq <- diffs ^ 2               # Square each cell
+  diffsSqNorm <- diffsSq / expected # Normalize with expected cells
+  
+  sum(diffsSqNorm)                   # Return the sum of the cells
+}
+
+# This makes a matrix that is just like Table 7.2
+# This table represents the null hypothesis of independence
+expectedValues <- matrix(c(10,30,30,30), nrow=2, ncol=2, byrow=TRUE)
+
+calcChiSquared(make2x2table(10),expectedValues)
+calcChiSquared(make2x2table(0),expectedValues)
+calcChiSquared(make2x2table(30),expectedValues)
+
+```
+```{r}
+set.seed(314)
+badBoatMF <- ftable(Titanic, row.vars=2, col.vars="Survived")
+badBoatMF
+ctBFout <- contingencyTableBF(badBoatMF,sampleType="poisson",posterior=FALSE)
+ctBFout
+
+367/1364
+
+126/344
+
+```
+
+```{r}
+ctMCMCout <- contingencyTableBF(badBoatMF,sampleType="poisson",posterior=TRUE,iterations=10000)
+summary(ctMCMCout)
+maleProp <- ctMCMCout[,"lambda[1,1]"]/ctMCMCout[,"lambda[1,2]"]
+mean(maleProp)
+femaleProp <- ctMCMCout[,"lambda[2,1]"]/ctMCMCout[,"lambda[2,2]"]
+mean(femaleProp)
+diffProp <- maleProp - femaleProp
+hist(diffProp)
+mean(diffProp)
+abline(v=quantile(diffProp,c(0.025)), col="black")
+abline(v=quantile(diffProp,c(0.975)), col="black")
+
+quantile(diffProp,c(0.025))
+quantile(diffProp,c(0.975))
+```
+

@@ -1,0 +1,244 @@
+---
+title: "Week 10 Time Series Clinic"
+output: html_notebook
+---
+
+# Instructions
+
+In this exercise, you will work on data from the National Oceanic and Atmospheric Administration (NOAA) that documents the concentration of atmospheric carbon dioxide (in micromols/mol) from three different monitoring sites across the globe. The file containing these data is called Week10data.csv and will be supplied by your instructor. 
+Sites 1 and 3 are in Alaska: 
+Site 1 is Cold Bay, AK (in the Aleutian islands) and 
+
+site 3 is Barrow, AK on the Chukchi Sea. 
+
+Previously, Barrow was ice locked for much of the year, but ice has gradually been diminishing since regular measurements began in the 1970s. On June 18, 2004 the coastal sea ice disappeared within 24 hours, signaling a major change in seasonal ice behavior. 
+
+Site 2 is located at Mauna Loa in Hawaii, which is, of course, a tropical location with relatively small seasonal variations in weather.
+
+```{r}
+#import csv files into data frames
+fpath <- "/Users/sathishrajendiran/Documents/R/IST772/Week10data.csv"
+
+# function readFiles
+readFiles <- function(fpath)
+  {
+  dftemp <- data.frame(read.csv(fpath),stringsAsFactors=FALSE)
+  return(dftemp)
+  }
+
+co2data <- readFiles(fpath) 
+
+summary(co2data)
+
+
+View(co2data)
+
+str(co2data)
+```
+
+
+This clinic unfolds in three phases: 1) reading in and visualizing the data; 2) conducting diagnostics of cyclicity and stationarity; and 3) conducting substantive analyses of the time series data. The general research question is to describe what is happening at these three sites and to highlight similarities and differences among them.
+
+Share your code at https://codeshare.io/aJDyRX
+
+# Phase 1 Instructions
+
+In this first phase of the clinic, read the data into R, inspect the data, and plot the data.
+
+1.	Use the "Import Dataset" dialog to import the data into R. It is recommend to use read_csv() (the second option on the drop down menu: "From Text (readr). . ." Assign the result to a data frame called "co2data." Run View(), summary(), and str() on the data. Paste in the results below and mention briefly the data type of co2data.
+
+2.	Create a correlation matrix of the data and paste it below. The cor() procedure will not work on text or factor data, so you need to select the subset of numerical values. This statement should work: 
+
+```{r}
+cor(co2data[,4:6])
+```
+
+Add any comments that you may have about the values you see in the correlation matrix.
+
+
+3.	Plot the data for each site. You can force a plot to be a univariate time series by using plot.ts(). For example, plot.ts(co2data$site1) creates a time series plot of Cold Bay, AK. Describe what you see in a brief sentence. Are three different sites similar or different from one another? Mention any differences you see in a comment below.
+
+```{r}
+plot.ts(co2data$site1)
+```
+```{r}
+plot.ts(co2data$site2)
+```
+
+```{r}
+plot.ts(co2data$site3)
+```
+
+
+4.	Convert the raw data into a multivariate time series object with the following command:
+
+```{r}
+co2series <- ts(co2data[,4:6], start=c(1978,10), frequency=12)
+```
+
+This start date was chosen by examining the first line of data. The frequency of 12 was selected because these data were generally collected monthly. Run plot() and str() on the data. In a brief comment, mention why it is no longer necessary to use plot.ts().
+
+```{r}
+str(co2series)
+plot(co2series)
+```
+
+
+5.	Use the decompose() function to break each site’s time series into its various components. For example, the following command decomposes the data for Mauna Loa, HI:
+
+```{r}
+dec1 <- decompose(co2series[,"site1"])
+dec2 <- decompose(co2series[,"site2"])
+dec3 <- decompose(co2series[,"site3"])
+```
+
+6.	Plot each of the three decomposition objects using the plot() command. Write a paragraph below describing what you observe for trend, seasonal, and random components of the time series. Include in your commentary anything you note about differences between the three sites.
+
+```{r}
+plot(dec1)
+plot(dec2)
+plot(dec3)
+
+```
+
+
+# Phase 2 Instructions
+
+Visualize and test the cyclicity and stationarity of the three time series. 
+
+7.	Install the "TSA" package and library it using the appropriate menus or command. 
+
+```{r}
+install.packages("TSA")
+library("TSA")
+```
+
+
+8.	Run the periodogram() function on the seasonal component of each of the time series. A periodogram displays the intensity of cyclical energy at different frequencies. For example, the following command plots a periodogram for the seasonal decomposition element for Cold Bay, AK and stores the resulting frequency analysis:
+
+```{r}
+p1 <- periodogram(dec1$seasonal)
+p2 <- periodogram(dec2$seasonal)
+p3 <- periodogram(dec3$seasonal)
+```
+
+Describe what you see in the plot. You can also run View(p1) and str(p1) to learn more about the output object.
+
+
+9.	Ascertain the length of the strongest cycle by inverting the appropriate frequency in the periodogram object. Try this code:
+
+```{r}
+1/p1$freq[which.max(p1$spec)]
+
+1/p2$freq[which.max(p2$spec)]
+
+1/p3$freq[which.max(p3$spec)]
+
+```
+
+There are a couple of interesting aspects to this line of code. First, which.max() returns the index number of the maximum value in the supplied vector. 
+So within p1$spec, which is the collection of intensity values, which.max() will reveal the location of the highest of those intensity values. 
+We then use that index number to choose the corresponding element from the frequency vector. Finally, to learn the length of the cycle in months, we take the reciprocal of frequency. Report the cycle length below for each of the three time series.
+
+10.	Next, let’s check the stationarity of the random component of each of the time series. The following three lines put the random components into a data frame, remove any missing data, and convert to a times series:
+
+```{r}
+sites <- data.frame(dec1$random, dec2$random, dec3$random)
+sites <- sites[complete.cases(sites),]
+sites <- ts(sites,start=c(1978,10),frequency=12) 
+```
+
+Run summary(), str(), and plot().
+
+```{r}
+summary(sites)
+
+str(sites)
+
+plot(sites)
+```
+
+11.	Next, examine the auto-correlation function (ACF) graph for each time series. Remember that the ACF provides an informal way of reviewing the time structure of a time series, particularly cycles and stationarity. Review pages 255-258 of the book for a reminder on how to diagnose an ACF. Here’s code that compares the decomposed random data with simple differencing for the Barrow, AK site:
+
+```{r}
+acf(sites[,1])
+acf(diff(co2series[,1]))
+
+acf(sites[,2])
+acf(diff(co2series[,2]))
+
+acf(sites[,3])
+acf(diff(co2series[,3]))
+```
+
+12.	Finally, run the Augmented Dickey-Fuller test on each time series. The function, adf.test() is in the tseries package, which you will have to install and library. Paste the results in below and add a comment on what the test shows for each time series. 
+
+```{r}
+# install.packages("tseries")
+library("tseries")
+adf.test(sites[,1])
+adf.test(sites[,2])
+adf.test(sites[,3])
+```
+
+
+# Phase 3 Instructions
+
+Everything we have done so far has focused on getting the time series data ready to analyze. In this phase you will conduct and interpret some analyses of the data.
+
+13.	Run cor() on the random component of the decomposition. From Phase 2, you should have this component already stored in a data frame called "sites".
+Interpret the matrix. Contrast these results with your correlation matrix from the original data (before the decomposition process; see Question 
+2). Keeping in mind the location of each site, what can you say about the similarities and differences among these sites? 
+Make sure in your interpretation that you keep in mind that the trend and seasonal components have already been removed:
+
+```{r}
+cor(sites)
+```
+
+
+14.	Conduct a change point analysis of the variance of each time series. The cpt.var() function that you will need is in the "changepoint" package. Report the results below. 
+
+```{r}
+library(changepoint)
+cp1 <- cpt.var(sites[,1])
+summary(cp1)
+cp2 <- cpt.var(sites[,2])
+summary(cp2)
+cp3 <- cpt.var(sites[,3])
+summary(cp3)
+```
+
+
+15.	If/when the cpt.var() procedure finds a change point in the variance of a time series, it will report on the index of the change point in the time series. Run plot on the results to reveal where the change took place. Briefly report on the results below:
+```{r}
+plot(cp1)
+plot(cp2)
+plot(cp3)
+```
+
+
+16.	Finally, you can forecast ahead into the following decade by fitting an ARIMA model to the data. Install and library the "forecast" package before running these three lines of code:
+
+```{r}
+# install.packages("forecast")
+library("forecast")
+fit <- auto.arima(co2series[,1])
+pred_co2 <- forecast(fit, 120)
+plot(pred_co2)
+```
+ 
+```{r}
+fit <- auto.arima(co2series[,2])
+pred_co2 <- forecast(fit, 120)
+plot(pred_co2)
+```
+ 
+```{r}
+fit <- auto.arima(co2series[,3])
+pred_co2 <- forecast(fit, 120)
+plot(pred_co2)
+```
+ 
+That code runs the forecast on Cold Bay, AK, using the original time series data (before we decomposed it). You can repeat the analysis on the other time series or even the decomposed elements if you are curious. Note that the grey area surrounding the blue prediction line shows the uncertainty associated with each prediction.
+
+17.	Finally, write a brief paragraph integrating the results of the analyses you conducted for Questions 13-16. Given that the general research question is to describe what is happening at these three sites and to highlight similarities and differences among them, what can you say about general trends, cycles of variation, similarities, differences, and the future?

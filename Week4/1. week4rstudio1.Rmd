@@ -1,0 +1,118 @@
+---
+title: "Week 4 – Battery Data Confidence Interval Exercise"
+author: "Sathish Kumar Rajendiran"
+output: pdf_document
+---
+
+Instructions: This exercise provides an opportunity to work with real data and develop a confidence interval. The data set represents battery life in minutes for mobile phones for two different types of batteries: NiCad and Li-Ion. The research question is whether the Li-Ion batteries (labelled as type 2 in the data set) offer a better battery life than the NiCads (labelled as type 1 in the data set).
+
+1. Download the provided CSV file (batterydata.r.csv) and read in the data using the Import Data dialog in R-Studio. Once imported, the data should show in a View() window in the upper left pane of R-Studio. Scroll through the data and name the variables here:
+
+```{r}
+#import csv files into data frames
+
+#define file path
+fpath <- "/Users/sathishrajendiran/Documents/R/IST772/batterydata.r.csv"
+
+#import into a dataframe
+batterydata_r <- data.frame(read.csv(fpath),stringsAsFactors=FALSE)
+
+#View the data set
+View(batterydata_r)
+
+colnames(batterydata_r)
+# [1] "Obs"     "Battery" "Time"  
+```
+
+2. Whenever you read in a new dataset, it's a good idea to explore it a bit to be sure you understand what's going on. summary() will give some basic information The describe() function in the psych library prints a wider range of descriptive statistics. Try these on the data you just read. 
+
+```{r}
+library(psych)
+
+# display Summary information to console
+summary(batterydata_r)
+
+# display detailed descriptive statistics information to console
+describe(batterydata_r)
+```
+
+It's also good practice to plot the data to observe the distributions. Create a histogram for the interesting variable.
+```{r}
+#unique values of Battery
+unique(batterydata_r$Battery) # [1] 1 2
+
+# NiCad | batterydata_r$Battery ==1
+#Li-Ion batteries | batterydata_r$Battery ==2
+
+#mean battery life in minutes
+mean(batterydata_r$Time[batterydata_r$Battery==1]) #[1] 1323.64  | NiCad
+mean(batterydata_r$Time[batterydata_r$Battery==2]) #[1] 1394.593 | Li-Ion
+
+#histogram of batterydata time
+hist(batterydata_r$Time[batterydata_r$Battery==1]) # | NiCad
+hist(batterydata_r$Time[batterydata_r$Battery==2]) # Li-Ion
+
+```
+
+Finally, given that the data are for two types of batteries, it's worth comparing the distributions. You can create a boxplot comparing them as follows: 
+
+```{r}
+#box plot to compare the batteries
+# with(batterydata_r, boxplot(Time~Battery))
+boxplot(Time~Battery, data=batterydata_r,
+       border="orange", 
+       col="steelblue",
+       freq=FALSE,
+       las=1, 
+       breaks=5,
+       horizontal = TRUE ,main=" Distribution of battery type vs life time")
+```
+
+Or use one of my favourite plots, the violin plot, a sort of cross between a boxplot and a histogram. You can create it as follows:
+
+```{r}
+library(ggplot2)
+
+ggplot(data=batterydata_r, aes(x=as.factor(Battery), y=Time)) + geom_violin()
+```
+
+What do you notice about these two distributions? 
+
+3. Subset the data in order to place the NiCad observations in one vector and the Li-Ion observations in the other. Here are two lines of code that will do the job:
+
+```{r}
+nicad <- batterydata_r$Time[batterydata_r$Battery==1] 
+liion <- batterydata_r$Time[batterydata_r$Battery==2]
+```
+
+4. Calculate the mean and standard deviation of both nicad and liion. Which mean is higher?
+
+```{r}
+
+cat("Average life of nicad battery is:",mean(nicad),"\n")
+cat("Average life of Li-Ion battery is:",mean(liion),"\n")
+
+cat("standard deviation of the life of nicad battery is:",sd(nicad),"\n")
+cat("standard deviation of the life of Li-Ion battery is:",sd(liion),"\n")
+
+```
+
+5. Use the t.test() command to create a confidence interval for the mean difference between these two vectors of data. Report the numeric values of the upper and lower bounds of the confidence interval.
+
+```{r}
+#t-test
+t.test(batterydata_r$Time[batterydata_r$Battery==1],batterydata_r$Time[batterydata_r$Battery==2])
+
+```
+
+
+6. In a brief sentence or two, interpret the confidence interval. Make sure to explain what a confidence interval and what, if anything, you know about the population mean difference between the two types of battery.
+
+* -83.49022 < Confidence interval >   -58.41675
+* center of the confidence interval would be ~71 
+
+7. Imagine you are now reporting these results back to the engineers who are working on these batteries. Engineers generally have no difficulty with quantitative concepts, but they are not statisticians, so they need thoughtful guidance on making sense of the results. Explain in a comment what caveats, cautions, or warnings accompany the confidence interval you just documented. (Here's a summary of the APA recommended format for reporting results of statistical tests https://depts.washington.edu/psych/files/writing_center/stats.pdf.)
+
+Its uncertain -
+
+7. Share your code and comments at https://codeshare.io/aJDyRX

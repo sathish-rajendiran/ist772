@@ -1,0 +1,45 @@
+---
+title: "IST772 Problem Set 4"
+author: "Your name here"
+output:
+  pdf_document: default
+---
+
+The homework for week 4 is based is based on exercises 7-10 on page 66, but with changes as noted in the text in this notebook (i.e., follow the problems as given in this document and not the textbook). 
+
+Attribution statement: (choose only one)
+1. I did this homework by myself, with help from the book and the professor
+2. I did this homework with help from the book and the professor and these Internet sources:
+3. I did this homework with help from <Name of another student> but did not cut and paste any code
+
+# Chapter 4, Exercise 7 
+
+_The built‐in warpbreaks data set contains data for the number of warp breaks per loom with different amounts of tension (we will not consider the variable for the type of wool). The tensions are labelled "L", "M" or "H" for low, medium and high tension. Run the summary() command on warpbreaks and explain the output. Create a histogram of the breaks for low tension (1 pt). As a reminder about R syntax, here is one way that you can access the low tension data:_
+
+```{r eval=FALSE}
+warpbreaks$breaks[warpbreaks$tension=="L"]
+```
+
+Using the [dplyr](https://dplyr.tidyverse.org/) package, you can instead write:
+
+```{r}
+library(dplyr)
+
+warpbreaks %>% filter(tension == "L") %>% select(breaks)
+```
+
+(Note that a select function is defined in multiple packages, so if you want to be sure you're using the one from the dplyr library, call dplyr::select.)
+
+_Also create histograms of the breaks for medium and high tensions. What can you say about the differences in the effects of tension by looking at the histograms? (1 pt)_
+
+# Chapter 4, Exercise 8
+
+_Create a boxplot (or violin plot) of the breaks data, using the model “breaks ~ tension". (1 pt) What can you say about the differences in the tensions by looking at the boxplots for the different tensions? (1 pt)_
+
+# Chapter 4, Exercise 9
+
+_Run a t‐test to compare the means of high and medium tension in the warpbreaks data. (1 pt) Report and interpret the confidence interval. (1 pt) Make sure to include a carefully worded statement about what the confidence interval implies with respect to the population mean difference between the high and medium tensions. (1 pt)_
+
+# Chapter 4, Exercise 10
+
+_Run a t‐test to compare the means of low and medium tension in the warpbreaks data. (1 pt) Report and interpret the confidence interval. (1 pt + 1 pt for statement about means)_

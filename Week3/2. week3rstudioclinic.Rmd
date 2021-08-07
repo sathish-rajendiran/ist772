@@ -1,0 +1,106 @@
+---
+title: "R-Studio Clinic #4"
+author: "Sathish Rajendiran"
+---
+
+Instructions: Examine the code and comments below. Add code and answers as instructed.
+
+```{r}
+set.seed(1234) 						                # Control randomization
+testPop <- rnorm(100000, mean=100, sd=10)	# Create simulated population of test scores
+```
+
+```{r}
+testPop
+```
+
+testPop now contains the simulated population of test scores from which we will sample and calculate sample means. But first, let's check our work to see what the testPop look like.
+
+# Question 1 
+
+Write a line of code to calculate the mean of testPop.
+```{r}
+cat("mean of the testPop is :",mean(testPop))
+```
+
+
+# Question 2 
+
+Write a line of code to produce a histogram of testPop.
+
+```{r}
+hist(testPop)
+```
+
+# Question 3 
+
+Add a comment explaining what these two lines of code do.  
+
+```{r}
+sampleTestScores <- function(n) {sample(testPop, size=n, replace=TRUE)} #function to take sampling from the testPop  of sample size n. --> assign it to variable sampleTestScores
+mean(sampleTestScores(100)) # calculate mean of the 100 sample trials from testPop
+
+```
+
+
+# Question 4 
+
+Add a comment explaining what this line of code does. 
+
+```{r}
+samplingDistribution <- replicate(1000, mean(sampleTestScores(100))) # replicates the 100 times trial of 100000 mean values for 1000 times to find the sampling distribution
+```
+
+# Question 5
+
+Write two lines of code to display the minimum and maximum values in samplingDistribution.
+
+```{r}
+summary(samplingDistribution) # summarizes min, max, quartiles
+min(samplingDistribution) #min value of SamplingDistribution  96.46755
+max(samplingDistribution) #min value of SamplingDistribution  103.6685
+```
+
+# Question 6 
+
+Explain why the minimum and maximum values in samplingDistribution are three or four points away from the mean of testPop. 
+
+# mean and median are same and euqals to 100 and almost matching testPop. As per the law of the large numbers the values will align centrally the population. With SD being 1 , min and max values of SamplingDistribution values are 3 or 4 points from the mean of testPop
+```{r}
+mean(testPop) # mean of testPop
+mean(samplingDistribution) #mean of the samplingDistribution 100.02
+sd(samplingDistribution)  #standard deviation of the samplingDistribution 1
+summary(samplingDistribution)
+median(samplingDistribution) #median of the samplingDistribution 100.02
+
+```
+
+
+# Question 7 
+
+Explain the differences between the following two histograms and the cause of those differences.
+
+# lower histogram is actually converges on the same population mean as the 1st histogram; however, the sampling distribution is much less dispersed.smaller dispersion results from the corrective influence of having many sampled observations that contribute to each sample mean.
+```{r}
+par(mfrow=c(2,1))
+hist(testPop, xlim=c(50,140))
+hist(samplingDistribution, xlim=c(50,140))
+par(mfrow=c(1,1))
+```
+
+
+# Question 8 
+
+Write two lines of code to calculate the standard deviation of testPop and the standard deviation of samplingDistribution. 
+
+```{r}
+sd(testPop) # standard deviation of testPop
+sd(samplingDistribution) # standard deviation of samplingDistribution
+```
+
+# Question 9
+
+Explain why the standard deviation of testPop and the standard deviation of samplingDistribution are so different.
+
+# because the sampling distribution is less dispersed with minimal variance as with both mean and median are same.
+

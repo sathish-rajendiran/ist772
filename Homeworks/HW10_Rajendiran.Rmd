@@ -1,0 +1,390 @@
+---
+title: "Week 11: Final Examination"
+author: "Sathish Kumar Rajendiran"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+Attribution statement: 
+1. I did this homework by myself, with help from the book and the professor. 
+
+<!-- The homework for week 10 is based on exercises 2, 5, 6, 7, and 8 on pages 272 and 273 but with changes as noted in this notebook (i.e., follow the problems as given in this document and not the textbook).  -->
+
+```{r}
+# import libraries 
+#create a function to ensure the libraries are imported
+EnsurePackage <- function(x){
+  x <- as.character(x)
+    if (!require(x,character.only = TRUE)){
+      install.packages(pkgs=x, repos = "http://cran.us.r-project.org")
+      require(x, character.only = TRUE)
+    }
+  }
+```
+
+# allSchoolsReportStatus.RData – 
+<!-- A list of California kindergartens and whether they reported vaccination data to the state in 2013 -->
+<!-- 'data.frame': 7381 obs. of 3 variables: $ name : Name of the school -->
+<!-- $ pubpriv : “PUBLIC” or “PRIVATE” -->
+<!-- $ reported: “Y” or “N” -->
+
+# usVaccines.Rdata – 
+<!-- Time series data from the World Health Organization reporting vaccination rates in the U.S. for five common vaccines -->
+<!-- Time-Series [1:38, 1:5] from 1980 to 2017: - attr(*, "dimnames")=List of 2 -->
+<!-- ..$ : NULL -->
+<!-- ..$ : chr [1:5] "DTP1" "HepB_BD" "Pol3" "Hib3" “MCV1”... -->
+<!-- (Note: DTP1 = First dose of Diphtheria/Pertussis/Tetanus vaccine; HepB_BD = Hepatitis B, Birth Dose; Pol3 = Polio third dose; Hib3 – Influenza third dose; MCV1 = Measles first dose) -->
+
+
+#reportSampleX.RData – 
+<!-- (Where X is the number of your particular dataset) A sample of California kindergartens that reported vaccination data, along with specific numbers and percentages for each school in the sample: -->
+<!-- 'data.frame': 698 obs. of 13 variables: -->
+<!-- $ code $ name -->
+<!-- : CA School Code Number (included for completeness, can be ignored) : Name of the school -->
+<!-- $ pubpriv -->
+<!-- $ enrollment : An integer indicating the number of students enrolled at the school -->
+<!-- $ allvaccs : The percent of enrolled students who had documented all required vaccinations $ conditional: The percent of enrolled students needed follow-up on their records -->
+<!-- $ medical : The percent of enrolled students with a medical exemption -->
+<!-- $ religious : The percent of enrolled students with a religious/belief exemption -->
+<!-- : The percent of students missing the Diphtheria/Pertussis/Tetanus vaccine : The percent of students missing the Polio vaccine -->
+<!-- : The percent of students missing the Measles/Mumps/Rubella vaccine : The percent of students missing the Hepatitis vaccine -->
+<!-- : The percent of students missing the Varicella (chickenpox) vaccine -->
+
+# Introductory/Descriptive Reports
+  
+  *  1. What proportion of public schools reported vaccination data?
+  *  2. What proportion of private schools reported vaccination data?
+  *  3. Have U.S. vaccinations rates been stable over time?
+  *  4. Are there any notable patterns in U.S. vaccinations rates over time?
+     
+# Public vs. Private School Comparisons:
+  *  5. Was there any credible difference in overall reporting proportions between public and private schools?
+  *  6. Compare overall vaccination rates (allvaccs) between public and private schools. Are there any credible differences?
+  *  7. Compare medical exemptions between public and private schools. Are there any credible differences?
+  *  8. Compare religious/belief exemptions between public and private schools. Are there any credible differences?
+  
+# Predictive Analyses:
+  *  9. Is it possible to predict whether a school is public or private based on conditional, medical, and religious percentages? 
+        If so, what are the specifics?
+  *  10. Is it possible to predict conditional percentage, based on the percentages of specific vaccines that are missing? 
+        If so, what are the specifics?
+
+  * Results
+     * aov(pixel ~ dayFact+Error(Dog), data=myPixel) -procedure runs on the new balanced dataset without the 
+       cofounding effects of individual differences
+     * dim(myPixel) - has 70 observations as a balanced dataset.
+     * If we calculate the grand mean of the degrees of freedom there are total 69 df 
+     Error: Dog
+              Df Sum Sq Mean Sq F value Pr(>F)
+    dayFact    2   2887    1444   0.208  0.817
+    Residuals  7  48506    6929               
+
+    Error: Within
+              Df Sum Sq Mean Sq F value Pr(>F)  
+    dayFact    3   1572   523.9   2.993 0.0383 *
+    Residuals 57   9978   175.1   
+    * Error: Dog
+      *  First section of the aov() table refers to variance attributable to individual differences among Dogs.
+      *  The main objective of repeated measures ANOVA is to separate the portion of the variation in the 
+         dependent variable and set it aside so that ir does not appear in the denominator of the F-test.i.e. with 9 df - 
+         there are about 10 observations refers to being residuals.
+    *  Error: Within
+      *  Within groups variance analysis, shows that there are about 60 df for the numerator reflects 61 points in time
+      *  F-ratio, F(3,57) = 2.993, p < 0.0383
+      *  F-ratio tests the null hypothesis that changes in days are 0 or the pixel values of the Dogs would remain consisently 
+        across any days.
+      * Because, the p < 0.05 we can reject the null hypothesis. It may support the alternative hypothesis that there 
+        is a  significant change in pixel values on different days.
+      * Day is a categorical value here. Repeated measures ANOVA was useful to analyzing this kind of data as it allowed us to
+        partition and remove the indiviual differences among the dogs.
+        
+# Please find more details from the R code below, 
+  
+```{r}
+EnsurePackage("nlme")
+?Pixel
+# X-ray pixel intensities over time
+# Description
+# The Pixel data frame has 102 rows and 4 columns of data on the pixel 
+# intensities of CT scans of dogs over time
+
+# This data frame contains the following columns:
+# Dog: a factor with levels 1 to 10 designating the dog on which the scan was made 
+# Side # a factor with levels L and R designating the side of the dog being scanned
+# day: a numeric vector giving the day post injection of the contrast on which the 
+# scan was made
+# pixel a numeric vector of pixel intensities
+
+summary(Pixel)
+# dim(Pixel) # [1] 102   4
+
+# View(Pixel)
+# str(Pixel)
+# colnames(Pixel)
+
+
+# define variables
+Dog <- Pixel$Dog
+Side <- Pixel$Side
+day <- Pixel$day
+pixel <- Pixel$pixel
+
+```
+
+```{r}
+#box plot to compare the tensions
+boxplot(pixel~day, data=Pixel,
+       border="orange", 
+       col="steelblue",
+       freq=FALSE,
+       las=1, 
+       # breaks=10,
+       # notch = TRUE,
+       horizontal = FALSE ,main=" Distribution of pixel vs day")
+```
+
+```{r}
+EnsurePackage("tidyverse")
+
+#data distribution
+# violin plot with median points
+
+Pixel %>%
+  pivot_longer(cols=-c(Dog,Side), names_to="variable", values_to="value", values_drop_na = TRUE) %>% 
+  ggplot(aes(x=variable, y=value)) + geom_violin(trim=FALSE, fill='steelblue', color="orange") + 
+  facet_wrap( ~ variable, scales="free") + 
+  stat_summary(fun=mean, geom="point", shape=23, size=4,color="white")  + 
+  theme_minimal()
+
+```
+
+```{r}
+EnsurePackage("dlookr") # outlier analysis
+# # #outlier analysis
+plot_outlier(Pixel)
+```
+
+
+```{r}
+# Corellation between Agriculture and Fertility
+plot(Dog, day
+     ,main="Corellation between day vs Dogs"
+     ,col="red")
+```
+
+_to subset the data. Keeping in mind that the data will need to be balanced before you can conduct this analysis. (1 pt) Try running a command like:_
+
+```{r}
+#balanced Data
+myPixel <- subset(Pixel, day %in% c(4,6,10,14))  # copy the dataset
+myPixel$dayFact <- as.factor(myPixel$day)   # convert day to a factor
+# Keep only those with matching all Days with balanced observations
+list <- rowSums(table(myPixel$Dog,myPixel$dayFact))==8 
+ist <- list[list==TRUE] 
+list <- as.numeric(names(list)) # Extract the row indices
+myPixel <- myPixel[myPixel$Dog %in% list,] # Match against the data
+
+dim(myPixel) # [1] 70  5
+
+#box plot to compare the tensions
+boxplot(pixel~dayFact, data=myPixel,
+       border="orange", 
+       col="steelblue",
+       freq=FALSE,
+       las=1, 
+       # breaks=10,
+       # notch = TRUE,
+       horizontal = FALSE ,main=" Balanced data - Distribution of pixel vs day")
+```
+
+```{r}
+# Repeated measures ANOVA
+aovpixelOut <- aov(pixel ~ dayFact+Error(Dog), data=myPixel)
+summary(aovpixelOut)
+
+```
+
+_as the starting point for cleaning up the data set._
+
+
+# Chapter 11, Exercise 5
+
+_Given that the built-in AirPassengers data set (see "? AirPassengers" for documentation) has a substantial growth trend, use diff() to create a differenced data set. (1 pt) Use plot() to examine and interpret the results of differencing. Use cpt.var() to find the change point in the variability of the differenced time series. (1 pt) Plot the result and describe in your own words what the change point signifies. (1 pt)_
+
+# 2) Question 5: Change point analysis | Time series analysis
+  
+  * Differenced data set
+     * AirPassengers dataset consists of monthly airline passenger numbers from 1949 to 1960
+     * Data is spread across all 12 months between this period.
+     * Trend is almost upward across the period
+     * diff(AirPassengers)- procedure helps removing a trend through finding differences between the neighboring observations
+     * plot(diffAirPassengers,col="steelblue",main="AirPassengers differential time series") - it generates the plot 
+       with differencial trend across differnt time
+     * This simple method of differencing trends to flatten out any trends that occur over time.
+     
+  * Change point
+     * After differencing out the trends over time series, next step is to find out if there has been event that made an impact
+       in the trend over time. This analysis is called change point. 
+     * This algorithm searches through the time series data and detects any major transition in the trend.
+     * These changes help document both point in time when the transition occured and the change in the mean level of the time series.
+     * cpt.var(diffAirPassengers) - this procedures captures the change point analysis by taking the differences in variances
+     * plot(dAPcp,cpt.col="orange",cpt.width=5,col="steelblue",main="change point variance on differenced time series")
+       This plot captures the change point analysis by differences in variance. In this case, its between 1954 and 1956. Just around 1955.
+  
+  * Results - below summary produces the cahnge point location analysis by documenting the change in variance.Maximum number of change
+      points is 1. It happended at 76 change point locations. Method "AMOC" stands for "at most one change". cpt.var() detect changes 
+      in the variability of time series over time.
+      
+      * Changepoint type      : Change in variance 
+      * Method of analysis    : AMOC 
+      * Test Statistic  : Normal 
+      * Type of penalty       : MBIC with value, 14.88853 
+      * Minimum Segment Length : 2 
+      * Maximum no. of cpts   : 1 
+      * Changepoint Locations : 76 
+     
+
+
+```{r}
+EnsurePackage("changepoint")
+EnsurePackage("tseries")
+? AirPassengers
+# Monthly Airline Passenger Numbers 1949-1960
+# Description: The classic Box & Jenkins airline data. 
+# Monthly totals of international airline passengers, 1949 to 1960.
+# Usage : AirPassengers
+# Format: A monthly time series, in thousands.
+summary(AirPassengers)
+str(AirPassengers) # Time-Series [1:144] from 1949 to 1961
+# View(AirPassengers)
+```
+
+```{r}
+AirPassengers
+```
+
+```{r}
+# AirPassengers undifferential plot
+plot(AirPassengers,col="blue",main="AirPassengers undifferential plot")
+```
+
+```{r}
+# differenced data set
+diffAirPassengers <- diff(AirPassengers)
+
+plot(diffAirPassengers,col="steelblue",main="AirPassengers differential time series")
+```
+
+```{r}
+# change point in the variability of the differenced time series
+dAPcp <- cpt.var(diffAirPassengers)
+plot(dAPcp,cpt.col="orange",cpt.width=5,col="steelblue"
+     ,main="change point variance on differenced time series")
+summary(dAPcp)
+```
+
+# Chapter 11, Exercise 6
+
+_Use cpt.mean() on the undifferenced AirPassengers time series. (1 pt) Plot and interpret the results. Compare the change point of the mean that you uncovered in this case to the change point in the variance that you uncovered in Exercise 5. What do these change points suggest about the history of air travel? (1 pt)_
+
+# 3) Question 6: Change point of the mean analysis
+  
+  * Change point on undifferenced AirPassengers time series
+     * Next, lets run the change point analysis on undifferenced Airpassengers time series. So, we can compare it against the differenced data
+     * This algorithm searches through the time series data and detects any major transition in the trend.
+     * cpt.mean(AirPassengers) - this procedures captures the change point analysis in the mean values
+     * plot(APcpm,cpt.col="steelblue",cpt.width=5,col="brown",main="change point mean on undifferenced time series")
+       This plot outlines two set of change point locations over time.
+     * cpt.mean() does not conduct a statistical test per se.However, the Strength of belief about the change in mean.This can be 
+       interpreted like R-Squared value.
+       #Confidence interval
+       cpt.mean(AirPassengers,class = FALSE)
+     * confidence interval 1 signifies stronger effect and therefore greater surety that the detected change in mean level of the
+       time series is not due to chance.
+  
+  * Results - below summary produces the change in point location analysis by documenting the change in mean. Number of change
+      points is 1. It happended at 77 change point locations. Method "AMOC" stands for "at most one change". cpt.mean() detect changes 
+      in the variability of time series over time.results as below,
+      
+      * Changepoint type      : Change in mean 
+      * Method of analysis    : AMOC 
+      * Test Statistic  : Normal 
+      * Type of penalty       : MBIC with value, 14.90944 
+      * Minimum Segment Length : 1 
+      * Maximum no. of cpts   : 1 
+      * Changepoint Locations : 77 
+
+
+```{r}
+# change point in the variability of the differenced time series
+APcpm <- cpt.mean(AirPassengers)
+plot(APcpm,cpt.col="steelblue",cpt.width=5,col="brown"
+     ,main="change point mean on undifferenced time series")
+summary(APcpm)
+
+#Confidence interval
+cpt.mean(AirPassengers,class = FALSE)
+# cpt    conf.value 
+#  77          1 
+
+```
+
+# Chapter 11, Exercise 7
+
+_Find historical information about air travel on the Internet and/or in reference materials that sheds light on the results from Exercises 5 and 6. Write a mini-article (less than 250 words) that interprets your statistical findings from Exercises 5 and 6 in the context of the historical information you found. (1 pt)_
+
+# 4) Question 7: Explanation
+  
+  * Historical Analysis
+     * Global air traffic - passengers travelled between 1970 and 2018
+        * In this article, change point analysis is performed on the global air traffic on passengers travelled between 
+          1970 and 2018. Year, 1970 recorded the least with 300 million travellers and 2018 recorded the most with 4.2 billion  
+          passengers travelled across.Time series analysis shows an upward trend across this period.Year 2010, showed a 
+          significant jump in the travellers count almost touching 2.25 billion and ever since it has been on the raise.As of 2018, 
+          Asia Pacific region had the highest share of airline passengers accounting one third of the global traffic. 
+          Dependent /predictor variables are cost,passenger economy status, and airlines carrying capacity.This Data contains
+          undifferenced data and it is aggregated over countries by traveling passengers over time.Differencing function can be applied to 
+          find the trends through taking the differences between the neighboring observations.Next, we need to balance the data to run 
+          aov() procedure to test F-test( null hypothesis significance test). Null hypothesis in this case would be there are no differences
+          in means variances over time.However, seeing the trend from the chart below, its obvious that null hypothesis can be rejected.
+          
+          Source: https://data.worldbank.org/indicator/IS.AIR.PSGR?end=2018&start=1970&view=chart
+         
+  
+# Chapter 11, Exercise 8
+
+_Use bcp() on the AirPassengers time series. (1 pt) Plot and interpret the results. Make sure to contrast these results with those from Exercise 6. (1 pt)_
+
+# 5) Question 8: Bayesian analysis | Change point analysis
+  
+  * Changt point Analysis - Bayesian version
+     * Bayesian version uses Markov chain Monte Carlo technique to develop a list of posterior priorities for mean changes at each point in the 
+       time series data.
+     * bcp(as.vector(AirPassengers)) - this procedure expects the time series values as vector
+     * plot(bAPcpm) - produces much richer output in time plot and gives much clearer view of what is happening in our time-series data.
+    
+  * Results
+     * Output of the bcp() procedure two sections
+       * Posterior Probability
+          * Lower pane shows the probablities of a mean change at each point in time
+          * You may see that there are isoloated spikes closer to probability 1.Further this can be analyzed through
+            plot(bAPcpm$posterior.prob >.95,col="blue")
+            * this plot generates  the plot with probability value less than or equal to 0.95 recorded as FALSE (i.e 0)
+            * this plot generates  the plot with probability value above to 0.95 recorded as TRUE (i.e 1)
+       * Posterior Means
+         * Upper pane shows the original time series.
+
+
+```{r}
+EnsurePackage("bcp")
+# Bayesian Change point analysis
+bAPcpm <- bcp(as.vector(AirPassengers))
+plot(bAPcpm)
+# summary(bAPcpm)
+```
+
+```{r}
+plot(bAPcpm$posterior.prob >.95,col="blue")
+```
+

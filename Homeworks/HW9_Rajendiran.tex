@@ -1,0 +1,1673 @@
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\usepackage{hyperref}
+\hypersetup{
+            pdftitle={IST772-- Problem Set 9},
+            pdfauthor={Sathish Kumar Rajendiran},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+
+\title{IST772-- Problem Set 9}
+\author{Sathish Kumar Rajendiran}
+\date{}
+
+\begin{document}
+\maketitle
+
+Attribution statement: 1. I did this homework by myself, with help from
+the book and the professor.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# import libraries }
+\CommentTok{#create a function to ensure the libraries are imported}
+\NormalTok{EnsurePackage <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x)\{}
+\NormalTok{  x <-}\StringTok{ }\KeywordTok{as.character}\NormalTok{(x)}
+    \ControlFlowTok{if}\NormalTok{ (}\OperatorTok{!}\KeywordTok{require}\NormalTok{(x,}\DataTypeTok{character.only =} \OtherTok{TRUE}\NormalTok{))\{}
+      \KeywordTok{install.packages}\NormalTok{(}\DataTypeTok{pkgs=}\NormalTok{x, }\DataTypeTok{repos =} \StringTok{"http://cran.us.r-project.org"}\NormalTok{)}
+      \KeywordTok{require}\NormalTok{(x, }\DataTypeTok{character.only =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{    \}}
+\NormalTok{  \}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{chapter-10-exercise-1}{%
+\section{Chapter 10, Exercise 1}\label{chapter-10-exercise-1}}
+
+\emph{The data sets package in R contains a small data set called swiss
+that contains n = 47 observations of socio-economic indicators for each
+of 47 French-speaking provinces of Switzerland at about 1888. Use
+``?swiss'' to display help about the data set. All the data in this data
+set are metric, but one, Catholic, shows a very bimodal distribution. We
+can dichotomize this variable to create binary variable as follows:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{?swiss }
+\CommentTok{# Swiss Fertility and Socioeconomic Indicators (1888) Data}
+\CommentTok{# Standardized fertility measure and socio-economic indicators for each of 47 French-speaking provinces of Switzerland at about 1888.}
+
+\CommentTok{# A data frame with 47 observations on 6 variables, each of which is in percent, i.e., in [0, 100].}
+\CommentTok{# [,1]  Fertility   Ig, ‘common standardized fertility measure’}
+\CommentTok{# [,2]  Agriculture % of males involved in agriculture as occupation}
+\CommentTok{# [,3]  Examination % draftees receiving highest mark on army examination}
+\CommentTok{# [,4]  Education   % education beyond primary school for draftees.}
+\CommentTok{# [,5]  Catholic    % ‘catholic’ (as opposed to ‘protestant’).}
+\CommentTok{# [,6]  Infant.Mortality    live births who live less than 1 year.}
+\CommentTok{# All variables but ‘Fertility’ give proportions of the population.}
+
+\KeywordTok{summary}\NormalTok{(swiss)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Fertility      Agriculture     Examination      Education    
+##  Min.   :35.00   Min.   : 1.20   Min.   : 3.00   Min.   : 1.00  
+##  1st Qu.:64.70   1st Qu.:35.90   1st Qu.:12.00   1st Qu.: 6.00  
+##  Median :70.40   Median :54.10   Median :16.00   Median : 8.00  
+##  Mean   :70.14   Mean   :50.66   Mean   :16.49   Mean   :10.98  
+##  3rd Qu.:78.45   3rd Qu.:67.65   3rd Qu.:22.00   3rd Qu.:12.00  
+##  Max.   :92.50   Max.   :89.70   Max.   :37.00   Max.   :53.00  
+##     Catholic       Infant.Mortality
+##  Min.   :  2.150   Min.   :10.80   
+##  1st Qu.:  5.195   1st Qu.:18.15   
+##  Median : 15.140   Median :20.00   
+##  Mean   : 41.144   Mean   :19.94   
+##  3rd Qu.: 93.125   3rd Qu.:21.70   
+##  Max.   :100.000   Max.   :26.60
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{dim}\NormalTok{(swiss)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 47  6
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{View}\NormalTok{(swiss)}
+
+\KeywordTok{str}\NormalTok{(swiss)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'data.frame':    47 obs. of  6 variables:
+##  $ Fertility       : num  80.2 83.1 92.5 85.8 76.9 76.1 83.8 92.4 82.4 82.9 ...
+##  $ Agriculture     : num  17 45.1 39.7 36.5 43.5 35.3 70.2 67.8 53.3 45.2 ...
+##  $ Examination     : int  15 6 5 12 17 9 16 14 12 16 ...
+##  $ Education       : int  12 9 5 7 15 7 7 8 7 13 ...
+##  $ Catholic        : num  9.96 84.84 93.4 33.77 5.16 ...
+##  $ Infant.Mortality: num  22.2 22.2 20.2 20.3 20.6 26.6 23.6 24.9 21 24.4 ...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# define variables}
+\NormalTok{Fertility <-}\StringTok{ }\NormalTok{swiss}\OperatorTok{$}\NormalTok{Fertility}
+\NormalTok{Education <-}\StringTok{ }\NormalTok{swiss}\OperatorTok{$}\NormalTok{Education}
+\NormalTok{Examination <-}\StringTok{ }\NormalTok{swiss}\OperatorTok{$}\NormalTok{Examination}
+\NormalTok{Catholic <-}\StringTok{ }\NormalTok{swiss}\OperatorTok{$}\NormalTok{Catholic}
+\NormalTok{Infant <-}\StringTok{ }\NormalTok{swiss}\OperatorTok{$}\NormalTok{Infant}
+\NormalTok{Agriculture <-}\StringTok{ }\NormalTok{swiss}\OperatorTok{$}\NormalTok{Agriculture}
+
+\KeywordTok{colnames}\NormalTok{(swiss)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Fertility"        "Agriculture"      "Examination"      "Education"       
+## [5] "Catholic"         "Infant.Mortality"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load the necessary library for further processing...}
+\KeywordTok{EnsurePackage}\NormalTok{(}\StringTok{"tidyverse"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: tidyverse
+\end{verbatim}
+
+\begin{verbatim}
+## -- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+\end{verbatim}
+
+\begin{verbatim}
+## v ggplot2 3.3.2     v purrr   0.3.4
+## v tibble  3.0.1     v dplyr   1.0.0
+## v tidyr   1.0.2     v stringr 1.4.0
+## v readr   1.3.1     v forcats 0.5.0
+\end{verbatim}
+
+\begin{verbatim}
+## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{swiss }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{pivot_longer}\NormalTok{(}\DataTypeTok{cols=} \OperatorTok{-}\NormalTok{Catholic, }\DataTypeTok{names_to=}\StringTok{"variable"}\NormalTok{, }\DataTypeTok{values_to=}\StringTok{"value"}\NormalTok{, }\DataTypeTok{values_drop_na =} \OtherTok{TRUE}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{variable, }\DataTypeTok{y=}\NormalTok{value)) }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_violin}\NormalTok{() }\OperatorTok{+}\StringTok{ }\KeywordTok{facet_wrap}\NormalTok{( }\OperatorTok{~}\StringTok{ }\NormalTok{variable, }\DataTypeTok{scales=}\StringTok{"free"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{swiss}\OperatorTok{$}\NormalTok{Catholic.b <-}\StringTok{ }\KeywordTok{as.integer}\NormalTok{(swiss}\OperatorTok{$}\NormalTok{Catholic }\OperatorTok{>}\StringTok{ }\DecValTok{60}\NormalTok{) }\CommentTok{# 60 looks like a gap in the histogram}
+\KeywordTok{table}\NormalTok{(swiss}\OperatorTok{$}\NormalTok{Catholic.b)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  0  1 
+## 31 16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Corellation between Agriculture and Fertility}
+\KeywordTok{plot}\NormalTok{(Agriculture, Fertility}
+\NormalTok{     ,}\DataTypeTok{main=}\StringTok{"Corellation between Agriculture and Fertility"}
+\NormalTok{     ,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\emph{Use logistic regression to predict Catholic.b, using two metric
+variables in the data set, Fertility and Agriculture (1 pt). Run any
+necessary diagnostics. (1 pt) Interpret the resulting null hypothesis
+significance tests. (1 pt)}
+
+\hypertarget{question-1-logistic-regression-analysis-on-swiss-data}{%
+\section{1) Question 1: Logistic Regression Analysis on Swiss
+data}\label{question-1-logistic-regression-analysis-on-swiss-data}}
+
+\begin{itemize}
+\tightlist
+\item
+  glm() \textbar{} Dependent variable (Catholic.b) \& Fertility and
+  Agriculture as Predictors/Independent variables with binomial(link =
+  ``logit'') link function
+
+  \begin{itemize}
+  \tightlist
+  \item
+    glm(Catholic.b \textasciitilde{} Fertility +
+    Agriculture,data=swiss,family = binomial(link = ``logit'')) is
+    stored on a variable ``swiss.glm''
+  \item
+    above code runs a logistic regression analysis on Catholic.b as the
+    dependent variable and Fertility and Agriculture as the predictors
+    from ``swiss'' dataset.
+  \end{itemize}
+\item
+  Diagnostics:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    From the glm(Catholic.b \textasciitilde{} Fertility +
+    Agriculture,data=swiss,family = binomial(link = ``logit'')) ; this
+    formula predicts ``Catholic.b'' values from Fertility and
+    Agriculture combined from the dataset ``swiss''
+  \item
+    Procedure glm() is similar to lm() procedure and expects the
+    dependent variable (variable, in question for prediction) first.
+    Followed by, independent/prdictor variable and a link function. It
+    can have number of predictor variables follows after
+    ``\textasciitilde{}'' symbol. ``.'' after ``\textasciitilde{}''
+    means - it expects to include all the remaining variables from the
+    dataset. In this case, we are only trying to predict ``fertility''
+    rate based on ``Education'' \& ``Agriculture'' variable.
+  \item
+    In addition, ``data=swiss'' implies what is the sample/population
+    the prediction is run against from the observations it contains.
+  \item
+    Successul execution of the glm() procedure provides results as shown
+    below.
+
+    \begin{itemize}
+    \tightlist
+    \item
+      call
+    \item
+      Deviance Residuals
+    \item
+      Coefficients
+    \item
+      Significant codes
+    \item
+      Null and Residual deviance with degrees of freedom
+    \item
+      Number of Fisher Scoring iterations
+    \end{itemize}
+  \item
+    Chi-Square analysis on logistic regression
+
+    \begin{itemize}
+    \tightlist
+    \item
+      anova(swiss.glm, test=``Chisq'') -performs chi-square analysis on
+      the glm() output
+    \end{itemize}
+  \item
+    Convert the log odds for the coefficient on the predictor into
+    regular odds
+
+    \begin{itemize}
+    \tightlist
+    \item
+      exp(coef(glmOut)) - converts log odds into regular odds
+    \end{itemize}
+  \item
+    Null hypothesis
+  \end{itemize}
+\item
+  Results:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Once the glm() procedure executes successfuly, it returns various
+    data points as an outcome. The first two lines defines the model, we
+    wanted.
+
+    \begin{itemize}
+    \tightlist
+    \item
+      glm(formula = Catholic.b \textasciitilde{} Fertility +
+      Agriculture, family = binomial(link = ``logit''), data = swiss)
+    \item
+      By specifying binomial() - it invokes the inverse logit or
+      logistic function as the basis for fitting the X variables to the
+      Y variable.
+    \end{itemize}
+  \item
+    Next, Summary of residuals that gives an overview of errors of
+    prediction.
+
+    \begin{itemize}
+    \tightlist
+    \item
+      With min as -1.50316 and max of 2.39654 shows, distribution of
+      residuals between -ve to positive almost spreading equally on both
+      sides, with Median almost 0 (-0.01404).
+    \item
+      It seems the residuals are symmetrically distributed.
+    \item
+      hist(residuals(swiss.glm)) suggests the same.
+    \end{itemize}
+  \item
+    Coefficients shows the key results.
+
+    \begin{itemize}
+    \item
+      Intercept is at -34.07275.
+    \item
+      Slopes for Education variable is 0.35010 and Agriculture is
+      0.13078 are way off from the intercept or B-weights. These
+      coefficients define the logrithm of the odds of the Y variable.
+    \item
+      Std.Errors around the estimates of slope and intercept shows the
+      estimated sampling distribution around these point estimates.
+    \item
+      z-value shows the student's t-test of the null hypothesis test
+      that each estimated coefficients is equal to zero.
+    \item
+      two asterik (*) indicates the significance level of alpha at p
+      \textless{} 0.01.
+    \item
+      one asterik (*) indicates that the significance level of alpha
+      level is 0.05.
+    \item
+      With above p-value; * Fertility has the strong coefficient value
+      as 0.00293 far less than the test of significance (p \textless{}
+      0.01); * Agriculture has p-value as 0.01384 far less than the test
+      of significance (p \textless{} 0.05) This shows that , both
+      ``Agriculture'' and ``Fertility'' are both statistically
+      significant.
+    \item
+      Null Hypothesis * Null hypothesis is that the log odds of
+      catholic.b is equal to 0 in the population. Since the log odds of
+      Fertility and Education both are statistically significant and
+      less than thier respective alpha levels - we can reject the null
+      hypothesis.
+    \item
+      In addition, the conversion from log odds to regular output
+      (exp(coef(glmOut))), (Intercept) Fertility Agriculture
+      0.000000000000001593646 1.419211326551196750145
+      1.139719619964769448117 From above its is infered that 1.419:1 on
+      fertility and 1.139:1 on Agriculture to likely to claim catholic.b
+    \item
+      The first Chi-Square model compares three nested models.
+
+      \begin{itemize}
+      \tightlist
+      \item
+        anova(swiss.glm, test=``Chisq'') - includes both predictors and
+        tests the level of significance on these predictors. It confirms
+        that both predictors with 0.0000009474 and 0.0001207 is far less
+        the the p value (0.001) and they are statistically significant.
+      \item
+        24.032 is the chi-square value ( residual deviance from top line
+        - residual deviance from 2nd line) 60.284 - 36.252 = 24.032 is
+        tested for significance on one degree of freedom.
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{please-find-more-details-from-the-r-code-below}{%
+\section{Please find more details from the R code
+below,}\label{please-find-more-details-from-the-r-code-below}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{options}\NormalTok{(}\DataTypeTok{scipen=}\DecValTok{999}\NormalTok{)  }\CommentTok{# turn-off scientific notation like 1e+48}
+\NormalTok{swiss.glm <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(Catholic.b }\OperatorTok{~}\StringTok{ }\NormalTok{Fertility }\OperatorTok{+}\StringTok{ }\NormalTok{Agriculture,}\DataTypeTok{data=}\NormalTok{swiss,}\DataTypeTok{family =} \KeywordTok{binomial}\NormalTok{(}\DataTypeTok{link =} \StringTok{"logit"}\NormalTok{)) }
+\KeywordTok{summary}\NormalTok{(swiss.glm)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = Catholic.b ~ Fertility + Agriculture, family = binomial(link = "logit"), 
+##     data = swiss)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -1.50316  -0.24820  -0.01404   0.14290   2.39654  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(>|z|)   
+## (Intercept) -34.07275   11.31906  -3.010  0.00261 **
+## Fertility     0.35010    0.11768   2.975  0.00293 **
+## Agriculture   0.13078    0.05314   2.461  0.01384 * 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 60.284  on 46  degrees of freedom
+## Residual deviance: 21.470  on 44  degrees of freedom
+## AIC: 27.47
+## 
+## Number of Fisher Scoring iterations: 8
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Chi-Square analysis on logistic regression}
+\KeywordTok{anova}\NormalTok{(swiss.glm, }\DataTypeTok{test=}\StringTok{"Chisq"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Analysis of Deviance Table
+## 
+## Model: binomial, link: logit
+## 
+## Response: Catholic.b
+## 
+## Terms added sequentially (first to last)
+## 
+## 
+##             Df Deviance Resid. Df Resid. Dev     Pr(>Chi)    
+## NULL                           46     60.284                 
+## Fertility    1   24.032        45     36.252 0.0000009474 ***
+## Agriculture  1   14.781        44     21.470    0.0001207 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Convert the log odds for the coefficient on the predictor into regular odds}
+\KeywordTok{exp}\NormalTok{(}\KeywordTok{coef}\NormalTok{(swiss.glm))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##             (Intercept)               Fertility             Agriculture 
+## 0.000000000000001593646 1.419211326551196750145 1.139719619964769448117
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(swiss.glm)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-7-1.pdf}
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-7-2.pdf}
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-7-3.pdf}
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-7-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{hist}\NormalTok{(}\KeywordTok{residuals}\NormalTok{(swiss.glm))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\hypertarget{chapter-10-exercise-5}{%
+\section{Chapter 10, Exercise 5}\label{chapter-10-exercise-5}}
+
+\emph{As noted in the chapter, the BaylorEdPsych add‐in package contains
+a procedure for generating pseudo‐R‐squared values from the output of
+the glm() procedure. Use the results of Exercise 1 to generate, report,
+and interpret a Nagelkerke pseudo‐R‐squared value. You might also
+examine the confusion matrix. (1 pt) }
+
+\hypertarget{question-5-pseudorsquared-values}{%
+\section{2) Question 5: Pseudo‐R‐squared
+values}\label{question-5-pseudorsquared-values}}
+
+\begin{itemize}
+\tightlist
+\item
+  Pseudo-R-squared value is calculated as below,
+
+  \begin{itemize}
+  \tightlist
+  \item
+    PseudoR2(swiss.glm) - this formula outputs various coeffients
+    including the Nagelkerke in scope.
+  \end{itemize}
+\item
+  Nagelkerke - Interpretation
+
+  \begin{itemize}
+  \tightlist
+  \item
+    The Nagelkerke comes significanttly larger that than few the other
+    values at 0.7778181
+
+    \begin{itemize}
+    \tightlist
+    \item
+      McFadden 0.6438474
+    \item
+      Adj.McFadden 0.5111418
+    \item
+      Cox.Snell 0.5621247
+    \item
+      McKelvey.Zavoina 0.9169675
+    \item
+      Effron 0.6902251
+    \end{itemize}
+  \item
+    Nagelkerke R-squared value is interpreted as the propotion of
+    variance in the outcome variable from earlier exercise
+    ``Catholic.b'' accounted for the predictor variables ``Agriculture''
+    and ``Fertility''.
+  \item
+    As only had a sample size of 47 observations, we were able to detect
+    the much smaller effect on these predictor variables.
+  \end{itemize}
+\item
+  In addtion, to conclude - lets explore on the confusion matrix as well
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Its a contingency table that compares the observed outcome vs the
+    predicted results
+  \item
+    table(round(predict(swiss.glm,type=``response'')),Catholic.b) -
+    formula produces confusion matrix on the glm model output.
+  \item
+    Outcome is dichotimized to 0 and 1 signifying result towards
+    Catholic.b or not.
+  \item
+    0 means Catholic.b as Yes and 1 as Catholic.b as No
+  \item
+    Overall accuracy is calculated as (29+14)/47 = 0.9148936 (
+    \textasciitilde{}91.5\% accuracy with these predictor variables)
+  \item
+    91.5\% accuracy further suggesting the significance of the predictor
+    variables.
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{please-find-more-details-from-the-r-code-below-1}{%
+\section{Please find more details from the R code
+below,}\label{please-find-more-details-from-the-r-code-below-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load the necessary library for further processing...}
+\KeywordTok{EnsurePackage}\NormalTok{(}\StringTok{"BaylorEdPsych"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: BaylorEdPsych
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{PseudoR2}\NormalTok{(swiss.glm) }\CommentTok{# generate pseudo‐R‐squared values}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         McFadden     Adj.McFadden        Cox.Snell       Nagelkerke 
+##        0.6438474        0.5111418        0.5621247        0.7778181 
+## McKelvey.Zavoina           Effron            Count        Adj.Count 
+##        0.9169675        0.6902251        0.9148936        0.7500000 
+##              AIC    Corrected.AIC 
+##       27.4702414       28.0283810
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{cat}\NormalTok{(}\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{confusion matrix:}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## confusion matrix:
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#confusion matrix}
+\KeywordTok{table}\NormalTok{(}\KeywordTok{round}\NormalTok{(}\KeywordTok{predict}\NormalTok{(swiss.glm,}\DataTypeTok{type=}\StringTok{"response"}\NormalTok{)),swiss}\OperatorTok{$}\NormalTok{Catholic.b)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    
+##      0  1
+##   0 29  2
+##   1  2 14
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# (29+14)/47}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{chapter-10-exercise-6}{%
+\section{Chapter 10, Exercise 6}\label{chapter-10-exercise-6}}
+
+\emph{Continue the analysis of the Chile data set described in this
+chapter. The data set is in the ``car'' package, so you will have to
+install.packages() and library() that package first, and then use the
+data(Chile) command to get access to the data set and ``? Chile'' to see
+the documentation. Pay close attention to the transformations needed to
+isolate cases with the Yes and No votes as shown in this chapter. Add a
+new predictor, statusquo, into the model and remove the income variable.
+Your new model specification should be vote \textasciitilde{} age +
+statusquo. The statusquo variable is a rating that each respondent gave
+indicating whether they preferred change or maintaining the status quo.
+Conduct general linear model (1 pt + 1 pt) and Bayesian analysis on this
+model (1 pt) and report and interpret all relevant results (1 pt).
+Compare the AIC from this model to the AIC from the model that was
+developed in the chapter (using income and age as predictors). }
+
+\hypertarget{question-6-logistic-regression-analysis-on-chile-data}{%
+\section{3) Question 6: Logistic Regression Analysis on Chile
+data}\label{question-6-logistic-regression-analysis-on-chile-data}}
+
+\begin{itemize}
+\tightlist
+\item
+  Data Preprocessing:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Chile data is imped by enabling ``car'' package"
+  \item
+    ChileYN dataframe is created by having the values Y and N split from
+    the observations with Chile\$vote==Y and N respectively
+  \item
+    removed ``income'' from this newly created dataframe
+  \item
+    missing values are removed
+  \item
+    Variable ChileYN\$vote is adjusted to Factor and the outcome is
+    changed to numeric further to simply keep the values as 0 and 1; 0 =
+    Vote and 1 = No vote (No)
+  \end{itemize}
+\item
+  glm() on ChileYN dataset
+
+  \begin{itemize}
+  \tightlist
+  \item
+    glm(vote \textasciitilde{} age + statusquo,data=ChileYN,family =
+    binomial(link = ``logit'')) is stored on a variable ``chile.glm''
+  \item
+    above code runs a logistic regression analysis on vote as the
+    dependent variable and age and statusquo as the predictors from
+    ``ChileYN'' dataset.
+  \item
+    ``binomial'' link function changes the output of the glm model to
+    inverse logit or logistic regression
+  \end{itemize}
+\item
+  Diagnostics:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    From the glm(vote \textasciitilde{} age +
+    statusquo,data=ChileYN,family = binomial(link = ``logit'')) ; this
+    formula predicts ``vote'' values from age and statusquo combined
+    from the dataset ``ChileYN''
+  \item
+    Procedure glm() is similar to lm() procedure and expects the
+    dependent variable (variable, in question for prediction) first.
+    Followed by, independent/prdictor variable and a link function. It
+    can have number of predictor variables follows after
+    ``\textasciitilde{}'' symbol. ``.'' after ``\textasciitilde{}''
+    means - it expects to include all the remaining variables from the
+    dataset. In this case, we are only trying to predict ``vote'' rate
+    based on ``Age'' \& ``Statusquo'' variables.``binomial'' is the link
+    function changes the output of the glm model to inverse logit or
+    logistic regression
+  \item
+    In addition, ``data=ChileYN'' implies what is the sample/population
+    the prediction is run against from the observations it contains.
+  \item
+    Successul execution of the glm() procedure provides results as shown
+    below.
+
+    \begin{itemize}
+    \tightlist
+    \item
+      call
+    \item
+      Deviance Residuals
+    \item
+      Coefficients
+    \item
+      Significant codes
+    \item
+      Null and Residual deviance with degrees of freedom
+    \item
+      Number of Fisher Scoring iterations
+    \end{itemize}
+  \item
+    Chi-Square analysis on logistic regression
+
+    \begin{itemize}
+    \tightlist
+    \item
+      anova(chile.glm, test=``Chisq'') -performs chi-square analysis on
+      the glm() output
+    \end{itemize}
+  \item
+    Convert the log odds for the coefficient on the predictor into
+    regular odds
+
+    \begin{itemize}
+    \tightlist
+    \item
+      exp(coef(chile.glm)) - converts log odds into regular odds
+    \end{itemize}
+  \item
+    Confusion matrix
+
+    \begin{itemize}
+    \tightlist
+    \item
+      table(round(predict(chile.glm,type=``response'')),ChileYN\$vote) -
+      this formula creates confusion marix
+    \end{itemize}
+  \item
+    Null hypothesis
+  \item
+    Run bayesian analysis on top the glm output
+
+    \begin{itemize}
+    \tightlist
+    \item
+      bayesLogitOut \textless{}- MCMClogit(formula = vote
+      \textasciitilde{} age + statusquo, data = ChileYN) formula
+      generates BayesLogit output
+    \end{itemize}
+  \item
+    Confirm alternate hypothesis and its test of significance on the
+    dependent variables.
+  \item
+    Run AIC procedure
+
+    \begin{itemize}
+    \tightlist
+    \item
+      stepAIC(chile.glm) formula generates AIC output
+    \item
+      Compare it against old AIC on age+income predictors
+    \end{itemize}
+  \end{itemize}
+\item
+  Results:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Once the glm() procedure executes successfuly, it returns various
+    data points as an outcome. The first two lines defines the model, we
+    wanted.
+
+    \begin{itemize}
+    \tightlist
+    \item
+      glm(formula = vote \textasciitilde{} age + statusquo, family =
+      binomial(link = ``logit''), data = ChileYN)
+    \item
+      By specifying binomial() - it invokes the inverse logit or
+      logistic function as the basis for fitting the X variables to the
+      Y variable.
+    \end{itemize}
+  \item
+    Next, Summary of residuals that gives an overview of errors of
+    prediction.
+
+    \begin{itemize}
+    \tightlist
+    \item
+      With min as -3.2095 and max of 2.8789 shows, distribution of
+      residuals between -ve to positive almost spreading equally on both
+      sides, with Median almost 0 (-0.1840).
+    \item
+      It seems the residuals are symmetrically distributed.
+    \item
+      hist(residuals(chile.glm)) suggests the same.
+    \end{itemize}
+  \item
+    Coefficients shows the key results.
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Intercept is at -0.193759.
+    \item
+      Slopes for age variable is 0.011322 and statusquo is 3.174487 are
+      way off from the intercept or B-weights. These coefficients define
+      the logrithm of the odds of the Y variable.
+    \item
+      Std.Errors around the estimates of slope and intercept shows the
+      estimated sampling distribution around these point estimates.
+    \item
+      z-value shows the student's t-test of the null hypothesis test
+      that each estimated coefficients is equal to zero.
+    \item
+      With above p-value; * age has the weak coefficient value as
+      0.011322 higher than the test of significance (p \textless{} 0.01)
+      at 0.0972 * statusquo has p-value as 0.0000000000000002 far less
+      than the test of significance (p \textless{} 0.001) This shows
+      that , ``statusquo'' as statistically significant where age as not
+      significant.
+    \item
+      Null Hypothesis * Null hypothesis is that the log odds of vote is
+      equal to 0 in the population. Since the log odds of statusquo is
+      statistically significant and less than thier respective alpha
+      level - we can reject the null hypothesis. * However, age not
+      having the stronger significance , we fail to reject null
+      hypothesis with Age as predictor for Vote.
+    \item
+      In addition, the conversion from log odds to regular output
+      (exp(coef(chile.glm))), (Intercept) age statusquo 0.8238564
+      1.0113863 23.9145451 From above its is infered that 1.0113863:1 on
+      age and 23.9145451:1 on statusquo to likely to claim vote. Showing
+      stronger odds on statusquo to predict vote
+    \item
+      The first Chi-Square model compares three nested models.
+
+      \begin{itemize}
+      \tightlist
+      \item
+        anova(chile.glm, test=``Chisq'') - includes both predictors and
+        tests the level of significance on these predictors.
+      \item
+        It confirms that both predictors with 0.000000004964 (age) and
+        0.00000000000000022(statusquo) is far less the the p value
+        (0.001) and they are statistically significant.
+      \item
+        34.2 is the chi-square value ( residual deviance from top line -
+        residual deviance from 2nd line) 2360.29 - 2326.09 = 34.2 is
+        tested for significance on one degree of freedom.
+      \end{itemize}
+    \end{itemize}
+  \item
+    Bayesian Logit * MCMCPack (MCMClogit) does the the bayesian
+    estimation of logistic regression * bayesLogitOut \textless{}-
+    MCMClogit(formula = vote \textasciitilde{} age + statusquo, data =
+    ChileYN) formula is used to simulate Bayesian estimation * Wih
+    sample size of 10,000 observations - population mean of the standard
+    errors * With earlier pre-processing the depedent variable is
+    converted into No=0 and Yes = 1. * Output contains the posterior
+    distribution of parameters representing both intercept and
+    cofficients on age and statusquo calibrated as log-odds. * Point
+    extimates for the intercept and the coefficients are similar to
+    outputs from the logistic regression. * 95\% HDI interval shows no
+    overlap on age and statusquo variables. * 95\% HDI shows age as
+    significant as it overlaps with 0. * more detailed analysis on the
+    HDI is shown on the trace chart below and it captures extensive
+    information about the alternative hypothesis for each of the
+    coefficients being estimated. * density curve on age is spread
+    across 0 and HDI lower bound (2.5\%) at -0.002005 and uppoer bound
+    (97.5\%) at 0.02499. * density curve on statusquo shows HDI well
+    over 0 with HDI lower bound (2.5\%) at 2.914442 and Upper bound
+    (97.5\%) at 3.48698. favoring alternative hypothesis.
+  \item
+    AIC is calculated at 740.5207 on age + statusquo Step Df Deviance
+    Resid. Df Resid. Dev AIC 1 1700 734.5207 740.5207
+  \item
+    AIC is at 2330.1 on age + income; with two step process Step Df
+    Deviance Resid. Df Resid. Dev AIC 1 1700 2326.029 2332.029 2 -
+    income 1 0.06212372 1701 2326.091 2330.091
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{please-find-more-details-from-the-r-code-below-2}{%
+\section{Please find more details from the R code
+below,}\label{please-find-more-details-from-the-r-code-below-2}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{options}\NormalTok{(}\DataTypeTok{scipen=}\DecValTok{999}\NormalTok{)  }\CommentTok{# turn-off scientific notation like 1e+48}
+
+\CommentTok{# load the necessary library for further processing...}
+\KeywordTok{EnsurePackage}\NormalTok{(}\StringTok{"car"}\NormalTok{) }\CommentTok{# Regression helper package: Chile data}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: car
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: carData
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'car'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:dplyr':
+## 
+##     recode
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:purrr':
+## 
+##     some
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{EnsurePackage}\NormalTok{(}\StringTok{"MCMCpack"}\NormalTok{) }\CommentTok{# Download MCMCpack package}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: MCMCpack
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: coda
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: MASS
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'MASS'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:dplyr':
+## 
+##     select
+\end{verbatim}
+
+\begin{verbatim}
+## ##
+## ## Markov Chain Monte Carlo Package (MCMCpack)
+\end{verbatim}
+
+\begin{verbatim}
+## ## Copyright (C) 2003-2020 Andrew D. Martin, Kevin M. Quinn, and Jong Hee Park
+\end{verbatim}
+
+\begin{verbatim}
+## ##
+## ## Support provided by the U.S. National Science Foundation
+\end{verbatim}
+
+\begin{verbatim}
+## ## (Grants SES-0350646 and SES-0350613)
+## ##
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{EnsurePackage}\NormalTok{(}\StringTok{"dlookr"}\NormalTok{) }\CommentTok{# outlier analysis}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: dlookr
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: mice
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'mice'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:stats':
+## 
+##     filter
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     cbind, rbind
+\end{verbatim}
+
+\begin{verbatim}
+## Registered S3 method overwritten by 'quantmod':
+##   method            from
+##   as.zoo.data.frame zoo
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'dlookr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:base':
+## 
+##     transform
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{EnsurePackage}\NormalTok{(}\StringTok{"mice"}\NormalTok{) }\CommentTok{# missing data }
+\KeywordTok{EnsurePackage}\NormalTok{(}\StringTok{"visdat"}\NormalTok{) }\CommentTok{# missing data }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: visdat
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{cat}\NormalTok{(}\StringTok{"All Packages are available"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## All Packages are available
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#import Chile dataset}
+\KeywordTok{data}\NormalTok{(Chile)}
+
+\CommentTok{#structure of Chile dataset}
+\KeywordTok{str}\NormalTok{(Chile)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'data.frame':    2700 obs. of  8 variables:
+##  $ region    : Factor w/ 5 levels "C","M","N","S",..: 3 3 3 3 3 3 3 3 3 3 ...
+##  $ population: int  175000 175000 175000 175000 175000 175000 175000 175000 175000 175000 ...
+##  $ sex       : Factor w/ 2 levels "F","M": 2 2 1 1 1 1 2 1 1 2 ...
+##  $ age       : int  65 29 38 49 23 28 26 24 41 41 ...
+##  $ education : Factor w/ 3 levels "P","PS","S": 1 2 1 1 3 1 2 3 1 1 ...
+##  $ income    : int  35000 7500 15000 35000 35000 7500 35000 15000 15000 15000 ...
+##  $ statusquo : num  1.01 -1.3 1.23 -1.03 -1.1 ...
+##  $ vote      : Factor w/ 4 levels "A","N","U","Y": 4 2 4 2 2 2 2 2 3 2 ...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Summary of Chile dataset}
+\KeywordTok{summary}\NormalTok{(Chile)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  region     population     sex           age        education  
+##  C :600   Min.   :  3750   F:1379   Min.   :18.00   P   :1107  
+##  M :100   1st Qu.: 25000   M:1321   1st Qu.:26.00   PS  : 462  
+##  N :322   Median :175000            Median :36.00   S   :1120  
+##  S :718   Mean   :152222            Mean   :38.55   NA's:  11  
+##  SA:960   3rd Qu.:250000            3rd Qu.:49.00              
+##           Max.   :250000            Max.   :70.00              
+##                                     NA's   :1                  
+##      income         statusquo          vote    
+##  Min.   :  2500   Min.   :-1.80301   A   :187  
+##  1st Qu.:  7500   1st Qu.:-1.00223   N   :889  
+##  Median : 15000   Median :-0.04558   U   :588  
+##  Mean   : 33876   Mean   : 0.00000   Y   :868  
+##  3rd Qu.: 35000   3rd Qu.: 0.96857   NA's:168  
+##  Max.   :200000   Max.   : 2.04859             
+##  NA's   :98       NA's   :17
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#outlier analysis}
+\KeywordTok{diagnose_outlier}\NormalTok{(Chile)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    variables outliers_cnt outliers_ratio outliers_mean             with_mean
+## 1 population            0       0.000000           NaN 152222.22222222221899
+## 2        age            0       0.000000           NaN     38.54872174879585
+## 3     income          164       6.074074      159756.1  33875.86471944658115
+## 4  statusquo            0       0.000000           NaN     -0.00000001118151
+##            without_mean
+## 1 152222.22222222221899
+## 2     38.54872174879585
+## 3  25408.12141099261862
+## 4     -0.00000001118151
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot_outlier}\NormalTok{(Chile)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-10-1.pdf}
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-10-2.pdf}
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-10-3.pdf}
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-10-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#data distribution}
+\NormalTok{Chile }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{pivot_longer}\NormalTok{(}\DataTypeTok{cols=}\OperatorTok{-}\KeywordTok{c}\NormalTok{(region,sex,vote,education), }\DataTypeTok{names_to=}\StringTok{"variable"}\NormalTok{, }\DataTypeTok{values_to=}\StringTok{"value"}\NormalTok{, }\DataTypeTok{values_drop_na =} \OtherTok{TRUE}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{variable, }\DataTypeTok{y=}\NormalTok{value)) }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_violin}\NormalTok{() }\OperatorTok{+}\StringTok{ }\KeywordTok{facet_wrap}\NormalTok{( }\OperatorTok{~}\StringTok{ }\NormalTok{variable, }\DataTypeTok{scales=}\StringTok{"free"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-10-5.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# missing data }
+\KeywordTok{md.pattern}\NormalTok{(Chile, }\DataTypeTok{plot=}\OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      region population sex age education statusquo income vote    
+## 2431      1          1   1   1         1         1      1    1   0
+## 150       1          1   1   1         1         1      1    0   1
+## 77        1          1   1   1         1         1      0    1   1
+## 14        1          1   1   1         1         1      0    0   2
+## 8         1          1   1   1         1         0      1    1   1
+## 3         1          1   1   1         1         0      1    0   2
+## 5         1          1   1   1         1         0      0    1   2
+## 9         1          1   1   1         0         1      1    1   1
+## 1         1          1   1   1         0         1      0    1   2
+## 1         1          1   1   1         0         0      0    0   4
+## 1         1          1   1   0         1         1      1    1   1
+##           0          0   0   1        11        17     98  168 295
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# missing data visualization}
+\KeywordTok{vis_miss}\NormalTok{(Chile)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-10-6.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{options}\NormalTok{(}\DataTypeTok{scipen=}\DecValTok{999}\NormalTok{)  }\CommentTok{# turn-off scientific notation like 1e+48}
+
+\NormalTok{ChileY <-}\StringTok{ }\NormalTok{Chile[Chile}\OperatorTok{$}\NormalTok{vote }\OperatorTok{==}\StringTok{ "Y"}\NormalTok{,] }\CommentTok{# Grab the Yes votes}
+\NormalTok{ChileN <-}\StringTok{ }\NormalTok{Chile[Chile}\OperatorTok{$}\NormalTok{vote }\OperatorTok{==}\StringTok{ "N"}\NormalTok{,] }\CommentTok{# Grab the No votes}
+\NormalTok{ChileYN <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(ChileY,ChileN) }\CommentTok{# Make a new dataset with those}
+\NormalTok{ChileYN <-}\StringTok{ }\NormalTok{ChileYN[}\KeywordTok{complete.cases}\NormalTok{(ChileYN),] }\CommentTok{# Get rid of missing}
+\NormalTok{ChileYN}\OperatorTok{$}\NormalTok{vote <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(ChileYN}\OperatorTok{$}\NormalTok{vote,}\DataTypeTok{levels=}\KeywordTok{c}\NormalTok{(}\StringTok{"N"}\NormalTok{,}\StringTok{"Y"}\NormalTok{)) }\CommentTok{# Fix the factor}
+
+\CommentTok{# Corellation between Agriculture and Fertility}
+\KeywordTok{plot}\NormalTok{(ChileYN}\OperatorTok{$}\NormalTok{age, ChileYN}\OperatorTok{$}\NormalTok{statusquo}
+\NormalTok{     ,}\DataTypeTok{main=}\StringTok{"Corellation between Age  and statusquo"}
+\NormalTok{     ,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-11-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{str}\NormalTok{(ChileYN)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'data.frame':    1703 obs. of  8 variables:
+##  $ region    : Factor w/ 5 levels "C","M","N","S",..: 3 3 3 3 3 3 3 3 3 3 ...
+##  $ population: int  175000 175000 175000 175000 175000 175000 175000 175000 175000 175000 ...
+##  $ sex       : Factor w/ 2 levels "F","M": 2 1 2 1 2 1 1 2 1 2 ...
+##  $ age       : int  65 38 64 46 67 38 55 18 24 58 ...
+##  $ education : Factor w/ 3 levels "P","PS","S": 1 1 1 3 1 3 2 3 2 1 ...
+##  $ income    : int  35000 15000 15000 75000 75000 35000 35000 75000 35000 35000 ...
+##  $ statusquo : num  1.01 1.23 1.37 1.51 1.32 ...
+##  $ vote      : Factor w/ 2 levels "N","Y": 2 2 2 2 2 2 2 2 2 2 ...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# remove income column}
+\NormalTok{ChileYN <-}\StringTok{ }\NormalTok{ChileYN[,}\OperatorTok{!}\KeywordTok{grepl}\NormalTok{(}\StringTok{"income"}\NormalTok{,}\KeywordTok{colnames}\NormalTok{(ChileYN))]}
+\NormalTok{ChileYN}\OperatorTok{$}\NormalTok{vote <-}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{(ChileYN}\OperatorTok{$}\NormalTok{vote) }\OperatorTok{-}\StringTok{ }\DecValTok{1} \CommentTok{# Adjust the outcome}
+\CommentTok{#table(ChileYN$vote)}
+
+\KeywordTok{str}\NormalTok{(ChileYN)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'data.frame':    1703 obs. of  7 variables:
+##  $ region    : Factor w/ 5 levels "C","M","N","S",..: 3 3 3 3 3 3 3 3 3 3 ...
+##  $ population: int  175000 175000 175000 175000 175000 175000 175000 175000 175000 175000 ...
+##  $ sex       : Factor w/ 2 levels "F","M": 2 1 2 1 2 1 1 2 1 2 ...
+##  $ age       : int  65 38 64 46 67 38 55 18 24 58 ...
+##  $ education : Factor w/ 3 levels "P","PS","S": 1 1 1 3 1 3 2 3 2 1 ...
+##  $ statusquo : num  1.01 1.23 1.37 1.51 1.32 ...
+##  $ vote      : num  1 1 1 1 1 1 1 1 1 1 ...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(ChileYN}\OperatorTok{$}\NormalTok{statusquo)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+## -1.72594 -1.09671 -0.18511 -0.00467  1.16602  1.71355
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(ChileYN)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  region     population     sex          age        education   statusquo       
+##  C :374   Min.   :  3750   F:814   Min.   :18.00   P :671    Min.   :-1.72594  
+##  M : 54   1st Qu.: 25000   M:889   1st Qu.:25.00   PS:343    1st Qu.:-1.09671  
+##  N :230   Median :175000           Median :36.00   S :689    Median :-0.18511  
+##  S :476   Mean   :150716           Mean   :38.06             Mean   :-0.00467  
+##  SA:569   3rd Qu.:250000           3rd Qu.:49.00             3rd Qu.: 1.16602  
+##           Max.   :250000           Max.   :70.00             Max.   : 1.71355  
+##       vote       
+##  Min.   :0.0000  
+##  1st Qu.:0.0000  
+##  Median :0.0000  
+##  Mean   :0.4909  
+##  3rd Qu.:1.0000  
+##  Max.   :1.0000
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# missing data }
+\KeywordTok{md.pattern}\NormalTok{(ChileYN, }\DataTypeTok{plot=}\OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  /\     /\
+## {  `---'  }
+## {  O   O  }
+## ==>  V <==  No need for mice. This data set is completely observed.
+##  \  \|/  /
+##   `-----'
+\end{verbatim}
+
+\begin{verbatim}
+##      region population sex age education statusquo vote  
+## 1703      1          1   1   1         1         1    1 0
+##           0          0   0   0         0         0    0 0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Crete glm model}
+\NormalTok{chile.glm <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(vote }\OperatorTok{~}\StringTok{ }\NormalTok{age }\OperatorTok{+}\StringTok{ }\NormalTok{statusquo,}\DataTypeTok{data=}\NormalTok{ChileYN,}\DataTypeTok{family =} \KeywordTok{binomial}\NormalTok{(}\DataTypeTok{link =} \StringTok{"logit"}\NormalTok{)) }
+\KeywordTok{summary}\NormalTok{(chile.glm)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = vote ~ age + statusquo, family = binomial(link = "logit"), 
+##     data = ChileYN)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -3.2095  -0.2830  -0.1840   0.1889   2.8789  
+## 
+## Coefficients:
+##              Estimate Std. Error z value            Pr(>|z|)    
+## (Intercept) -0.193759   0.270708  -0.716              0.4741    
+## age          0.011322   0.006826   1.659              0.0972 .  
+## statusquo    3.174487   0.143921  22.057 <0.0000000000000002 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 2360.29  on 1702  degrees of freedom
+## Residual deviance:  734.52  on 1700  degrees of freedom
+## AIC: 740.52
+## 
+## Number of Fisher Scoring iterations: 6
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#histogram on residuals chile.glm}
+\KeywordTok{hist}\NormalTok{(}\KeywordTok{residuals}\NormalTok{(chile.glm))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-11-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Chi-Square analysis on logistic regression}
+\KeywordTok{anova}\NormalTok{(chile.glm, }\DataTypeTok{test=}\StringTok{"Chisq"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Analysis of Deviance Table
+## 
+## Model: binomial, link: logit
+## 
+## Response: vote
+## 
+## Terms added sequentially (first to last)
+## 
+## 
+##           Df Deviance Resid. Df Resid. Dev              Pr(>Chi)    
+## NULL                       1702    2360.29                          
+## age        1     34.2      1701    2326.09        0.000000004964 ***
+## statusquo  1   1591.6      1700     734.52 < 0.00000000000000022 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Convert the log odds for the coefficient on the predictor into regular odds}
+\KeywordTok{exp}\NormalTok{(}\KeywordTok{coef}\NormalTok{(chile.glm))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## (Intercept)         age   statusquo 
+##   0.8238564   1.0113863  23.9145451
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#confusion matrix}
+\KeywordTok{table}\NormalTok{(}\KeywordTok{round}\NormalTok{(}\KeywordTok{predict}\NormalTok{(chile.glm,}\DataTypeTok{type=}\StringTok{"response"}\NormalTok{)),ChileYN}\OperatorTok{$}\NormalTok{vote)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    
+##       0   1
+##   0 810  74
+##   1  57 762
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{271}\NormalTok{) }\CommentTok{# Control randomization}
+\CommentTok{#bayesian estimation of logistic regression}
+\NormalTok{bayesLogitOut <-}\StringTok{ }\KeywordTok{MCMClogit}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ vote }\OperatorTok{~}\StringTok{ }\NormalTok{age }\OperatorTok{+}\StringTok{ }\NormalTok{statusquo, }\DataTypeTok{data =}\NormalTok{ ChileYN)}
+\KeywordTok{summary}\NormalTok{(bayesLogitOut) }\CommentTok{# Summarize the results}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Iterations = 1001:11000
+## Thinning interval = 1 
+## Number of chains = 1 
+## Sample size per chain = 10000 
+## 
+## 1. Empirical mean and standard deviation for each variable,
+##    plus standard error of the mean:
+## 
+##                 Mean       SD   Naive SE Time-series SE
+## (Intercept) -0.18272 0.272640 0.00272640       0.008938
+## age          0.01123 0.006817 0.00006817       0.000223
+## statusquo    3.19061 0.145853 0.00145853       0.004993
+## 
+## 2. Quantiles for each variable:
+## 
+##                  2.5%       25%      50%        75%   97.5%
+## (Intercept) -0.742761 -0.365241 -0.17552 -0.0003872 0.34439
+## age         -0.002005  0.006733  0.01121  0.0157683 0.02499
+## statusquo    2.914442  3.087259  3.18546  3.2847388 3.48698
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(bayesLogitOut)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-11-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{EnsurePackage}\NormalTok{(}\StringTok{"MASS"}\NormalTok{) }\CommentTok{# AIC}
+
+\NormalTok{stepOut <-}\StringTok{ }\KeywordTok{stepAIC}\NormalTok{(chile.glm)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Start:  AIC=740.52
+## vote ~ age + statusquo
+## 
+##             Df Deviance     AIC
+## <none>           734.52  740.52
+## - age        1   737.27  741.27
+## - statusquo  1  2326.09 2330.09
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{stepOut}\OperatorTok{$}\NormalTok{anova}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Stepwise Model Path 
+## Analysis of Deviance Table
+## 
+## Initial Model:
+## vote ~ age + statusquo
+## 
+## Final Model:
+## vote ~ age + statusquo
+## 
+## 
+##   Step Df Deviance Resid. Df Resid. Dev      AIC
+## 1                       1700   734.5207 740.5207
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# stepOutOLD <- stepAIC(chout)}
+\CommentTok{# stepOutOLD$anova}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{chapter-10-exercise-7}{%
+\section{Chapter 10, Exercise 7}\label{chapter-10-exercise-7}}
+
+\emph{Bonus R code question: Develop your own custom function that will
+take the posterior distribution of a coefficient from the output object
+from an MCMClogit() analysis and automatically create a histogram of the
+posterior distributions of the coefficient in terms of regular odds
+(instead of log‐odds). Make sure to mark vertical lines on the histogram
+indicating the boundaries of the 95\% HDI. (1 pt) Run the function on
+your regression results. (1 pt)}
+
+\begin{itemize}
+\tightlist
+\item
+  Custom Function:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    histquoLogOdds takes one of the predictor variable output (log odds)
+    as input
+  \item
+    converts the log-odds into regular odds with exponential function as
+    exp(quoLogOdds)
+  \item
+    hist(quoLogOdds, main=prdictor,col=``grey'') - procedure creates
+    histogram with HDI lines
+  \item
+    HDI lines
+
+    \begin{itemize}
+    \tightlist
+    \item
+      2.5\% or HDI lower bound \textbar{}
+      abline(v=quantile(quoLogOdds,c(0.025)),col=``orange'')
+    \item
+      97.5\% or HDI upper bound \textbar{}
+      abline(v=quantile(quoLogOdds,c(0.975)),col=``blue'')
+    \item
+      median or 50\% percent quantile \textbar{}
+      abline(v=quantile(quoLogOdds,c(0.50)),col=``green'')
+    \end{itemize}
+  \end{itemize}
+\item
+  Output of the function produces histograms
+
+  \begin{itemize}
+  \tightlist
+  \item
+    histquoLogOdds(``statusquo'') - histogram on statusquo regular odds
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Status histograms has values between\textasciitilde{}15 to
+      \textasciitilde{}34 as lower and upper bounds
+    \end{itemize}
+  \item
+    histquoLogOdds(``age'') - histogram on age regular odds
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Age histograms has more consistent values between just below 1 and
+      over 1.
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{please-find-more-details-from-the-r-code-below-3}{%
+\section{Please find more details from the R code
+below,}\label{please-find-more-details-from-the-r-code-below-3}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# bayesLogitOut hist }
+
+\CommentTok{# Custom function to output histograms with HDI vertical lines }
+\CommentTok{# prdictor bayesLogitOut - output variable coeffients converted to regular odds (instead of log-odds)}
+\NormalTok{histquoLogOdds <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(prdictor)}
+\NormalTok{  \{}
+\NormalTok{  quoLogOdds <-}\StringTok{ }\KeywordTok{as.matrix}\NormalTok{(bayesLogitOut[,prdictor])}
+\NormalTok{  quoLogOdds <-}\StringTok{ }\KeywordTok{exp}\NormalTok{(quoLogOdds)  }\CommentTok{# regular odds (instead of log‐odds)}
+  \KeywordTok{hist}\NormalTok{(quoLogOdds, }\DataTypeTok{main=}\NormalTok{prdictor,}\DataTypeTok{col=}\StringTok{"grey"}\NormalTok{) }\CommentTok{# hist}
+  \KeywordTok{abline}\NormalTok{(}\DataTypeTok{v=}\KeywordTok{quantile}\NormalTok{(quoLogOdds,}\KeywordTok{c}\NormalTok{(}\FloatTok{0.025}\NormalTok{)),}\DataTypeTok{col=}\StringTok{"orange"}\NormalTok{) }
+  \KeywordTok{abline}\NormalTok{(}\DataTypeTok{v=}\KeywordTok{quantile}\NormalTok{(quoLogOdds,}\KeywordTok{c}\NormalTok{(}\FloatTok{0.975}\NormalTok{)),}\DataTypeTok{col=}\StringTok{"blue"}\NormalTok{) }
+  \KeywordTok{abline}\NormalTok{(}\DataTypeTok{v=}\KeywordTok{quantile}\NormalTok{(quoLogOdds,}\KeywordTok{c}\NormalTok{(}\FloatTok{0.50}\NormalTok{)),}\DataTypeTok{col=}\StringTok{"green"}\NormalTok{) }
+\NormalTok{  \}}
+
+\CommentTok{#Plot histograms}
+\KeywordTok{histquoLogOdds}\NormalTok{(}\StringTok{"statusquo"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-14-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{histquoLogOdds}\NormalTok{(}\StringTok{"age"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW9_Rajendiran_files/figure-latex/unnamed-chunk-14-2.pdf}
+
+\end{document}

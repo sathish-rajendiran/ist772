@@ -1,0 +1,122 @@
+---
+title: "IST772– Week8 Async"
+author: "Sathish Kumar Rajendiran"
+output: pdf_document
+---
+
+```{r}
+# install.packages('animation')
+library(animation) # Load the animation library
+
+par(mfrow=c(1,1)) # Configure the plot window as a single space
+x <- seq(-10, 10, length= 30) # Create some X values
+y <- x #UsethesameforY
+f <- function(x,y){z <- x*2+y-3}#Zisa function of X and Y
+z <- outer(x,y,f) # Run the function on all X and Y
+ani.record(reset = TRUE) # Empty the animation buffer
+```
+
+```{r}
+# Change the perspective many times; theta is the azimuth direction
+for (i in 1:70) 
+{ 
+  persp(x, y, z, theta = i, phi = 30, expand = 0.5, col = 'lightcoral') 
+  ani.record() # record the current frame
+  }
+oopts = ani.options(interval = 0.1) # Set the delay between frames
+ani.replay() # Replay the stored frames
+```
+
+```{r}
+set.seed(321)
+hardwork <- rnorm(120)
+basicsmarts <- rnorm(120)
+curiosity <- rnorm(120)
+
+randomnoise <- rnorm(120)
+gpa <- hardwork/2 + basicsmarts/2 + curiosity/2 + randomnoise/2
+sd(gpa)
+
+#png("Figure08_1.png", width = 6, height = 6, units = 'in', res = 300)  
+plot(hardwork, gpa, main=NULL)
+#dev.off()
+
+#png("Figure08_2.png", width = 6, height = 6, units = 'in', res = 300)  
+plot(hardwork,gpa, main=NULL)
+abline(a=0, b=0.56)
+#dev.off()
+
+arrows(min(hardwork),gpa[which.min(hardwork)],min(hardwork),min(hardwork)*0.56)
+
+#png("Figure08_3.png", width = 6, height = 6, units = 'in', res = 300)  
+hist(gpa - (hardwork * 0.56), main=NULL)
+#dev.off()
+sum(gpa - (hardwork * 0.56))
+```
+
+
+```{r}
+```
+
+
+```{r}
+options(scipen=999)  # turn-off scientific notation like 1e+48
+calcSQERR <- function(dv, iv, slope)
+{
+  (dv - (iv*slope))^2
+}
+
+head(calcSQERR(gpa,hardwork,0.56))
+sum(calcSQERR(gpa,hardwork,0.56))
+
+#png("Figure08_4.png", width = 6, height = 6, units = 'in', res = 300)  
+hist(calcSQERR(gpa,hardwork,0.56), main=NULL)
+#dev.off()
+
+sumSQERR <- function(slope)
+{
+  sum(calcSQERR(gpa, hardwork, slope))
+}
+
+sumSQERR(0.56)
+```
+```{r}
+trySlopes <- seq(from=0, to=1, length.out=40)
+sqerrList <- sapply(trySlopes, sumSQERR)
+plot(trySlopes, sqerrList)
+```
+```{r}
+seq(from=0, to=1, length.out=40)
+```
+
+```{r}
+plot(trySlopes, sqerrList)
+
+```
+```{r}
+install.packages('QuantPsyc') 
+library('QuantPsyc') 
+```
+
+
+```{r}
+options(scipen=999)  # turn-off scientific notation like 1e+48
+
+# install.packages("BayesFactor")
+library("BayesFactor")
+
+stateData <- data.frame(state.x77)
+stateOut <- lm(Life.Exp ~ HS.Grad + Income + Illiteracy,data=stateData)
+summary(stateOut)
+
+stateOutMCMC <- lmBF(Life.Exp ~ HS.Grad + Income + Illiteracy,data=stateData, posterior=TRUE, iterations=100000)
+summary(stateOutMCMC)
+rsqList <- 1 - (stateOutMCMC[,"sig2"] / var(stateData$Life.Exp))
+mean(rsqList)
+quantile(rsqList,c(0.025))
+quantile(rsqList,c(0.975))
+
+stateOutBF <- lmBF(Life.Exp ~ HS.Grad + Income + Illiteracy,data=stateData)
+stateOutBF
+```
+

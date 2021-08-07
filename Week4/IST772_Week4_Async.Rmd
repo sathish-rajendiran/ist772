@@ -1,0 +1,129 @@
+---
+title: "IST772– Week4 Async"
+author: "Sathish Kumar Rajendiran"
+output: pdf_document
+---
+
+```{r}
+str(mtcars)
+dim(mtcars)
+head(mtcars)
+View(mtcars)
+
+describe(mtcars)
+```
+```{r}
+colnames(mtcars)
+```
+
+
+```{r}
+?mtcars
+mtcars[which.max(subset(mtcars,am==1)$mpg),]
+
+mtcars[which.max(subset(mtcars,am=="0")$mpg),]
+mtcars[which.max(subset(mtcars,am==1)$mpg),]
+mtcars[which.max(mtcars$mpg),]
+
+x <- subset(mtcars,am==1)
+
+x[which.max(x$mpg),]
+
+y <- subset(mtcars,am==0)
+y[which.max(y$mpg),]
+```
+
+, 1]	mpg	Miles/(US) gallon
+[, 2]	cyl	Number of cylinders
+[, 3]	disp	Displacement (cu.in.)
+[, 4]	hp	Gross horsepower
+[, 5]	drat	Rear axle ratio
+[, 6]	wt	Weight (1000 lbs)
+[, 7]	qsec	1/4 mile time
+[, 8]	vs	Engine (0 = V-shaped, 1 = straight)
+[, 9]	am	Transmission (0 = automatic, 1 = manual)
+[,10]	gear	Number of forward gears
+[,11]	carb	Number of carburetors
+
+
+```{r}
+mean(mtcars$mpg[mtcars$am == 0 ] )
+mean(mtcars$mpg[mtcars$am == 1 ] )
+
+sd(mtcars$mpg[mtcars$am == 0 ] )
+sd(mtcars$mpg[mtcars$am == 1 ] )
+```
+
+
+```{r}
+boxplot(mpg ~ am, data=mtcars)
+```
+
+
+```{r}
+#draw one sample as demo
+sample(mtcars$mpg[mtcars$am == 1], size=13,replace=TRUE) # 13 observation with am==1
+sample(mtcars$mpg[mtcars$am == 0], size=19,replace=TRUE)
+
+mean(sample(mtcars$mpg[mtcars$am==0],size=19,replace=TRUE))
+mean(sample(mtcars$mpg[mtcars$am == 0], size=19,replace=TRUE))
+      
+meanDiffs <- replicate(100,
+                       mean(sample(mtcars$mpg[mtcars$am == 0], size=19,replace=TRUE)) -  
+                       mean(sample(mtcars$mpg[mtcars$am == 1], size=13,replace=TRUE)))
+meanDiffs
+hist(meanDiffs) # histogram of mean distribution
+
+
+n1 <- mean(sample(mtcars$mpg[mtcars$am == 1], size=13,replace=TRUE))
+n2 <- mean(sample(mtcars$mpg[mtcars$am == 0], size=19,replace=TRUE)) 
+n1
+n2
+```
+```{r}
+#first t-test | inferential test
+
+t.test(mtcars$mpg[mtcars$am == 0],mtcars$mpg[mtcars$am == 1])
+```
+
+
+```{r}
+t.test(mtcars$mpg[mtcars$am==0] ,mtcars$mpg[mtcars$am==1])
+```
+
+```{r}
+t.test(mtcars$mpg[mtcars$vs==0],mtcars$mpg[mtcars$vs==1])
+```
+
+
+```{r}
+install.packages("animation")
+library(animation)
+conf.int(level=0.95)
+```
+
+```{r}
+install.packages("psych")
+library(psych)
+
+describe(mtcars)
+
+data(package="psych")
+?mtcars
+
+str(Dwyer)
+dim(Dwyer)
+```
+
+
+```{r}
+plot(seq(-4,4,.01),dt(seq(-4,4,0.01),df=30))
+abline(v=qt(0.975,df=30))
+abline(v=qt(0.025,df=30))
+```
+
+
+```{r}
+
+```
+

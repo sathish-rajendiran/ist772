@@ -1,0 +1,461 @@
+---
+title: "IST772– Problem Set 9"
+author: "Sathish Kumar Rajendiran"
+output:
+  html_document:
+    df_print: paged
+---
+
+Attribution statement: 
+1. I did this homework by myself, with help from the book and the professor. 
+
+<!-- The homework for week 9 is based on exercises 1, 5, 6, and 7 on page 234 but with changes as noted in this notebook (i.e., follow the problems as given in this document and not the textbook).  -->
+
+```{r}
+# import libraries 
+#create a function to ensure the libraries are imported
+EnsurePackage <- function(x){
+  x <- as.character(x)
+    if (!require(x,character.only = TRUE)){
+      install.packages(pkgs=x, repos = "http://cran.us.r-project.org")
+      require(x, character.only = TRUE)
+    }
+  }
+```
+
+
+# Chapter 10, Exercise 1
+
+_The data sets package in R contains a small data set called swiss that contains n = 47 observations of socio-economic indicators for each of 47 French-speaking provinces of Switzerland at about 1888.  Use “?swiss” to display help about the data set. All the data in this data set are metric, but one, Catholic, shows a very bimodal distribution. We can dichotomize this variable to create binary variable as follows:_
+
+
+
+```{r}
+?swiss 
+# Swiss Fertility and Socioeconomic Indicators (1888) Data
+# Standardized fertility measure and socio-economic indicators for each of 47 French-speaking provinces of Switzerland at about 1888.
+
+# A data frame with 47 observations on 6 variables, each of which is in percent, i.e., in [0, 100].
+# [,1]	Fertility	Ig, ‘common standardized fertility measure’
+# [,2]	Agriculture	% of males involved in agriculture as occupation
+# [,3]	Examination	% draftees receiving highest mark on army examination
+# [,4]	Education	% education beyond primary school for draftees.
+# [,5]	Catholic	% ‘catholic’ (as opposed to ‘protestant’).
+# [,6]	Infant.Mortality	live births who live less than 1 year.
+# All variables but ‘Fertility’ give proportions of the population.
+
+summary(swiss)
+
+dim(swiss)
+# View(swiss)
+
+str(swiss)
+# define variables
+Fertility <- swiss$Fertility
+Education <- swiss$Education
+Examination <- swiss$Examination
+Catholic <- swiss$Catholic
+Infant <- swiss$Infant
+Agriculture <- swiss$Agriculture
+
+colnames(swiss)
+
+```
+
+```{r}
+# load the necessary library for further processing...
+EnsurePackage("tidyverse")
+
+swiss %>% 
+  pivot_longer(cols= -Catholic, names_to="variable", values_to="value", values_drop_na = TRUE) %>% 
+  ggplot(aes(x=variable, y=value)) + geom_violin() + facet_wrap( ~ variable, scales="free")
+
+```
+
+
+```{r}
+swiss$Catholic.b <- as.integer(swiss$Catholic > 60) # 60 looks like a gap in the histogram
+table(swiss$Catholic.b)
+```
+```{r}
+# Corellation between Agriculture and Fertility
+plot(Agriculture, Fertility
+     ,main="Corellation between Agriculture and Fertility"
+     ,col="red")
+```
+
+_Use logistic regression to predict Catholic.b, using two metric variables in the data set, Fertility and Agriculture (1 pt). Run any necessary diagnostics. (1 pt) Interpret the resulting null hypothesis significance tests. (1 pt)_
+
+# 1) Question 1: Logistic Regression Analysis on Swiss data
+  
+  * glm() | Dependent variable (Catholic.b) & Fertility and Agriculture as Predictors/Independent variables with binomial(link = "logit") 
+    link function
+     * glm(Catholic.b ~ Fertility + Agriculture,data=swiss,family = binomial(link = "logit"))  is stored on a variable "swiss.glm"
+     * above code runs a logistic regression analysis on Catholic.b as the dependent variable and Fertility and Agriculture as the predictors from "swiss" dataset.
+     
+  * Diagnostics:
+     * From the glm(Catholic.b ~ Fertility + Agriculture,data=swiss,family = binomial(link = "logit")) ; this formula predicts "Catholic.b" values from Fertility and Agriculture combined from the dataset "swiss"
+     * Procedure glm() is similar to lm() procedure and expects the dependent variable (variable, in question for prediction) first. Followed by, independent/prdictor variable and a link function. 
+       It can have number of predictor variables follows after  "~" symbol. "." after "~" means - it expects to include all the remaining variables from the dataset.
+       In this case, we are only trying to predict "fertility" rate based on "Education" & "Agriculture" variable.
+     * In addition, "data=swiss" implies what is the sample/population the prediction is run against from the observations it contains. 
+     * Successul execution of the glm() procedure provides results as shown below.
+        * call
+        * Deviance Residuals
+        * Coefficients
+        * Significant codes
+        * Null and Residual deviance with degrees of freedom
+        * Number of Fisher Scoring iterations
+     * Chi-Square analysis on logistic regression
+        * anova(swiss.glm, test="Chisq") -performs chi-square analysis on the glm() output
+     * Convert the log odds for the coefficient on the predictor into regular odds
+        * exp(coef(glmOut)) - converts log odds into regular odds
+     * Null hypothesis 
+      
+
+  * Results:
+    * Once the glm() procedure executes successfuly, it returns various data points as an outcome. The first two lines defines the model, we wanted.
+       * glm(formula = Catholic.b ~ Fertility + Agriculture, family = binomial(link = "logit"), data = swiss)
+       * By specifying binomial() - it invokes the inverse logit or logistic function as the basis for fitting the X variables to the Y variable.
+    * Next, Summary of residuals that gives an overview of errors of prediction.
+       *  With min as -1.50316 and max of 2.39654  shows, distribution of residuals between -ve to positive almost spreading equally on both sides, with Median almost 0 (-0.01404). 
+       *  It seems the residuals are symmetrically distributed.
+       *  hist(residuals(swiss.glm)) suggests the same.
+       
+    * Coefficients shows the key results.
+       *  Intercept is at -34.07275. 
+       *  Slopes for Education variable is 0.35010 and Agriculture is 0.13078 are way off from the intercept or B-weights. These coefficients define the logrithm of the odds of the Y variable.
+       *  Std.Errors around the estimates of slope and intercept shows the estimated sampling distribution around these point estimates.
+       *  z-value shows the student's t-test of the null hypothesis test that each estimated coefficients is equal to zero.
+       *  two asterik (*) indicates the significance level of alpha at p < 0.01.
+       *  one asterik (*) indicates that the significance level of alpha level is 0.05.
+       *  With above p-value; 
+              * Fertility has the strong coefficient value as 0.00293 far less than the test of significance (p < 0.01); 
+              * Agriculture has p-value as 0.01384 far less than the test of significance (p < 0.05)
+          This shows that , both "Agriculture" and "Fertility" are both statistically significant.
+       *  Null Hypothesis
+              * Null hypothesis is that the log odds of catholic.b is equal to 0 in the population. Since the log odds of Fertility and Education both are statistically significant and less than thier respective alpha levels - we can reject the null hypothesis.
+            
+       * In addition, the conversion from log odds to regular output (exp(coef(glmOut))),
+            (Intercept)               Fertility             Agriculture 
+            0.000000000000001593646 1.419211326551196750145 1.139719619964769448117 
+          From above its is infered that 1.419:1 on fertility and 1.139:1 on Agriculture to likely to claim catholic.b 
+       * The first Chi-Square model compares three nested models.
+          * anova(swiss.glm, test="Chisq") - includes both predictors and tests the level of significance on these predictors. It confirms that both predictors with 0.0000009474 and 0.0001207 is far less the the p value (0.001) and they are statistically significant.
+          * 24.032 is the chi-square value ( residual deviance from top line - residual deviance from 2nd line) 60.284 - 36.252 = 24.032 is tested for significance on one degree of freedom.
+        
+# Please find more details from the R code below, 
+
+```{r}
+options(scipen=999)  # turn-off scientific notation like 1e+48
+swiss.glm <- glm(Catholic.b ~ Fertility + Agriculture,data=swiss,family = binomial(link = "logit")) 
+summary(swiss.glm)
+
+#Chi-Square analysis on logistic regression
+anova(swiss.glm, test="Chisq")
+
+# Convert the log odds for the coefficient on the predictor into regular odds
+exp(coef(swiss.glm))
+```
+
+```{r}
+plot(swiss.glm)
+```
+```{r}
+hist(residuals(swiss.glm))
+```
+
+
+# Chapter 10, Exercise 5
+
+_As noted in the chapter, the BaylorEdPsych add‐in package contains a procedure for generating pseudo‐R‐squared values from the output of the glm() procedure. Use the results of Exercise 1 to generate, report, and interpret a Nagelkerke pseudo‐R‐squared value. You might also examine the confusion matrix. (1 pt) _
+
+# 2) Question 5: Pseudo‐R‐squared values
+  *  Pseudo-R-squared value is calculated as below,
+      *  PseudoR2(swiss.glm) - this formula outputs various coeffients including the Nagelkerke in scope.
+  *  Nagelkerke - Interpretation
+      *  The Nagelkerke comes significanttly larger that than few the other values at 0.7778181
+          * McFadden 0.6438474
+          * Adj.McFadden 0.5111418
+          * Cox.Snell 0.5621247 
+          * McKelvey.Zavoina  0.9169675
+          * Effron 0.6902251
+      * Nagelkerke R-squared value is interpreted as the propotion of variance in the outcome variable from earlier exercise "Catholic.b" accounted for the 
+        predictor variables "Agriculture" and "Fertility".
+      * As only had a sample size of 47 observations, we were able to detect the much smaller effect on these predictor variables.
+  * In addtion, to conclude - lets explore on the confusion matrix as well
+      * Its a contingency table that compares the observed outcome vs the predicted results
+      * table(round(predict(swiss.glm,type="response")),Catholic.b) - formula produces confusion matrix on the glm model output.
+      * Outcome is dichotimized to 0 and 1 signifying result towards Catholic.b or not.
+      * 0 means Catholic.b as Yes and 1 as Catholic.b as No
+      * Overall accuracy is calculated as (29+14)/47 = 0.9148936 ( ~91.5% accuracy with these predictor variables)
+      * 91.5% accuracy further suggesting the significance of the predictor variables.
+          
+
+# Please find more details from the R code below,
+
+```{r}
+# load the necessary library for further processing...
+EnsurePackage("BaylorEdPsych")
+
+PseudoR2(swiss.glm) # generate pseudo‐R‐squared values
+
+cat("\nconfusion matrix:\n")
+#confusion matrix
+table(round(predict(swiss.glm,type="response")),swiss$Catholic.b)
+
+# (29+14)/47
+
+```
+
+# Chapter 10, Exercise 6
+
+_Continue the analysis of the Chile data set described in this chapter. The data set is in the “car” package, so you will have to install.packages() and library() that package first, and then use the data(Chile) command to get access to the data set and "? Chile" to see the documentation. Pay close attention to the transformations needed to isolate cases with the Yes and No votes as shown in this chapter. Add a new predictor, statusquo, into the model and remove the income variable. Your new model specification should be vote ~ age + statusquo. The statusquo variable is a rating that each respondent gave indicating whether they preferred change or maintaining the status quo. Conduct general linear model (1 pt + 1 pt) and Bayesian analysis on this model (1 pt) and report and interpret all relevant results (1 pt). Compare the AIC from this model to the AIC from the model that was developed in the chapter (using income and age as predictors). _
+
+# 3) Question 6: Logistic Regression Analysis on Chile data
+  
+  * Data Preprocessing:
+     * Chile data is imped by enabling "car" package"
+     * ChileYN dataframe is created by having the values Y and N split from the observations with Chile$vote==Y and N respectively
+     * removed "income" from this newly created dataframe
+     * missing values are removed
+     * Variable ChileYN$vote is adjusted to Factor and the outcome is changed to numeric further to simply keep the values as 0 and 1; 0 = Vote and 1 = No vote (No)
+
+  * glm() on ChileYN dataset
+     * glm(vote ~ age + statusquo,data=ChileYN,family = binomial(link = "logit"))  is stored on a variable "chile.glm"
+     * above code runs a logistic regression analysis on vote as the dependent variable and age and statusquo as the predictors from "ChileYN" dataset.
+     * "binomial" link function changes the output of the glm model to inverse logit or logistic regression
+     
+   * Diagnostics:
+     * From the glm(vote ~ age + statusquo,data=ChileYN,family = binomial(link = "logit")) ; this formula predicts "vote" values from age and statusquo combined from the dataset "ChileYN"
+     * Procedure glm() is similar to lm() procedure and expects the dependent variable (variable, in question for prediction) first. Followed by, independent/prdictor variable and a link function. 
+       It can have number of predictor variables follows after  "~" symbol. "." after "~" means - it expects to include all the remaining variables from the dataset.
+       In this case, we are only trying to predict "vote" rate based on "Age" & "Statusquo" variables."binomial" is the link function changes the output of the glm model to 
+       inverse logit or logistic regression
+     * In addition, "data=ChileYN" implies what is the sample/population the prediction is run against from the observations it contains. 
+     * Successul execution of the glm() procedure provides results as shown below.
+        * call
+        * Deviance Residuals
+        * Coefficients
+        * Significant codes
+        * Null and Residual deviance with degrees of freedom
+        * Number of Fisher Scoring iterations
+     * Chi-Square analysis on logistic regression
+        * anova(chile.glm, test="Chisq") -performs chi-square analysis on the glm() output
+     * Convert the log odds for the coefficient on the predictor into regular odds
+        * exp(coef(chile.glm)) - converts log odds into regular odds
+     * Confusion matrix
+        * table(round(predict(chile.glm,type="response")),ChileYN$vote) - this formula creates confusion marix
+     * Null hypothesis 
+     * Run bayesian analysis on top the glm output 
+        * bayesLogitOut <- MCMClogit(formula = vote ~ age + statusquo, data = ChileYN) formula generates BayesLogit output
+     * Confirm alternate hypothesis and its test of significance on the dependent variables.
+     * Run AIC procedure
+        * stepAIC(chile.glm) formula generates AIC output
+        * Compare it against old AIC on age+income predictors
+     
+  * Results:
+    * Once the glm() procedure executes successfuly, it returns various data points as an outcome. The first two lines defines the model, we wanted.
+       * glm(formula = vote ~ age + statusquo, family = binomial(link = "logit"), data = ChileYN)
+       * By specifying binomial() - it invokes the inverse logit or logistic function as the basis for fitting the X variables to the Y variable.
+    * Next, Summary of residuals that gives an overview of errors of prediction.
+       *  With min as -3.2095 and max of 2.8789  shows, distribution of residuals between -ve to positive almost spreading equally on both sides, with Median almost 0 (-0.1840). 
+       *  It seems the residuals are symmetrically distributed.
+       *  hist(residuals(chile.glm)) suggests the same.
+       
+    * Coefficients shows the key results.
+       *  Intercept is at -0.193759. 
+       *  Slopes for age variable is 0.011322 and statusquo is 3.174487 are way off from the intercept or B-weights. These coefficients define the logrithm of the odds of the Y variable.
+       *  Std.Errors around the estimates of slope and intercept shows the estimated sampling distribution around these point estimates.
+       *  z-value shows the student's t-test of the null hypothesis test that each estimated coefficients is equal to zero.
+       *  With above p-value; 
+              * age has the weak coefficient value as 0.011322 higher than the test of significance (p < 0.01) at 0.0972
+              * statusquo has p-value as 0.0000000000000002 far less than the test of significance (p < 0.001)
+          This shows that , "statusquo" as statistically significant where age as not significant.
+       *  Null Hypothesis
+              * Null hypothesis is that the log odds of vote is equal to 0 in the population. Since the log odds of statusquo is statistically significant and less 
+                than thier respective alpha level - we can reject the null hypothesis.
+              * However, age not having the stronger significance , we fail to reject null hypothesis with Age as predictor for Vote.
+       * In addition, the conversion from log odds to regular output (exp(coef(chile.glm))),
+          (Intercept)         age   statusquo 
+           0.8238564   1.0113863  23.9145451
+          From above its is infered that 1.0113863:1 on age and 23.9145451:1 on statusquo to likely to claim vote. Showing stronger odds on statusquo to predict vote 
+       * The first Chi-Square model compares three nested models.
+          * anova(chile.glm, test="Chisq") - includes both predictors and tests the level of significance on these predictors. 
+          * It confirms that both predictors with 0.000000004964 (age) and 0.00000000000000022(statusquo) is far less the the p value (0.001) and they are statistically significant.
+          * 34.2 is the chi-square value ( residual deviance from top line - residual deviance from 2nd line) 2360.29 - 2326.09 = 34.2 is tested for significance on one degree of freedom.
+    * Bayesian Logit
+            * MCMCPack (MCMClogit) does the the bayesian estimation of logistic regression
+            * bayesLogitOut <- MCMClogit(formula = vote ~ age + statusquo, data = ChileYN) formula is used to simulate Bayesian estimation
+            * Wih sample size of 10,000 observations - population mean of the standard errors
+            * With earlier pre-processing the depedent variable is converted into No=0 and Yes = 1.
+            * Output contains the posterior distribution of parameters representing both intercept and cofficients on age and statusquo calibrated as log-odds.
+            * Point extimates for the intercept and the coefficients are similar to outputs from the logistic regression.
+            * 95% HDI interval shows no overlap on age and statusquo variables.
+            * 95% HDI shows age as significant as it overlaps with 0.
+            * more detailed analysis on the HDI is shown on the trace chart below and it captures extensive information about the alternative hypothesis for each of 
+              the coefficients being estimated.
+            * density curve on age is spread across 0 and HDI lower bound (2.5%) at -0.002005 and uppoer bound (97.5%) at 0.02499. 
+            * density curve on statusquo shows HDI well over 0 with HDI lower bound (2.5%) at 2.914442 and Upper bound (97.5%) at 3.48698. favoring alternative hypothesis.
+    * AIC is calculated at 740.5207 on age + statusquo
+         Step Df Deviance Resid. Df Resid. Dev      AIC
+          1                       1700   734.5207 740.5207
+    * AIC is at 2330.1 on age + income; with two step process
+              Step Df   Deviance Resid. Df Resid. Dev      AIC
+                1                             1700   2326.029 2332.029
+                2 - income  1 0.06212372      1701   2326.091 2330.091
+         
+        
+# Please find more details from the R code below, 
+
+```{r}
+options(scipen=999)  # turn-off scientific notation like 1e+48
+
+# load the necessary library for further processing...
+EnsurePackage("car") # Regression helper package: Chile data
+EnsurePackage("MCMCpack") # Download MCMCpack package
+EnsurePackage("dlookr") # outlier analysis
+EnsurePackage("mice") # missing data 
+EnsurePackage("visdat") # missing data 
+
+cat("All Packages are available")
+
+#import Chile dataset
+data(Chile)
+
+#structure of Chile dataset
+str(Chile)
+
+# Summary of Chile dataset
+summary(Chile)
+
+#outlier analysis
+diagnose_outlier(Chile)
+plot_outlier(Chile)
+
+
+#data distribution
+Chile %>% 
+  pivot_longer(cols=-c(region,sex,vote,education), names_to="variable", values_to="value", values_drop_na = TRUE) %>% 
+  ggplot(aes(x=variable, y=value)) + geom_violin() + facet_wrap( ~ variable, scales="free")
+
+# missing data 
+md.pattern(Chile, plot=FALSE)
+
+# missing data visualization
+vis_miss(Chile)
+
+```
+```{r}
+options(scipen=999)  # turn-off scientific notation like 1e+48
+
+ChileY <- Chile[Chile$vote == "Y",] # Grab the Yes votes
+ChileN <- Chile[Chile$vote == "N",] # Grab the No votes
+ChileYN <- rbind(ChileY,ChileN) # Make a new dataset with those
+ChileYN <- ChileYN[complete.cases(ChileYN),] # Get rid of missing
+ChileYN$vote <- factor(ChileYN$vote,levels=c("N","Y")) # Fix the factor
+
+# Corellation between Agriculture and Fertility
+plot(ChileYN$age, ChileYN$statusquo
+     ,main="Corellation between Age  and statusquo"
+     ,col="red")
+
+
+str(ChileYN)
+# remove income column
+ChileYN <- ChileYN[,!grepl("income",colnames(ChileYN))]
+ChileYN$vote <- as.numeric(ChileYN$vote) - 1 # Adjust the outcome
+#table(ChileYN$vote)
+
+str(ChileYN)
+summary(ChileYN$statusquo)
+
+summary(ChileYN)
+
+# missing data 
+md.pattern(ChileYN, plot=FALSE)
+
+# Crete glm model
+chile.glm <- glm(vote ~ age + statusquo,data=ChileYN,family = binomial(link = "logit")) 
+summary(chile.glm)
+
+#histogram on residuals chile.glm
+hist(residuals(chile.glm))
+
+#Chi-Square analysis on logistic regression
+anova(chile.glm, test="Chisq")
+
+# Convert the log odds for the coefficient on the predictor into regular odds
+exp(coef(chile.glm))
+
+#confusion matrix
+table(round(predict(chile.glm,type="response")),ChileYN$vote)
+
+set.seed(271) # Control randomization
+#bayesian estimation of logistic regression
+bayesLogitOut <- MCMClogit(formula = vote ~ age + statusquo, data = ChileYN)
+summary(bayesLogitOut) # Summarize the results
+
+plot(bayesLogitOut)
+
+```
+
+
+```{r}
+EnsurePackage("MASS") # AIC
+
+stepOut <- stepAIC(chile.glm)
+stepOut$anova
+
+```
+
+```{r}
+# stepOutOLD <- stepAIC(chout)
+# stepOutOLD$anova
+```
+
+
+
+# Chapter 10, Exercise 7
+
+_Bonus R code question: Develop your own custom function that will take the posterior distribution of a coefficient from the output object from an MCMClogit() analysis and automatically create a histogram of the posterior distributions of the coefficient in terms of regular odds (instead of log‐odds).  Make sure to mark vertical lines on the histogram indicating the boundaries of the 95% HDI. (1 pt) Run the function on your regression results. (1 pt)_
+
+* Custom Function:
+     * histquoLogOdds takes one of the predictor variable output (log odds) as input
+     * converts the log-odds into regular odds with exponential function as  exp(quoLogOdds)
+     * hist(quoLogOdds, main=prdictor,col="grey") - procedure creates histogram with HDI lines
+     * HDI lines
+       * 2.5% or HDI lower bound |  abline(v=quantile(quoLogOdds,c(0.025)),col="orange") 
+       * 97.5% or HDI upper bound |  abline(v=quantile(quoLogOdds,c(0.975)),col="blue") 
+       * median or 50% percent quantile | abline(v=quantile(quoLogOdds,c(0.50)),col="green")
+* Output of the function produces histograms 
+    * histquoLogOdds("statusquo")  - histogram on statusquo regular odds
+       * Status histograms has values between~15 to ~34 as lower and upper bounds
+    * histquoLogOdds("age") - histogram on age regular odds
+       * Age histograms has more consistent values between just below 1 and over 1.
+       
+# Please find more details from the R code below, 
+
+```{r}
+
+# bayesLogitOut hist 
+
+# Custom function to output histograms with HDI vertical lines 
+# prdictor bayesLogitOut - output variable coeffients converted to regular odds (instead of log-odds)
+histquoLogOdds <- function(prdictor)
+  {
+  quoLogOdds <- as.matrix(bayesLogitOut[,prdictor])
+  quoLogOdds <- exp(quoLogOdds)  # regular odds (instead of log‐odds)
+  hist(quoLogOdds, main=prdictor,col="grey") # hist
+  abline(v=quantile(quoLogOdds,c(0.025)),col="orange") 
+  abline(v=quantile(quoLogOdds,c(0.975)),col="blue") 
+  abline(v=quantile(quoLogOdds,c(0.50)),col="green") 
+  }
+
+#Plot histograms
+histquoLogOdds("statusquo") 
+histquoLogOdds("age") 
+```
+
+
+

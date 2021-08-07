@@ -1,0 +1,87 @@
+---
+title: "Bivariate correlation exercise"
+---
+
+Annotate the R code in the next cell with comments. Add line spacing or break the code into multiple cells as appropriate to improve the appearance of the code and the results. 
+
+```{r}
+# install.packages("BayesFactor") # Uncomment if not installed
+library("BayesFactor")
+data("CO2")
+#?CO2
+```
+
+```{r}
+CO2
+dim(CO2)
+summary(CO2)
+```
+
+```{r}
+hist(CO2$conc)
+hist(CO2$uptake)
+plot(CO2$conc,CO2$uptake)
+```
+
+```{r}
+cor(CO2$conc,CO2$uptake)
+cor.test(CO2$conc,CO2$uptake)
+```
+
+```{r}
+bfCorTest <- function (x,y) # Test r with BayesFactor
+{
+  zx <- scale(x) # Standardize X
+  zy <- scale(y) # Standardize Y
+  zData <- data.frame(x=zx,rhoNot0=zy) # Put in a data frame
+  bfOut <- generalTestBF(x ~ rhoNot0, data=zData) # linear coefficient
+  mcmcOut <- posterior(bfOut,iterations=10000) # posterior samples
+  plot(mcmcOut[,"rhoNot0"])
+  print(summary(mcmcOut[,"rhoNot0"])) # Get the HDI for r
+  return(bfOut) # Return Bayes factor object
+}
+```
+
+```{r}
+bfCorTest(CO2$conc,CO2$uptake)
+```
+
+Explain the results, integrating the Bayesian estimation, Bayes factor and conventional results.
+
+
+```{r}
+# Subset the data
+quebec <- CO2[CO2$Type=="Quebec", ]
+missip <- CO2[CO2$Type=="Mississippi", ]
+```
+
+```{r}
+cor(quebec$conc,quebec$uptake)
+cor.test(quebec$conc,quebec$uptake)
+cor(missip$conc,missip$uptake)
+cor.test(missip$conc,missip$uptake)
+```
+
+Are the two correlations equivalent?
+
+```{r}
+# install.packages("cocor")
+library("cocor") # load package
+cocor.indep.groups(r1.jk=cor(quebec$conc,quebec$uptake), 
+                   r2.hm=cor(missip$conc,missip$uptake), 
+                   n1=length(quebec$conc), 
+                   n2=length(missip$conc), 
+                   alternative="two.sided", 
+                   alpha=0.05, conf.level=0.95, null.value=0)
+```
+
+Reinterpret your results from above in light of your comparison between the two correlations.
+
+And in Stan
+
+```{stan model=cor.model}
+
+
+```
+
+

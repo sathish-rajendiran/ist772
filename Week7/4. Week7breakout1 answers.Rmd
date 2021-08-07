@@ -1,0 +1,99 @@
+---
+title: "Week 7 Breakout 1: Chi-Square Test of Independence"
+---
+
+Instructions: There is a dataset built into R called HairEyeColor that contains a contingency table for n=592 statistics students. Four variants of hair color are crossed with four variants of eye color with cell counts of the number of people fitting each description. Your goal is to conduct a thorough chi-square analysis using both conventional and Bayesian techniques. 
+
+1.	First, just for simplicity, combine the males and females into one 4x4 contingency table:
+
+```{r}
+HEcombined <- HairEyeColor[ , ,1] + HairEyeColor[ , ,2]
+```
+
+Note the double commas in the selector: HairEyeColor is a 3D table! Review the result by typing HEcombined at the console. Check the total number of observations in the new dataset with sum(HEcombined). Add comments to describe what you see.
+
+2.	Review the absolute proportion of observations in each cell with:
+
+```{r}
+HEcombined/sum(HEcombined)
+```
+
+Review the results with your group, going row by row or column by column and describe what you see. Later, we are going to focus on a subset of four cells where the real action is located. Can you pick out which ones they might be?
+
+3.	Calculate the chi-square value and test the overall significance of the test of independence. You can use the chisq.test() procedure to accomplish this:
+
+```{r}
+chiOut <- chisq.test(HEcombined)
+
+chiOut
+```
+
+Describe the results of the significance test in a comment. Why are there nine degrees of freedom? What is the null hypothesis? Is the null hypothesis rejected?
+
+4.	Examine the “residuals” from the chi-square test (chiOut$residuals). Residuals represent how far an observed value was from the expected value. A large positive residual means that the observation for a cell was much higher than expected. A large negative residual means that the observation for a cell was much lower than expected. Large residuals (negative or positive) indicate the cells that made the most powerful contribution to the value of chi-square. Therefore, cells with large residuals show where the “action” is with respect to non-independence.
+
+```{r}
+chiOut$residuals
+```
+
+```{r}
+which.max(chiOut$residuals)
+```
+
+5.	Based on the residuals, choose two rows and two columns that have the most interesting stuff happening in them. For example, I chose rows for Black and Red hair and columns for Brown and Hazel eyes with the following command:
+
+```{r}
+HEsmall <- HEcombined[c("Black","Blond"), c("Brown","Blue")]
+HEsmall
+```
+
+(You could instead use the row and column numbers.) Verify that you got what you wanted by examing HEsmall and rerunning the chi-square. Describe what you see.
+
+```{r}
+chisq.test(HEsmall)
+```
+
+6.	Conduct a Bayesian contingency table analysis with the following line of code:
+
+```{r}
+library(BayesFactor)
+ctOut <- contingencyTableBF(HEsmall, sampleType="poisson", posterior=TRUE, iterations=10000)
+summary(ctOut)
+```
+
+Review the results and describe what you see.
+
+7.	Examine histograms of the posterior distributions of the proportions of different colored eyes. Here’s an example of code that will plot the ratios formed by the entries in the first row:
+
+```{r}
+Row1 <- ctOut[,"lambda[1,1]"] / ctOut[,"lambda[1,2]"]
+hist(Row1) 
+```
+
+Add a cell to calculate the proportions for the second row. Store the result in a new variable. 
+
+```{r}
+Row2 <- ctOut[,"lambda[2,1]"] / ctOut[,"lambda[2,2]"]
+hist(Row2) 
+```
+
+Describe what you are seeing and make sense out of it. You might want to refer back to HEsmall to remember what the original count was in each cell.
+
+8.	After completing step 7, you now have two different posterior distributions of ratio values, one for each row. The difference between these two distributions makes a third posterior distribution that captures the extent to which the first two rows differ. Calculate this third distribution and display a histogram for it. Use the xlab= and main= arguments to hist() to provide labels for the x-axis and for the histogram as a whole.
+ 
+```{r}
+Diff<-Row1-Row2
+hist(Diff)
+```
+ 
+9.	Explain the histogram in a comment. Just based on a visual inspection, does the HDI overlap with zero? Is there a credible difference between the two rows with respect to the proportions of different colored eyes?
+
+10.	Power Mode: Place vertical lines on the histogram to represent the HDI. Display the actual values for the upper and lower bounds of the HDI. 
+
+```{r}
+hist(Diff)
+abline(v=quantile(Diff,0.025))
+abline(v=quantile(Diff,0.975))
+```
+
+11.	Paste your code into the code share: https://codeshare.io/aJDyRX
